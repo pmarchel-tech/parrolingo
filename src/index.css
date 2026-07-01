@@ -97,8 +97,9 @@ body {
 .app-container {
   width: 100%;
   max-width: 430px; /* iPhone 15 Pro Max width */
-  height: 100vh;
-  max-height: 926px; /* iPhone 15 Pro Max height */
+  height: 100dvh; /* Dynamic Viewport Height for mobile */
+  height: 100vh; /* Fallback for older browsers */
+  max-height: 100dvh;
   background-color: var(--background);
   display: flex;
   flex-direction: column;

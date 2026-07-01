@@ -5734,7 +5734,7 @@ const KANJI_TO_HIRAGANA_TTS = {
         style={{ 
           flex: 1, 
           overflowY: 'auto', 
-          padding: '20px var(--space-margin) 280px var(--space-margin)' 
+          padding: '20px var(--space-margin) 180px var(--space-margin)' 
         }}
       >
         {/* Progress Bar & Header */}
@@ -6045,9 +6045,81 @@ const KANJI_TO_HIRAGANA_TTS = {
             </button>
           </div>
         )}
+        {/* Explanation displayed inline within scrollable content when checked */}
+        {isAnswerChecked && currentQuestion.explanation && (
+          <div style={{ marginTop: '24px', backgroundColor: 'white', padding: '16px', borderRadius: 'var(--radius-default)', border: '1px solid var(--surface-container-high)', textAlign: 'left' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h2 style={{ fontFamily: 'var(--font-japanese)', color: 'var(--primary)', margin: 0 }}>
+                {(() => {
+                  const word = currentQuestion.explanation.word;
+                  if (speakingWord !== word || !highlightRange) return word;
+                  return (
+                    <span>
+                      {word.split('').map((char, index) => {
+                        const isHighlighted = index >= highlightRange.start && index < highlightRange.end;
+                        return (
+                          <span 
+                            key={index} 
+                            style={{ 
+                              fontWeight: isHighlighted ? '800' : 'normal',
+                              color: isHighlighted ? '#ff5a5f' : 'var(--primary)',
+                              transition: 'all 0.1s ease',
+                              textDecoration: isHighlighted ? 'underline' : 'none',
+                              display: 'inline-block',
+                              transform: isHighlighted ? 'scale(1.2)' : 'scale(1)'
+                            }}
+                          >
+                            {char}
+                          </span>
+                        );
+                      })}
+                    </span>
+                  );
+                })()}
+              </h2>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button className="audio-btn" onClick={() => speakText(currentQuestion.explanation.word, 1.0)}>
+                  1.0x
+                </button>
+                <button className="audio-btn" onClick={() => speakText(currentQuestion.explanation.word, 0.5)}>
+                  0.5x
+                </button>
+              </div>
+            </div>
+            <p className="body-md" style={{ fontWeight: '600', color: 'var(--outline)', marginTop: '2px', marginBottom: '12px' }}>
+              {renderHighlightedRomaji(currentQuestion.explanation.word, currentQuestion.explanation.romaji)}
+            </p>
+
+            <div style={{ marginTop: '12px' }}>
+              <span className="label-md" style={{ color: 'var(--primary)', fontSize: '11px', textTransform: 'uppercase' }}>ARTI</span>
+              <p className="body-md" style={{ fontWeight: '700', color: 'var(--on-surface)', margin: '2px 0 0 0' }}>
+                {currentQuestion.explanation.translation}
+              </p>
+            </div>
+
+            <div style={{ marginTop: '8px' }}>
+              <span className="label-md" style={{ color: 'var(--primary)', fontSize: '11px', textTransform: 'uppercase' }}>KONTEKS</span>
+              <p className="body-md" style={{ margin: '2px 0 0 0' }}>{currentQuestion.explanation.context}</p>
+            </div>
+
+            <div style={{ marginTop: '8px', padding: '10px', backgroundColor: '#fdf2f8', borderRadius: '8px', borderLeft: '3px solid var(--tertiary)' }}>
+              <span className="label-md" style={{ color: 'var(--tertiary)', fontSize: '11px' }}>Tip Penggunaan:</span>
+              <p className="body-md" style={{ color: 'var(--on-surface-variant)', fontSize: '13px', margin: '2px 0 0 0' }}>
+                {currentQuestion.explanation.tip}
+              </p>
+            </div>
+
+            <div style={{ marginTop: '12px', padding: '10px', backgroundColor: '#f0fdf4', borderRadius: '8px' }}>
+              <span className="label-md" style={{ color: 'var(--secondary)', fontSize: '11px' }}>Contoh Penggunaan:</span>
+              <p className="body-md" style={{ fontWeight: '700', fontStyle: 'italic', margin: '2px 0 0 0' }}>
+                "{currentQuestion.explanation.example}"
+              </p>
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Sticky Answer Feedback Panel (Duolingo Style) */}
+      {/* Sticky Answer Feedback Panel (Duolingo Style - Compact & Mobile Friendly) */}
       {isAnswerChecked && (
         <div 
           style={{ 
@@ -6057,11 +6129,9 @@ const KANJI_TO_HIRAGANA_TTS = {
             right: 0,
             borderTop: `3px solid ${isCorrect ? 'var(--secondary)' : 'var(--tertiary)'}`,
             backgroundColor: isCorrect ? '#ecfdf5' : '#fef2f2',
-            padding: '20px var(--space-margin)',
+            padding: '16px var(--space-margin)',
             boxShadow: '0 -8px 24px rgba(0, 0, 0, 0.15)',
             zIndex: 150,
-            maxHeight: '80%',
-            overflowY: 'auto',
             display: 'flex',
             flexDirection: 'column',
             gap: '12px',
@@ -6075,103 +6145,30 @@ const KANJI_TO_HIRAGANA_TTS = {
               <XCircle size={32} color="var(--tertiary)" />
             )}
             <div>
-              <h3 style={{ color: isCorrect ? 'var(--secondary)' : 'var(--tertiary)', margin: 0 }}>
+              <h3 style={{ color: isCorrect ? 'var(--secondary)' : 'var(--tertiary)', margin: 0, fontSize: '16px' }}>
                 {isCorrect ? 'Jawaban Benar!' : 'Jawaban Salah!'}
               </h3>
               {isCorrect && currentQuestion.type === 'C' && typedInput.trim().toLowerCase() !== currentQuestion.targetRomaji.toLowerCase() && (
-                <p className="body-md" style={{ color: '#065f46', margin: '4px 0 0 0', fontWeight: '600' }}>
+                <p className="body-md" style={{ color: '#065f46', margin: '4px 0 0 0', fontWeight: '600', fontSize: '13px' }}>
                   Ada sedikit salah ketik. Ejaan resmi: <strong style={{ textDecoration: 'underline' }}>{currentQuestion.targetRomaji}</strong> ({currentQuestion.targetJa})
                 </p>
               )}
               {!isCorrect && currentQuestion.type === 'B' && (
-                <p className="body-md" style={{ color: 'var(--tertiary)', margin: '4px 0 0 0' }}>
+                <p className="body-md" style={{ color: 'var(--tertiary)', margin: '2px 0 0 0', fontSize: '13px' }}>
                   Jawaban benar: {currentQuestion.options[currentQuestion.answer]}
                 </p>
               )}
               {!isCorrect && currentQuestion.type === 'C' && (
-                <p className="body-md" style={{ color: 'var(--tertiary)', margin: '4px 0 0 0' }}>
+                <p className="body-md" style={{ color: 'var(--tertiary)', margin: '2px 0 0 0', fontSize: '13px' }}>
                   Jawaban benar: {currentQuestion.targetRomaji} ({currentQuestion.targetJa})
                 </p>
               )}
             </div>
           </div>
 
-          {/* Detailed Explanation (Image 5 Style) */}
-          {currentQuestion.explanation && (
-            <div style={{ backgroundColor: 'white', padding: '16px', borderRadius: 'var(--radius-default)', border: '1px solid var(--surface-container-high)' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h2 style={{ fontFamily: 'var(--font-japanese)', color: 'var(--primary)', margin: 0 }}>
-                  {(() => {
-                    const word = currentQuestion.explanation.word;
-                    if (speakingWord !== word || !highlightRange) return word;
-                    return (
-                      <span>
-                        {word.split('').map((char, index) => {
-                          const isHighlighted = index >= highlightRange.start && index < highlightRange.end;
-                          return (
-                            <span 
-                              key={index} 
-                              style={{ 
-                                fontWeight: isHighlighted ? '800' : 'normal',
-                                color: isHighlighted ? '#ff5a5f' : 'var(--primary)',
-                                transition: 'all 0.1s ease',
-                                textDecoration: isHighlighted ? 'underline' : 'none',
-                                display: 'inline-block',
-                                transform: isHighlighted ? 'scale(1.2)' : 'scale(1)'
-                              }}
-                            >
-                              {char}
-                            </span>
-                          );
-                        })}
-                      </span>
-                    );
-                  })()}
-                </h2>
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  <button className="audio-btn" onClick={() => speakText(currentQuestion.explanation.word, 1.0)}>
-                    1.0x
-                  </button>
-                  <button className="audio-btn" onClick={() => speakText(currentQuestion.explanation.word, 0.5)}>
-                    0.5x
-                  </button>
-                </div>
-              </div>
-              <p className="body-md" style={{ fontWeight: '600', color: 'var(--outline)', marginTop: '2px', marginBottom: '12px' }}>
-                {renderHighlightedRomaji(currentQuestion.explanation.word, currentQuestion.explanation.romaji)}
-              </p>
-
-              <div style={{ marginTop: '12px' }}>
-                <span className="label-md" style={{ color: 'var(--primary)', fontSize: '11px', textTransform: 'uppercase' }}>ARTI</span>
-                <p className="body-md" style={{ fontWeight: '700', color: 'var(--on-surface)', margin: '2px 0 0 0' }}>
-                  {currentQuestion.explanation.translation}
-                </p>
-              </div>
-
-              <div style={{ marginTop: '8px' }}>
-                <span className="label-md" style={{ color: 'var(--primary)', fontSize: '11px', textTransform: 'uppercase' }}>KONTEKS</span>
-                <p className="body-md" style={{ margin: '2px 0 0 0' }}>{currentQuestion.explanation.context}</p>
-              </div>
-
-              <div style={{ marginTop: '8px', padding: '10px', backgroundColor: '#fdf2f8', borderRadius: '8px', borderLeft: '3px solid var(--tertiary)' }}>
-                <span className="label-md" style={{ color: 'var(--tertiary)', fontSize: '11px' }}>Tip Penggunaan:</span>
-                <p className="body-md" style={{ color: 'var(--on-surface-variant)', fontSize: '13px', margin: '2px 0 0 0' }}>
-                  {currentQuestion.explanation.tip}
-                </p>
-              </div>
-
-              <div style={{ marginTop: '12px', padding: '10px', backgroundColor: '#f0fdf4', borderRadius: '8px' }}>
-                <span className="label-md" style={{ color: 'var(--secondary)', fontSize: '11px' }}>Contoh Penggunaan:</span>
-                <p className="body-md" style={{ fontWeight: '700', fontStyle: 'italic', margin: '2px 0 0 0' }}>
-                  "{currentQuestion.explanation.example}"
-                </p>
-              </div>
-            </div>
-          )}
-
           <button 
             className={`btn ${isCorrect ? 'btn-secondary' : 'btn-tertiary'}`}
-            style={{ width: '100%', marginTop: '8px' }}
+            style={{ width: '100%', marginTop: '4px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             onClick={handleNext}
           >
             Lanjutkan
