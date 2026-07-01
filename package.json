@@ -1,0 +1,24 @@
+{
+  "name": "kaigolingo",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "node \"C:/Users/WELCOME/.gemini/antigravity/brain/d2e2037d-49c8-4cf9-9dff-871457b77ef3/git_fresh_init.js\"",
+    "preview": "vite preview",
+    "copy-mascot": "node copy_mascot.js",
+    "test": "npx -y vitest run src/components/LearnScreen.test.jsx --environment jsdom",
+    "test-session": "node test_session.js",
+    "export-questions": "node export_questions.js"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "lucide-react": "^0.400.0",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.1",
+    "vite": "^5.3.1"
+  }
+}
