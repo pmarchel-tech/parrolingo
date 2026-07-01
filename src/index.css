@@ -584,6 +584,20 @@ h3, .headline-md {
   color: var(--on-surface-variant);
 }
 
+@media (max-width: 440px) {
+  .question-option {
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    font-size: 15px;
+  }
+  .option-badge {
+    width: 28px;
+    height: 28px;
+    margin-right: 12px;
+    font-size: 13px;
+  }
+}
+
 .question-option.selected .option-badge {
   background-color: var(--primary);
   color: var(--on-primary);

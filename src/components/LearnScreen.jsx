@@ -5738,7 +5738,7 @@ const KANJI_TO_HIRAGANA_TTS = {
         }}
       >
         {/* Progress Bar & Header */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', gap: '16px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px', gap: '16px' }}>
           <button onClick={() => onEndSession()} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, display: 'flex', alignItems: 'center', color: 'var(--outline)' }}>
             <X size={24} />
           </button>
@@ -5760,10 +5760,10 @@ const KANJI_TO_HIRAGANA_TTS = {
           </span>
         </div>
 
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
           {/* Question Prompt */}
-          <div style={{ marginBottom: '24px', textAlign: 'center' }}>
-            <span className="badge badge-blue" style={{ marginBottom: '8px' }}>
+          <div style={{ marginBottom: '16px', textAlign: 'center' }}>
+            <span className="badge badge-blue" style={{ marginBottom: '6px' }}>
               {currentQuestion.type === 'A' && 'Mencocokkan Kata'}
               {currentQuestion.type === 'B' && 'Dengar & Pilih'}
               {currentQuestion.type === 'C' && 'Ketik Konversi'}
@@ -5834,12 +5834,12 @@ const KANJI_TO_HIRAGANA_TTS = {
 
           {/* Tipe B: Listening */}
           {currentQuestion.type === 'B' && (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px', width: '100%' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', width: '100%' }}>
               <button
                 onClick={playQuestionAudio}
                 style={{
-                  width: '96px',
-                  height: '96px',
+                  width: '76px',
+                  height: '76px',
                   borderRadius: '50%',
                   backgroundColor: 'var(--primary-container)',
                   border: 'none',
@@ -5851,7 +5851,7 @@ const KANJI_TO_HIRAGANA_TTS = {
                   color: 'white'
                 }}
               >
-                <Volume2 size={40} />
+                <Volume2 size={32} />
               </button>
 
               <div style={{ width: '100%' }}>
@@ -5882,10 +5882,10 @@ const KANJI_TO_HIRAGANA_TTS = {
 
           {/* Tipe C: Typing */}
           {currentQuestion.type === 'C' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', width: '100%' }}>
-              <div className="card no-press" style={{ textAlign: 'center', backgroundColor: 'var(--surface-container-low)' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' }}>
+              <div className="card no-press" style={{ textAlign: 'center', backgroundColor: 'var(--surface-container-low)', padding: '16px' }}>
                 <h2 style={{ color: 'var(--primary)' }}>{currentQuestion.targetJa}</h2>
-                <p className="body-md" style={{ marginTop: '8px' }}>Arti: {currentQuestion.meaning}</p>
+                <p className="body-md" style={{ marginTop: '4px' }}>Arti: {currentQuestion.meaning}</p>
               </div>
 
               <input
@@ -5901,9 +5901,9 @@ const KANJI_TO_HIRAGANA_TTS = {
 
           {/* Tipe D: Shadowing */}
           {currentQuestion.type === 'D' && (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px', width: '100%' }}>
-              <div className="card no-press" style={{ width: '100%', textAlign: 'center' }}>
-                <h1 className="japanese-display" style={{ marginBottom: '8px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', width: '100%' }}>
+              <div className="card no-press" style={{ width: '100%', textAlign: 'center', padding: '16px' }}>
+                <h1 className="japanese-display" style={{ marginBottom: '4px' }}>
                   {(() => {
                     const word = currentQuestion.targetJa;
                     if (speakingWord !== word || !highlightRange) return word;
