@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Map, BookOpen, BarChart3, User, Award, Flame, Coins, ShieldAlert } from 'lucide-react';
+import { Map, BookOpen, BarChart3, User, Award, Flame, Coins, ShieldAlert, ChevronDown } from 'lucide-react';
 import { initDB, seedDefaultDictionary, seedDefaultLogs, getProgress } from './utils/db';
 
 // Import Screens
@@ -69,6 +69,14 @@ export default function App() {
   const [sessionType, setSessionType] = useState(null);
   const [apiKey, setApiKey] = useState('');
   const [isDbReady, setIsDbReady] = useState(false);
+  const [selectedProgram, setSelectedProgram] = useState(() => {
+    return localStorage.getItem('kaigolingo_selected_program') || 'kaigo';
+  });
+
+  const handleProgramChange = (val) => {
+    setSelectedProgram(val);
+    localStorage.setItem('kaigolingo_selected_program', val);
+  };
 
   // Initialize DB and Load Stats
   useEffect(() => {
@@ -134,8 +142,36 @@ export default function App() {
               className="header-avatar"
             />
             <div>
-              <div style={{ fontSize: '11px', color: 'var(--outline)', fontWeight: '700' }}>Halo, Budi!</div>
-              <div className="header-title">KaigoLingo</div>
+              <div style={{ fontSize: '10px', color: 'var(--outline)', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Program Belajar</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '2px' }}>
+                <select 
+                  value={selectedProgram}
+                  onChange={(e) => handleProgramChange(e.target.value)}
+                  style={{
+                    fontFamily: 'var(--font-display)',
+                    fontSize: '18px',
+                    fontWeight: '700',
+                    color: 'var(--primary)',
+                    border: 'none',
+                    backgroundColor: 'transparent',
+                    cursor: 'pointer',
+                    outline: 'none',
+                    padding: 0,
+                    margin: 0,
+                    appearance: 'none',
+                    WebkitAppearance: 'none',
+                    MozAppearance: 'none',
+                    maxWidth: '160px',
+                    textOverflow: 'ellipsis'
+                  }}
+                >
+                  <option value="kaigo" style={{ color: 'var(--on-surface)', fontWeight: '500' }}>Kaigo - Perawat</option>
+                  <option value="seizogyo" style={{ color: 'var(--on-surface)', fontWeight: '500' }}>Seizogyo - Pabrik</option>
+                  <option value="kensetsugyo" style={{ color: 'var(--on-surface)', fontWeight: '500' }}>Kensetsugyo - Konstruksi</option>
+                  <option value="nogyo" style={{ color: 'var(--on-surface)', fontWeight: '500' }}>Nogyo - Perkebunan</option>
+                </select>
+                <ChevronDown size={16} color="var(--primary)" style={{ cursor: 'pointer', pointerEvents: 'none' }} />
+              </div>
             </div>
           </div>
 
