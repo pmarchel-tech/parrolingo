@@ -6119,48 +6119,48 @@ const KANJI_TO_HIRAGANA_TTS = {
         )}
       </div>
 
-      {/* Sticky Answer Feedback Panel (Duolingo Style - Compact & Mobile Friendly Floating Card) */}
+      {/* Sticky Answer Feedback Panel (Duolingo Style - Compact & Mobile Friendly Floating Bento Card) */}
       {isAnswerChecked && (
         <div 
           style={{ 
             position: 'absolute',
-            bottom: '24px',
+            bottom: '60px',
             left: '16px',
             right: '16px',
             border: `2px solid ${isCorrect ? 'var(--secondary)' : 'var(--tertiary)'}`,
             borderRadius: 'var(--radius-default)',
             backgroundColor: isCorrect ? '#ecfdf5' : '#fef2f2',
-            padding: '16px var(--space-margin)',
+            padding: '12px 16px',
             boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15)',
             zIndex: 150,
             display: 'flex',
             flexDirection: 'column',
-            gap: '12px',
+            gap: '8px',
             animation: 'slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1)'
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             {isCorrect ? (
-              <CheckCircle size={32} color="var(--secondary)" />
+              <CheckCircle size={28} color="var(--secondary)" />
             ) : (
-              <XCircle size={32} color="var(--tertiary)" />
+              <XCircle size={28} color="var(--tertiary)" />
             )}
             <div>
-              <h3 style={{ color: isCorrect ? 'var(--secondary)' : 'var(--tertiary)', margin: 0, fontSize: '16px' }}>
+              <h3 style={{ color: isCorrect ? 'var(--secondary)' : 'var(--tertiary)', margin: 0, fontSize: '15px' }}>
                 {isCorrect ? 'Jawaban Benar!' : 'Jawaban Salah!'}
               </h3>
               {isCorrect && currentQuestion.type === 'C' && typedInput.trim().toLowerCase() !== currentQuestion.targetRomaji.toLowerCase() && (
-                <p className="body-md" style={{ color: '#065f46', margin: '4px 0 0 0', fontWeight: '600', fontSize: '13px' }}>
+                <p className="body-md" style={{ color: '#065f46', margin: '2px 0 0 0', fontWeight: '600', fontSize: '12px' }}>
                   Ada sedikit salah ketik. Ejaan resmi: <strong style={{ textDecoration: 'underline' }}>{currentQuestion.targetRomaji}</strong> ({currentQuestion.targetJa})
                 </p>
               )}
               {!isCorrect && currentQuestion.type === 'B' && (
-                <p className="body-md" style={{ color: 'var(--tertiary)', margin: '2px 0 0 0', fontSize: '13px' }}>
+                <p className="body-md" style={{ color: 'var(--tertiary)', margin: '1px 0 0 0', fontSize: '12px' }}>
                   Jawaban benar: {currentQuestion.options[currentQuestion.answer]}
                 </p>
               )}
               {!isCorrect && currentQuestion.type === 'C' && (
-                <p className="body-md" style={{ color: 'var(--tertiary)', margin: '2px 0 0 0', fontSize: '13px' }}>
+                <p className="body-md" style={{ color: 'var(--tertiary)', margin: '1px 0 0 0', fontSize: '12px' }}>
                   Jawaban benar: {currentQuestion.targetRomaji} ({currentQuestion.targetJa})
                 </p>
               )}
@@ -6169,11 +6169,11 @@ const KANJI_TO_HIRAGANA_TTS = {
 
           <button 
             className={`btn ${isCorrect ? 'btn-secondary' : 'btn-tertiary'}`}
-            style={{ width: '100%', marginTop: '4px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            style={{ width: '100%', marginTop: '0px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px' }}
             onClick={handleNext}
           >
             Lanjutkan
-            <ArrowRight size={18} style={{ marginLeft: '8px' }} />
+            <ArrowRight size={16} style={{ marginLeft: '8px' }} />
           </button>
         </div>
       )}
