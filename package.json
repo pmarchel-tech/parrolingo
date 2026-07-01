@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "vite",
-    "build": "node \"C:/Users/WELCOME/.gemini/antigravity/brain/d2e2037d-49c8-4cf9-9dff-871457b77ef3/git_fresh_init.js\"",
+    "build": "vite build",
     "preview": "vite preview",
     "copy-mascot": "node copy_mascot.js",
     "test": "npx -y vitest run src/components/LearnScreen.test.jsx --environment jsdom",
