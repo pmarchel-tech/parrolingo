@@ -6119,18 +6119,19 @@ const KANJI_TO_HIRAGANA_TTS = {
         )}
       </div>
 
-      {/* Sticky Answer Feedback Panel (Duolingo Style - Compact & Mobile Friendly) */}
+      {/* Sticky Answer Feedback Panel (Duolingo Style - Compact & Mobile Friendly Floating Card) */}
       {isAnswerChecked && (
         <div 
           style={{ 
             position: 'absolute',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            borderTop: `3px solid ${isCorrect ? 'var(--secondary)' : 'var(--tertiary)'}`,
+            bottom: '24px',
+            left: '16px',
+            right: '16px',
+            border: `2px solid ${isCorrect ? 'var(--secondary)' : 'var(--tertiary)'}`,
+            borderRadius: 'var(--radius-default)',
             backgroundColor: isCorrect ? '#ecfdf5' : '#fef2f2',
             padding: '16px var(--space-margin)',
-            boxShadow: '0 -8px 24px rgba(0, 0, 0, 0.15)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15)',
             zIndex: 150,
             display: 'flex',
             flexDirection: 'column',

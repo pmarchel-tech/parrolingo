@@ -109,7 +109,7 @@ body {
   border-radius: 0;
 }
 
-@media (min-width: 500px) {
+@media (min-width: 768px) {
   .app-container {
     border-radius: var(--radius-lg);
     height: 90vh;
@@ -584,7 +584,7 @@ h3, .headline-md {
   color: var(--on-surface-variant);
 }
 
-@media (max-width: 500px) {
+@media (max-width: 768px) {
   .question-option {
     padding: 12px 16px;
     margin-bottom: 8px;
