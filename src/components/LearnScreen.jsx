@@ -84,14 +84,93 @@ const ROMAJI_CHUNKS = {
   ]
 };
 
-// Levenshtein Distance for lenient typing evaluation
-const getLevenshteinDistance = (a, b) => {
-  const matrix = [];
-  let i;
-  for (i = 0; i <= b.length; i++) {
-    matrix[i] = [i];
+// Algorithmic Hepburn Romaji to Hiragana converter
+const romajiToHiragana = (romaji) => {
+  if (!romaji) return '';
+  let str = romaji.toLowerCase().trim();
+  
+  // Standardize common romaji variations
+  str = str.replace(/tsu/g, 'tsu')
+           .replace(/chi/g, 'chi')
+           .replace(/sh/g, 'sh')
+           .replace(/ch/g, 'ch')
+           .replace(/fu/g, 'fu')
+           .replace(/jy/g, 'j')
+           .replace(/j/g, 'j');
+
+  const mapping = {
+    'kya': 'きゃ', 'kyu': 'きゅ', 'kyo': 'きょ',
+    'sha': 'しゃ', 'shu': 'しゅ', 'sho': 'しょ',
+    'cha': 'ちゃ', 'chu': 'ちゅ', 'cho': 'ちょ',
+    'nya': 'にゃ', 'nyu': 'にゅ', 'nyo': 'にょ',
+    'hya': 'ひゃ', 'hyu': 'ひゅ', 'hyo': 'ひょ',
+    'mya': 'みゃ', 'myu': 'みゅ', 'myo': 'みょ',
+    'rya': 'りゃ', 'ryu': 'りゅ', 'ryo': 'りょ',
+    'gya': 'ぎゃ', 'gyu': 'ぎゅ', 'gyo': 'ぎょ',
+    'ja': 'じゃ', 'ju': 'じゅ', 'jo': 'じょ',
+    'bya': 'びゃ', 'byu': 'びゅ', 'byo': 'びょ',
+    'pya': 'ぴゃ', 'pyu': 'ぴゅ', 'pyo': 'ぴょ',
+    'ka': 'か', 'ki': 'き', 'ku': 'く', 'ke': 'け', 'ko': 'こ',
+    'sa': 'さ', 'shi': 'し', 'su': 'す', 'se': 'せ', 'so': 'そ',
+    'ta': 'た', 'chi': 'ち', 'tsu': 'つ', 'te': 'て', 'to': 'と',
+    'na': 'な', 'ni': 'に', 'nu': 'ぬ', 'ne': 'ね', 'no': 'の',
+    'ha': 'は', 'hi': 'ひ', 'fu': 'ふ', 'he': 'へ', 'ho': 'ほ',
+    'ma': 'ま', 'mi': 'み', 'mu': 'む', 'me': 'め', 'mo': 'も',
+    'ya': 'や', 'yu': 'ゆ', 'yo': 'よ',
+    'ra': 'ら', 'ri': 'り', 'ru': 'る', 're': 'れ', 'ro': 'ろ',
+    'wa': 'わ', 'wo': 'を', 'nn': 'ん', 'n': 'ん',
+    'ga': 'が', 'gi': 'ぎ', 'gu': 'ぐ', 'ge': 'げ', 'go': 'ご',
+    'za': 'ざ', 'ji': 'じ', 'zu': 'ず', 'ze': 'ぜ', 'zo': 'ぞ',
+    'da': 'だ', 'de': 'で', 'do': 'ど',
+    'ba': 'ば', 'bi': 'び', 'bu': 'ぶ', 'be': 'べ', 'bo': 'ぼ',
+    'pa': 'ぱ', 'pi': 'ぴ', 'pu': 'ぷ', 'pe': 'ぺ', 'po': 'ぽ',
+    'a': 'あ', 'i': 'い', 'u': 'う', 'e': 'え', 'o': 'お'
+  };
+
+  let result = '';
+  let i = 0;
+  while (i < str.length) {
+    // Check double consonants (sokuon - small tsu) e.g., 'pp', 'tt', 'ss', 'kk'
+    if (i < str.length - 1 && str[i] === str[i+1] && str[i] !== 'n' && str[i] !== 'a' && str[i] !== 'i' && str[i] !== 'u' && str[i] !== 'e' && str[i] !== 'o') {
+      result += 'っ';
+      i++;
+      continue;
+    }
+
+    // Try to match 3 characters
+    if (i < str.length - 2) {
+      const part3 = str.substring(i, i + 3);
+      if (mapping[part3]) {
+        result += mapping[part3];
+        i += 3;
+        continue;
+      }
+    }
+
+    // Try to match 2 characters
+    if (i < str.length - 1) {
+      const part2 = str.substring(i, i + 2);
+      if (mapping[part2]) {
+        result += mapping[part2];
+        i += 2;
+        continue;
+      }
+    }
+
+    // Try to match 1 character
+    const part1 = str.substring(i, i + 1);
+    if (mapping[part1]) {
+      result += mapping[part1];
+      i += 1;
+      continue;
+    }
+
+    // Keep original character if no match
+    result += str[i];
+    i += 1;
   }
-return result;
+  
+  return result;
 };
 
 // Dynamically generated Kanji-to-Hiragana mapping at runtime
@@ -327,10 +406,9 @@ const getSimilarity = (s1, s2) => {
   if (longerLength === 0) {
     return 1.0;
   }
-  return (longerLength - getLevenshteinDistance(longer, shorter)) / longerLength;
+  return (longerLength - editDistance(longer, shorter)) / parseFloat(longerLength);
 };
 
-// Default fallback questions if week not explicitly seeded
 const DEFAULT_QUESTIONS = [
   { type: 'B', prompt: 'Apa yang diucapkan dalam audio tersebut?', audioText: 'こんにちは', options: ['こんにちは (kon-ni-chi-wa)', 'ありがとう (a-ri-ga-tou)', 'すみません (su-mi-ma-sen)'], answer: 0, explanation: { word: 'こんにちは', romaji: 'kon-ni-chi-wa', translation: 'Selamat Siang / Halo', context: 'Salam umum di siang hari.', tip: 'Gunakan dari jam 11 siang hingga sore hari.', example: 'Konnichiwa, Tanaka-san.' } },
   { type: 'C', prompt: 'Ketik bunyi Romaji berikut!', targetRomaji: 'arigatou', targetJa: 'ありがとう', meaning: 'Terima kasih' },
