@@ -3,17 +3,6 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
 import App from '../App';
 
-import { execSync } from 'child_process';
-try {
-  console.log("=== RUNNING GIT SYNC FROM TEST ===");
-  execSync('git add -A', { stdio: 'inherit' });
-  execSync('git commit -m "feat: add app icon + hide floating nav when modal opens"', { stdio: 'inherit' });
-  execSync('git pull origin main --no-rebase', { stdio: 'inherit' });
-  execSync('git push origin main', { stdio: 'inherit' });
-  console.log("=== GIT SYNC FROM TEST FINISHED ===");
-} catch (e) {
-  console.error("Git sync failed:", e.message);
-}
 
 // Mock IndexedDB database utilities
 vi.mock('../utils/db', () => ({

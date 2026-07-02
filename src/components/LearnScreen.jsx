@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Volume2, Mic, CheckCircle, XCircle, ArrowRight, X, Play, RefreshCw, Lock, Award, ShieldAlert } from 'lucide-react';
-import { saveProgress, addLog, getVoiceSignature } from '../utils/db';
+import { saveProgress, addLog, getVoiceSignature, getQuestionsByWeek, getVocabByWeek, seedQuestionsAndVocab } from '../utils/db';
 
 // React Error Boundary to catch any rendering crashes on the results screen
 class SafeErrorBoundary extends React.Component {
@@ -55,6 +55,7 @@ class SafeErrorBoundary extends React.Component {
   }
 }
 
+<<<<<<< HEAD
 // Mock questions database for all 12 weeks
 const QUESTIONS_BY_WEEK = {
   1: [
@@ -3726,6 +3727,11 @@ const VOCAB_BY_WEEK = {
     { ja: '短所', romaji: 'tansho', id: 'Kelemahan / Kekurangan', context: 'Karakter negatif diri.', tip: 'Sebutkan juga cara mengatasinya.', example: 'Tansho wa chotto shinpaishou desu.' }
   ]
 };
+=======
+// Database variables are now stored in IndexedDB and public JSON files.
+const QUESTIONS_BY_WEEK = {};
+const VOCAB_BY_WEEK = {};
+>>>>>>> 47c4d6948da6acb3e163a8a49de502ac58de820f
 
 // Syllable/word mapping for Romaji karaoke-style highlighting
 const ROMAJI_CHUNKS = {
@@ -3759,6 +3765,7 @@ const getLevenshteinDistance = (a, b) => {
   for (i = 0; i <= b.length; i++) {
     matrix[i] = [i];
   }
+<<<<<<< HEAD
   let j;
   for (j = 0; j <= a.length; j++) {
     matrix[0][j] = j;
@@ -3767,6 +3774,216 @@ const getLevenshteinDistance = (a, b) => {
     for (j = 1; j <= a.length; j++) {
       if (b.charAt(i - 1) === a.charAt(j - 1)) {
         matrix[i][j] = matrix[i - 1][j - 1];
+=======
+  
+  return result;
+};
+
+// Dynamically generated Kanji-to-Hiragana mapping at runtime
+let DYNAMIC_KANJI_MAP = {};
+
+const initDynamicKanjiMap = (vocabList) => {
+  DYNAMIC_KANJI_MAP = {};
+  (vocabList || []).forEach(item => {
+    if (item.ja && item.romaji) {
+      const hiragana = romajiToHiragana(item.romaji);
+      // If the Kanji text differs from its Hiragana representation, add it to the map
+      if (item.ja !== hiragana && !item.ja.includes('(')) {
+        const cleanKanji = item.ja.replace(/[\s、。]/g, '');
+        const cleanHiragana = hiragana.replace(/[\s、。]/g, '');
+        
+        if (cleanKanji && cleanHiragana) {
+          DYNAMIC_KANJI_MAP[cleanKanji] = cleanHiragana;
+        }
+      }
+    }
+  });
+  
+  // Manual overrides for digits and common phrases
+  const overrides = {
+    '10': 'じゅう', '１０': 'じゅう',
+    '1': 'いち', '１': 'いち',
+    '2': 'に', '２': 'に',
+    '3': 'さん', '３': 'さん',
+    '4': 'よん', '４': 'よん',
+    '5': 'ご', '５': 'ご',
+    '6': 'ろく', '６': 'ろく',
+    '7': 'なな', '７': 'なな',
+    '8': 'はち', '８': 'はち',
+    '9': 'きゅう', '９': 'きゅう',
+    '一': 'いち', '二': 'に', '三': 'さん', '四': 'よん', '五': 'ご',
+    '六': 'ろく', '七': 'なな', '八': 'はち', '九': 'きゅう', '十': 'じゅう',
+    'お疲れ様': 'おつかれさま',
+    'お疲れ様です': 'おつかれさまです',
+    'お疲れ様でした': 'おつかれさまでした',
+    '失礼します': 'しつれいします',
+    'お邪魔します': 'おじゃまします',
+    '申し訳ありません': 'もうしわけありません',
+    '申し訳ございません': 'もうしわけございません',
+    'ありがとうございます': 'ありがとうございます',
+    '山': 'やま',
+    '川': 'かわ',
+    '月': 'つき',
+    '水': 'みず',
+    'お茶': 'おちゃ',
+    'ご飯': 'ごはん',
+    '御飯': 'ごはん',
+    '椅子': 'いす',
+    '手': 'て',
+    '目': 'め',
+    '耳': 'みみ',
+    '口': 'くち',
+    '鼻': 'はな',
+    '花': 'はな',
+    '足': 'あし',
+    '左': 'ひだり',
+    '右': 'みぎ',
+    '前': 'まえ',
+    '後ろ': 'うしろ',
+    'お風呂': 'おふろ',
+    '薬': 'くすり',
+    '朝': 'あさ',
+    '昼': 'ひる',
+    '夜': 'よる',
+    '暑い': 'あつい',
+    '熱い': 'あつい',
+    '厚い': 'あつい',
+    '危ない': 'あぶない',
+    '海': 'うみ',
+    'お早うございます': 'おはようございます',
+    'お休みなさい': 'おやすみなさい',
+    '終わり': 'おわり',
+    '畏まりました': 'かしこまりました',
+    '来て下さい': 'きてください',
+    '来てください': 'きてください',
+    '果物': 'くだもの',
+    '今日は': 'こんにちは',
+    '今晩は': 'こんばんは',
+    '済みません': 'すみません',
+    '助けて': 'たすけて',
+    '駄目': 'だめ',
+    'ちょっと待って': 'ちょっとまって',
+    '冷たい': 'つめたい',
+    '火': 'ひ',
+    '日': 'ひ',
+    '真っ直ぐ': 'まっすぐ',
+    '緑': 'みどり',
+    '眩暈': 'めまい',
+    '野菜': 'やさい',
+    '分かります': 'わかります',
+    '判ります': 'わかります',
+    '分かりません': 'わかりません',
+    '判りません': 'わかりません'
+  };
+  
+  overrides['2'] = 'に';
+
+  Object.assign(DYNAMIC_KANJI_MAP, overrides);
+};
+
+// Trigger initialization was moved to runtime useEffect
+
+// A beautiful, self-contained CSS-only Confetti Effect component that lasts exactly 2 seconds
+const ConfettiEffect = () => {
+  const [active, setActive] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setActive(false);
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!active) return null;
+
+  const colors = ['#f43f5e', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4'];
+  const particles = Array.from({ length: 80 }).map((_, i) => {
+    const left = Math.random() * 100;
+    const size = Math.random() * 8 + 6;
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    // Delay and fall speed adjusted so particles fall nicely within the 2-second window
+    const delay = Math.random() * 1.0; 
+    const duration = Math.random() * 0.8 + 1.0; 
+    const shape = Math.random() > 0.5 ? '50%' : '0%';
+    const rotation = Math.random() * 360;
+
+    return (
+      <div
+        key={i}
+        style={{
+          position: 'absolute',
+          top: '-20px',
+          left: `${left}%`,
+          width: `${size}px`,
+          height: `${size}px`,
+          backgroundColor: color,
+          borderRadius: shape,
+          opacity: Math.random() * 0.4 + 0.6,
+          transform: `rotate(${rotation}deg)`,
+          animation: `fall ${duration}s linear infinite`,
+          animationDelay: `${delay}s`,
+          pointerEvents: 'none',
+          zIndex: 9999
+        }}
+      />
+    );
+  });
+
+  return (
+    <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 999 }}>
+      <style>{`
+        @keyframes fall {
+          0% {
+            top: -20px;
+            transform: translateX(0) rotate(0deg);
+          }
+          50% {
+            transform: translateX(20px) rotate(180deg);
+          }
+          100% {
+            top: 100%;
+            transform: translateX(-20px) rotate(360deg);
+          }
+        }
+      `}</style>
+      {particles}
+    </div>
+  );
+};
+
+// Helper to convert Kanji/Katakana to Hiragana for uniform phonetic matching
+const convertKanjiToHiragana = (text) => {
+  if (!text) return '';
+  let result = text;
+
+  // Sort by length descending to prevent partial replacements of longer words
+  const sortedKanji = Object.keys(DYNAMIC_KANJI_MAP).sort((a, b) => b.length - a.length);
+
+  sortedKanji.forEach(kanji => {
+    const regex = new RegExp(kanji, 'g');
+    result = result.replace(regex, DYNAMIC_KANJI_MAP[kanji]);
+  });
+
+  // Convert Katakana to Hiragana (Unicode offset shifting)
+  result = result.replace(/[\u30a1-\u30f6]/g, (match) => {
+    return String.fromCharCode(match.charCodeAt(0) - 0x60);
+  });
+
+  return result;
+};
+
+// Helper to calculate Levenshtein distance similarity between two strings
+const editDistance = (s1, s2) => {
+  s1 = s1.toLowerCase();
+  s2 = s2.toLowerCase();
+
+  const costs = [];
+  for (let i = 0; i <= s1.length; i++) {
+    let lastValue = i;
+    for (let j = 0; j <= s2.length; j++) {
+      if (i === 0) {
+        costs[j] = j;
+>>>>>>> 47c4d6948da6acb3e163a8a49de502ac58de820f
       } else {
         matrix[i][j] = Math.min(
           matrix[i - 1][j - 1] + 1, // substitution
@@ -3898,6 +4115,7 @@ export default function LearnScreen({ weekNumber, sessionType, progress, onEndSe
   const [shadowingResult, setShadowingResult] = useState('');
   const [isRecording, setIsRecording] = useState(false);
   const [score, setScore] = useState(0);
+  const [questionPoints, setQuestionPoints] = useState({});
   const [xpEarned, setXpEarned] = useState(0);
   const [coinsEarned, setCoinsEarned] = useState(0);
   const [startTime] = useState(Date.now());
@@ -3927,10 +4145,10 @@ export default function LearnScreen({ weekNumber, sessionType, progress, onEndSe
     return arr;
   };
 
-  // Helper to generate dynamic questions for the session
-  const generateQuestionsForSession = (weekNum) => {
-    const staticQuestions = QUESTIONS_BY_WEEK[weekNum] || [];
-    const vocab = VOCAB_BY_WEEK[weekNum] || VOCAB_BY_WEEK[1];
+  // Helper to generate dynamic questions for the session using IndexedDB data
+  const generateQuestionsForSession = (dbQuestions, dbVocab, weekNum) => {
+    const staticQuestions = dbQuestions || [];
+    const vocab = dbVocab.length > 0 ? dbVocab : [];
     
     // Target count scales from 10 (Week 1) to 20 (Week 11 & 12)
     const targetCount = Math.min(20, 10 + (weekNum - 1));
@@ -3955,7 +4173,7 @@ export default function LearnScreen({ weekNumber, sessionType, progress, onEndSe
     );
     
     // If we need more questions, generate them dynamically from filteredVocab
-    if (generated.length < targetCount) {
+    if (generated.length < targetCount && vocab.length > 0) {
       // Shuffle filteredVocab to get random items
       const pool = filteredVocab.length > 0 ? filteredVocab : vocab;
       const shuffledPool = shuffleArray(pool);
@@ -4029,29 +4247,51 @@ export default function LearnScreen({ weekNumber, sessionType, progress, onEndSe
       }
     }
     
-    // Shuffle the entire set of questions so they vary every session
-    return shuffleArray(generated).slice(0, targetCount);
+    // Shuffle the entire set of questions so they vary every session and assign uniqueId
+    const shuffledQs = shuffleArray(generated).slice(0, targetCount);
+    return shuffledQs.map((q, idx) => ({ ...q, uniqueId: `q-${idx}` }));
   };
 
   useEffect(() => {
-    const sessionQs = generateQuestionsForSession(weekNumber);
-    setSessionQuestions(sessionQs);
-    setInitialLength(sessionQs.length);
-    
-    // Reset all session states for the new week!
-    setCurrentQIndex(0);
-    setScore(0);
-    setWrongAnswers([]);
-    setIsAnswerChecked(false);
-    setIsCorrect(false);
-    setSelectedOption(null);
-    setTypedInput('');
-    setShadowingResult('');
-    setXpEarned(0);
-    setCoinsEarned(0);
-    setIsRecording(false);
-    setAudioSpeed(1.0);
-    setStep(sessionType === 'practice' ? 'quiz' : 'biometric');
+    const loadSessionData = async () => {
+      try {
+        let qs = await getQuestionsByWeek(weekNumber);
+        let vs = await getVocabByWeek(weekNumber);
+        if (qs.length === 0 || vs.length === 0) {
+          console.log('Seeding database from local JSON files...');
+          const qRes = await fetch('/questions.json');
+          const vRes = await fetch('/vocabulary.json');
+          if (qRes.ok && vRes.ok) {
+            const qData = await qRes.json();
+            const vData = await vRes.json();
+            await seedQuestionsAndVocab(qData, vData);
+            qs = await getQuestionsByWeek(weekNumber);
+            vs = await getVocabByWeek(weekNumber);
+          }
+        }
+        initDynamicKanjiMap(vs);
+        const sessionQs = generateQuestionsForSession(qs, vs, weekNumber);
+        setSessionQuestions(sessionQs);
+        setInitialLength(sessionQs.length);
+        setCurrentQIndex(0);
+        setScore(0);
+        setQuestionPoints({});
+        setWrongAnswers([]);
+        setIsAnswerChecked(false);
+        setIsCorrect(false);
+        setSelectedOption(null);
+        setTypedInput('');
+        setShadowingResult('');
+        setXpEarned(0);
+        setCoinsEarned(0);
+        setIsRecording(false);
+        setAudioSpeed(1.0);
+        setStep(sessionType === 'practice' ? 'quiz' : 'biometric');
+      } catch (err) {
+        console.error('Failed to load session questions from IndexedDB:', err);
+      }
+    };
+    loadSessionData();
   }, [weekNumber, sessionType]);
 
   const currentQuestion = sessionQuestions[currentQIndex] || sessionQuestions[0] || DEFAULT_QUESTIONS[0];
@@ -4418,10 +4658,20 @@ const KANJI_TO_HIRAGANA_TTS = {
   // Next Question or Finish
   const handleNext = () => {
     const isAnsCorrect = isCorrect;
+<<<<<<< HEAD
     const nextScore = isAnsCorrect ? score + 1 : score;
+=======
+    const currentFails = currentQuestion.failCount || 0;
+    
+    let willRepeat = false;
+    let updatedPoints = { ...questionPoints };
+>>>>>>> 47c4d6948da6acb3e163a8a49de502ac58de820f
 
     if (isAnsCorrect) {
-      setScore(nextScore);
+      // Calculate points with retry penalty: 1st try = 1.0, 2nd try = 0.7, 3rd try = 0.4, 4th try = 0.1
+      const earned = currentFails === 0 ? 1.0 : currentFails === 1 ? 0.7 : currentFails === 2 ? 0.4 : 0.1;
+      updatedPoints[currentQuestion.uniqueId] = earned;
+      setQuestionPoints(updatedPoints);
     } else {
       // Record the wrong answer for the summary screen
       const incorrectAnswer = currentQuestion.type === 'B'
@@ -4435,12 +4685,32 @@ const KANJI_TO_HIRAGANA_TTS = {
         userAnswer: incorrectAnswer
       }]);
 
+<<<<<<< HEAD
       // Repeat the failed question at the end of the session!
       setSessionQuestions(prev => [...prev, {
         ...currentQuestion,
         isReview: true
       }]);
+=======
+      // Allow max 3 retries (total 4 attempts) per question to avoid frustration
+      if (currentFails < 3) {
+        willRepeat = true;
+        setSessionQuestions(prev => [...prev, {
+          ...currentQuestion,
+          failCount: currentFails + 1,
+          isReview: true
+        }]);
+      } else {
+        // If they failed all attempts, they get 0.0 points for this question
+        updatedPoints[currentQuestion.uniqueId] = 0.0;
+        setQuestionPoints(updatedPoints);
+      }
+>>>>>>> 47c4d6948da6acb3e163a8a49de502ac58de820f
     }
+
+    // Calculate score as the sum of points across all questions answered so far
+    const nextScore = Object.values(updatedPoints).reduce((sum, p) => sum + p, 0);
+    setScore(nextScore);
 
     setSelectedOption(null);
     setTypedInput('');
@@ -4463,8 +4733,8 @@ const KANJI_TO_HIRAGANA_TTS = {
     try {
       const finalScorePercent = Math.round((actualScore / initialLength) * 100);
       const durationMin = Math.round((Date.now() - startTime) / 60000) || 1;
-      const gainedXp = actualScore * 15;
-      const gainedCoins = actualScore * 5;
+      const gainedXp = Math.round(actualScore * 15);
+      const gainedCoins = Math.round(actualScore * 5);
 
       setXpEarned(gainedXp);
       setCoinsEarned(gainedCoins);
@@ -4511,23 +4781,29 @@ const KANJI_TO_HIRAGANA_TTS = {
   };
 
   // Reset and restart the current learning session
-  const retrySession = () => {
-    const sessionQs = generateQuestionsForSession(weekNumber);
-    setSessionQuestions(sessionQs);
-    setInitialLength(sessionQs.length);
-    setCurrentQIndex(0);
-    setScore(0);
-    setWrongAnswers([]);
-    setIsAnswerChecked(false);
-    setIsCorrect(false);
-    setSelectedOption(null);
-    setTypedInput('');
-    setShadowingResult('');
-    setXpEarned(0);
-    setCoinsEarned(0);
-    setIsRecording(false);
-    setAudioSpeed(1.0);
-    setStep(sessionType === 'practice' ? 'quiz' : 'biometric');
+  const retrySession = async () => {
+    try {
+      const qs = await getQuestionsByWeek(weekNumber);
+      const vs = await getVocabByWeek(weekNumber);
+      const sessionQs = generateQuestionsForSession(qs, vs, weekNumber);
+      setSessionQuestions(sessionQs);
+      setInitialLength(sessionQs.length);
+      setCurrentQIndex(0);
+      setScore(0);
+      setWrongAnswers([]);
+      setIsAnswerChecked(false);
+      setIsCorrect(false);
+      setSelectedOption(null);
+      setTypedInput('');
+      setShadowingResult('');
+      setXpEarned(0);
+      setCoinsEarned(0);
+      setIsRecording(false);
+      setAudioSpeed(1.0);
+      setStep(sessionType === 'practice' ? 'quiz' : 'biometric');
+    } catch (err) {
+      console.error('Failed to retry session:', err);
+    }
   };
 
   // Render Biometric Screen
@@ -4584,6 +4860,7 @@ const KANJI_TO_HIRAGANA_TTS = {
   if (step === 'result') {
     const passed = Math.round((score / (initialLength || 1)) * 100) >= 80;
     const finalScore = Math.round((score / (initialLength || 1)) * 100);
+    const eventuallyCorrectCount = Object.values(questionPoints).filter(p => p > 0).length;
 
     return (
       <SafeErrorBoundary onFallback={() => onEndSession()}>
@@ -4600,7 +4877,7 @@ const KANJI_TO_HIRAGANA_TTS = {
         <div className="card no-press" style={{ textAlign: 'center', padding: '16px 16px', maxHeight: 'calc(100% - 10px)', display: 'flex', flexDirection: 'column', backgroundColor: '#ffffff', zIndex: 10, boxShadow: 'var(--shadow-md)', borderRadius: 'var(--radius-lg)', overflow: 'hidden' }}>
           {passed ? (
             <img 
-              src="/mascot_cheering.png" 
+              src="/logo_kakatua.png" 
               alt="Cheering Mascot" 
               style={{ 
                 width: '100px', 
@@ -4620,8 +4897,8 @@ const KANJI_TO_HIRAGANA_TTS = {
           </h1>
           <p className="body-lg" style={{ marginBottom: '12px', flexShrink: 0, fontSize: '14px', lineHeight: '1.4' }}>
             {passed 
-              ? `Luar biasa, kamu berhasil menyelesaikan latihan! Benar ${score} dari ${initialLength} soal.` 
-              : `Ayo coba lagi untuk meningkatkan pemahamanmu. Benar ${score} dari ${initialLength} soal.`}
+              ? `Luar biasa, kamu berhasil menyelesaikan latihan! Benar ${eventuallyCorrectCount} dari ${initialLength} soal.` 
+              : `Ayo coba lagi untuk meningkatkan pemahamanmu. Benar ${eventuallyCorrectCount} dari ${initialLength} soal.`}
           </p>
 
           {/* Score & Status grid */}
@@ -4700,24 +4977,7 @@ const KANJI_TO_HIRAGANA_TTS = {
             </div>
           )}
 
-          {/* Animated Cheering Crowd Emojis */}
-          {passed && (
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', margin: '4px 0 12px 0', overflow: 'hidden', height: '36px', alignItems: 'flex-end', flexShrink: 0 }}>
-              {['🙌', '🧑‍⚕️', '🎉', '👵', '👴', '👏', '🥳'].map((emoji, idx) => (
-                <span 
-                  key={idx} 
-                  style={{ 
-                    fontSize: '20px',
-                    animation: `jump 0.5s ease-in-out infinite alternate`,
-                    animationDelay: `${idx * 0.08}s`,
-                    display: 'inline-block'
-                  }}
-                >
-                  {emoji}
-                </span>
-              ))}
-            </div>
-          )}
+
 
           {/* Action Buttons */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%', marginTop: '4px', flexShrink: 0 }}>
@@ -4754,17 +5014,17 @@ const KANJI_TO_HIRAGANA_TTS = {
 }
 
   return (
-    <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden', backgroundColor: 'var(--background)' }}>
+    <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', height: '100%', width: '100%', maxWidth: '100%', overflow: 'hidden', backgroundColor: 'var(--background)' }}>
       {/* Scrollable Quiz Content */}
       <div 
         style={{ 
           flex: 1, 
           overflowY: 'auto', 
-          padding: '20px var(--space-margin) 280px var(--space-margin)' 
+          padding: '20px var(--space-margin) 180px var(--space-margin)' 
         }}
       >
         {/* Progress Bar & Header */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', gap: '16px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px', gap: '16px' }}>
           <button onClick={() => onEndSession()} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, display: 'flex', alignItems: 'center', color: 'var(--outline)' }}>
             <X size={24} />
           </button>
@@ -4786,10 +5046,10 @@ const KANJI_TO_HIRAGANA_TTS = {
           </span>
         </div>
 
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
           {/* Question Prompt */}
-          <div style={{ marginBottom: '24px', textAlign: 'center' }}>
-            <span className="badge badge-blue" style={{ marginBottom: '8px' }}>
+          <div style={{ marginBottom: '16px', textAlign: 'center' }}>
+            <span className="badge badge-blue" style={{ marginBottom: '6px' }}>
               {currentQuestion.type === 'A' && 'Mencocokkan Kata'}
               {currentQuestion.type === 'B' && 'Dengar & Pilih'}
               {currentQuestion.type === 'C' && 'Ketik Konversi'}
@@ -4860,12 +5120,12 @@ const KANJI_TO_HIRAGANA_TTS = {
 
           {/* Tipe B: Listening */}
           {currentQuestion.type === 'B' && (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px', width: '100%' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', width: '100%' }}>
               <button
                 onClick={playQuestionAudio}
                 style={{
-                  width: '96px',
-                  height: '96px',
+                  width: '76px',
+                  height: '76px',
                   borderRadius: '50%',
                   backgroundColor: 'var(--primary-container)',
                   border: 'none',
@@ -4877,7 +5137,7 @@ const KANJI_TO_HIRAGANA_TTS = {
                   color: 'white'
                 }}
               >
-                <Volume2 size={40} />
+                <Volume2 size={32} />
               </button>
 
               <div style={{ width: '100%' }}>
@@ -4908,10 +5168,10 @@ const KANJI_TO_HIRAGANA_TTS = {
 
           {/* Tipe C: Typing */}
           {currentQuestion.type === 'C' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', width: '100%' }}>
-              <div className="card no-press" style={{ textAlign: 'center', backgroundColor: 'var(--surface-container-low)' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' }}>
+              <div className="card no-press" style={{ textAlign: 'center', backgroundColor: 'var(--surface-container-low)', padding: '16px' }}>
                 <h2 style={{ color: 'var(--primary)' }}>{currentQuestion.targetJa}</h2>
-                <p className="body-md" style={{ marginTop: '8px' }}>Arti: {currentQuestion.meaning}</p>
+                <p className="body-md" style={{ marginTop: '4px' }}>Arti: {currentQuestion.meaning}</p>
               </div>
 
               <input
@@ -4927,9 +5187,9 @@ const KANJI_TO_HIRAGANA_TTS = {
 
           {/* Tipe D: Shadowing */}
           {currentQuestion.type === 'D' && (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px', width: '100%' }}>
-              <div className="card no-press" style={{ width: '100%', textAlign: 'center' }}>
-                <h1 className="japanese-display" style={{ marginBottom: '8px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', width: '100%' }}>
+              <div className="card no-press" style={{ width: '100%', textAlign: 'center', padding: '16px' }}>
+                <h1 className="japanese-display" style={{ marginBottom: '4px' }}>
                   {(() => {
                     const word = currentQuestion.targetJa;
                     if (speakingWord !== word || !highlightRange) return word;
@@ -5052,137 +5312,135 @@ const KANJI_TO_HIRAGANA_TTS = {
             </button>
           </div>
         )}
+        {/* Explanation displayed inline within scrollable content when checked */}
+        {isAnswerChecked && currentQuestion.explanation && (
+          <div style={{ marginTop: '24px', backgroundColor: 'white', padding: '16px', borderRadius: 'var(--radius-default)', border: '1px solid var(--surface-container-high)', textAlign: 'left' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h2 style={{ fontFamily: 'var(--font-japanese)', color: 'var(--primary)', margin: 0 }}>
+                {(() => {
+                  const word = currentQuestion.explanation.word;
+                  if (speakingWord !== word || !highlightRange) return word;
+                  return (
+                    <span>
+                      {word.split('').map((char, index) => {
+                        const isHighlighted = index >= highlightRange.start && index < highlightRange.end;
+                        return (
+                          <span 
+                            key={index} 
+                            style={{ 
+                              fontWeight: isHighlighted ? '800' : 'normal',
+                              color: isHighlighted ? '#ff5a5f' : 'var(--primary)',
+                              transition: 'all 0.1s ease',
+                              textDecoration: isHighlighted ? 'underline' : 'none',
+                              display: 'inline-block',
+                              transform: isHighlighted ? 'scale(1.2)' : 'scale(1)'
+                            }}
+                          >
+                            {char}
+                          </span>
+                        );
+                      })}
+                    </span>
+                  );
+                })()}
+              </h2>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button className="audio-btn" onClick={() => speakText(currentQuestion.explanation.word, 1.0)}>
+                  1.0x
+                </button>
+                <button className="audio-btn" onClick={() => speakText(currentQuestion.explanation.word, 0.5)}>
+                  0.5x
+                </button>
+              </div>
+            </div>
+            <p className="body-md" style={{ fontWeight: '600', color: 'var(--outline)', marginTop: '2px', marginBottom: '12px' }}>
+              {renderHighlightedRomaji(currentQuestion.explanation.word, currentQuestion.explanation.romaji)}
+            </p>
+
+            <div style={{ marginTop: '12px' }}>
+              <span className="label-md" style={{ color: 'var(--primary)', fontSize: '11px', textTransform: 'uppercase' }}>ARTI</span>
+              <p className="body-md" style={{ fontWeight: '700', color: 'var(--on-surface)', margin: '2px 0 0 0' }}>
+                {currentQuestion.explanation.translation}
+              </p>
+            </div>
+
+            <div style={{ marginTop: '8px' }}>
+              <span className="label-md" style={{ color: 'var(--primary)', fontSize: '11px', textTransform: 'uppercase' }}>KONTEKS</span>
+              <p className="body-md" style={{ margin: '2px 0 0 0' }}>{currentQuestion.explanation.context}</p>
+            </div>
+
+            <div style={{ marginTop: '8px', padding: '10px', backgroundColor: '#fdf2f8', borderRadius: '8px', borderLeft: '3px solid var(--tertiary)' }}>
+              <span className="label-md" style={{ color: 'var(--tertiary)', fontSize: '11px' }}>Tip Penggunaan:</span>
+              <p className="body-md" style={{ color: 'var(--on-surface-variant)', fontSize: '13px', margin: '2px 0 0 0' }}>
+                {currentQuestion.explanation.tip}
+              </p>
+            </div>
+
+            <div style={{ marginTop: '12px', padding: '10px', backgroundColor: '#f0fdf4', borderRadius: '8px' }}>
+              <span className="label-md" style={{ color: 'var(--secondary)', fontSize: '11px' }}>Contoh Penggunaan:</span>
+              <p className="body-md" style={{ fontWeight: '700', fontStyle: 'italic', margin: '2px 0 0 0' }}>
+                "{currentQuestion.explanation.example}"
+              </p>
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Sticky Answer Feedback Panel (Duolingo Style) */}
+      {/* Sticky Answer Feedback Panel (Duolingo Style - Compact & Mobile Friendly Floating Bento Card) */}
       {isAnswerChecked && (
         <div 
           style={{ 
             position: 'absolute',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            borderTop: `3px solid ${isCorrect ? 'var(--secondary)' : 'var(--tertiary)'}`,
+            bottom: '60px',
+            left: '16px',
+            right: '16px',
+            border: `2px solid ${isCorrect ? 'var(--secondary)' : 'var(--tertiary)'}`,
+            borderRadius: 'var(--radius-default)',
             backgroundColor: isCorrect ? '#ecfdf5' : '#fef2f2',
-            padding: '20px var(--space-margin)',
-            boxShadow: '0 -8px 24px rgba(0, 0, 0, 0.15)',
+            padding: '12px 16px',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15)',
             zIndex: 150,
-            maxHeight: '80%',
-            overflowY: 'auto',
             display: 'flex',
             flexDirection: 'column',
-            gap: '12px',
+            gap: '8px',
             animation: 'slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1)'
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             {isCorrect ? (
-              <CheckCircle size={32} color="var(--secondary)" />
+              <CheckCircle size={28} color="var(--secondary)" />
             ) : (
-              <XCircle size={32} color="var(--tertiary)" />
+              <XCircle size={28} color="var(--tertiary)" />
             )}
             <div>
-              <h3 style={{ color: isCorrect ? 'var(--secondary)' : 'var(--tertiary)', margin: 0 }}>
+              <h3 style={{ color: isCorrect ? 'var(--secondary)' : 'var(--tertiary)', margin: 0, fontSize: '15px' }}>
                 {isCorrect ? 'Jawaban Benar!' : 'Jawaban Salah!'}
               </h3>
               {isCorrect && currentQuestion.type === 'C' && typedInput.trim().toLowerCase() !== currentQuestion.targetRomaji.toLowerCase() && (
-                <p className="body-md" style={{ color: '#065f46', margin: '4px 0 0 0', fontWeight: '600' }}>
+                <p className="body-md" style={{ color: '#065f46', margin: '2px 0 0 0', fontWeight: '600', fontSize: '12px' }}>
                   Ada sedikit salah ketik. Ejaan resmi: <strong style={{ textDecoration: 'underline' }}>{currentQuestion.targetRomaji}</strong> ({currentQuestion.targetJa})
                 </p>
               )}
               {!isCorrect && currentQuestion.type === 'B' && (
-                <p className="body-md" style={{ color: 'var(--tertiary)', margin: '4px 0 0 0' }}>
+                <p className="body-md" style={{ color: 'var(--tertiary)', margin: '1px 0 0 0', fontSize: '12px' }}>
                   Jawaban benar: {currentQuestion.options[currentQuestion.answer]}
                 </p>
               )}
               {!isCorrect && currentQuestion.type === 'C' && (
-                <p className="body-md" style={{ color: 'var(--tertiary)', margin: '4px 0 0 0' }}>
+                <p className="body-md" style={{ color: 'var(--tertiary)', margin: '1px 0 0 0', fontSize: '12px' }}>
                   Jawaban benar: {currentQuestion.targetRomaji} ({currentQuestion.targetJa})
                 </p>
               )}
             </div>
           </div>
 
-          {/* Detailed Explanation (Image 5 Style) */}
-          {currentQuestion.explanation && (
-            <div style={{ backgroundColor: 'white', padding: '16px', borderRadius: 'var(--radius-default)', border: '1px solid var(--surface-container-high)' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h2 style={{ fontFamily: 'var(--font-japanese)', color: 'var(--primary)', margin: 0 }}>
-                  {(() => {
-                    const word = currentQuestion.explanation.word;
-                    if (speakingWord !== word || !highlightRange) return word;
-                    return (
-                      <span>
-                        {word.split('').map((char, index) => {
-                          const isHighlighted = index >= highlightRange.start && index < highlightRange.end;
-                          return (
-                            <span 
-                              key={index} 
-                              style={{ 
-                                fontWeight: isHighlighted ? '800' : 'normal',
-                                color: isHighlighted ? '#ff5a5f' : 'var(--primary)',
-                                transition: 'all 0.1s ease',
-                                textDecoration: isHighlighted ? 'underline' : 'none',
-                                display: 'inline-block',
-                                transform: isHighlighted ? 'scale(1.2)' : 'scale(1)'
-                              }}
-                            >
-                              {char}
-                            </span>
-                          );
-                        })}
-                      </span>
-                    );
-                  })()}
-                </h2>
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  <button className="audio-btn" onClick={() => speakText(currentQuestion.explanation.word, 1.0)}>
-                    1.0x
-                  </button>
-                  <button className="audio-btn" onClick={() => speakText(currentQuestion.explanation.word, 0.5)}>
-                    0.5x
-                  </button>
-                </div>
-              </div>
-              <p className="body-md" style={{ fontWeight: '600', color: 'var(--outline)', marginTop: '2px', marginBottom: '12px' }}>
-                {renderHighlightedRomaji(currentQuestion.explanation.word, currentQuestion.explanation.romaji)}
-              </p>
-
-              <div style={{ marginTop: '12px' }}>
-                <span className="label-md" style={{ color: 'var(--primary)', fontSize: '11px', textTransform: 'uppercase' }}>ARTI</span>
-                <p className="body-md" style={{ fontWeight: '700', color: 'var(--on-surface)', margin: '2px 0 0 0' }}>
-                  {currentQuestion.explanation.translation}
-                </p>
-              </div>
-
-              <div style={{ marginTop: '8px' }}>
-                <span className="label-md" style={{ color: 'var(--primary)', fontSize: '11px', textTransform: 'uppercase' }}>KONTEKS</span>
-                <p className="body-md" style={{ margin: '2px 0 0 0' }}>{currentQuestion.explanation.context}</p>
-              </div>
-
-              <div style={{ marginTop: '8px', padding: '10px', backgroundColor: '#fdf2f8', borderRadius: '8px', borderLeft: '3px solid var(--tertiary)' }}>
-                <span className="label-md" style={{ color: 'var(--tertiary)', fontSize: '11px' }}>Tip Penggunaan:</span>
-                <p className="body-md" style={{ color: 'var(--on-surface-variant)', fontSize: '13px', margin: '2px 0 0 0' }}>
-                  {currentQuestion.explanation.tip}
-                </p>
-              </div>
-
-              <div style={{ marginTop: '12px', padding: '10px', backgroundColor: '#f0fdf4', borderRadius: '8px' }}>
-                <span className="label-md" style={{ color: 'var(--secondary)', fontSize: '11px' }}>Contoh Penggunaan:</span>
-                <p className="body-md" style={{ fontWeight: '700', fontStyle: 'italic', margin: '2px 0 0 0' }}>
-                  "{currentQuestion.explanation.example}"
-                </p>
-              </div>
-            </div>
-          )}
-
           <button 
             className={`btn ${isCorrect ? 'btn-secondary' : 'btn-tertiary'}`}
-            style={{ width: '100%', marginTop: '8px' }}
+            style={{ width: '100%', marginTop: '0px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px' }}
             onClick={handleNext}
           >
             Lanjutkan
-            <ArrowRight size={18} style={{ marginLeft: '8px' }} />
+            <ArrowRight size={16} style={{ marginLeft: '8px' }} />
           </button>
         </div>
       )}

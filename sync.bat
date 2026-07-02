@@ -1,0 +1,13 @@
+@echo off
+echo === GitHub Sync Starting ===
+cd /d "%~dp0"
+echo [1/4] Staging changes...
+git add -A
+echo [2/4] Committing changes...
+git commit -m "feat: add app icon + hide floating nav when modal opens"
+echo [3/4] Pulling remote updates...
+git pull origin main --no-rebase
+echo [4/4] Pushing to GitHub...
+git push origin main
+echo === GitHub Sync Finished ===
+pause
