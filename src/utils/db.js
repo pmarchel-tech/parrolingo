@@ -1,7 +1,7 @@
 // IndexedDB local storage utility for KaigoLingo
 
 const DB_NAME = 'kaigolingo_db';
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 
 let dbInstance = null;
 
@@ -55,10 +55,11 @@ export function initDB() {
       }
 
       // 6. Vocabulary Store
-      if (!db.objectStoreNames.contains('vocabulary')) {
-        const vStore = db.createObjectStore('vocabulary', { keyPath: 'id' });
-        vStore.createIndex('week', 'week', { unique: false });
+      if (db.objectStoreNames.contains('vocabulary')) {
+        db.deleteObjectStore('vocabulary');
       }
+      const vStore = db.createObjectStore('vocabulary', { keyPath: 'vocabId' });
+      vStore.createIndex('week', 'week', { unique: false });
     };
   });
 }
@@ -323,7 +324,7 @@ export async function seedQuestionsAndVocab(questionsData, vocabData) {
           list.forEach((v, idx) => {
             vStore.put({
               ...v,
-              id: `${week}_${idx}`,
+              vocabId: `${week}_${idx}`,
               week: parseInt(week),
               orderIndex: idx
             });
@@ -365,7 +366,7 @@ export async function exportQuestionsAndVocab() {
   vocabulary.forEach(v => {
     const w = v.week.toString();
     if (!vocabByWeek[w]) vocabByWeek[w] = [];
-    const { id, week, orderIndex, ...cleanV } = v;
+    const { vocabId, week, orderIndex, ...cleanV } = v;
     vocabByWeek[w].push(cleanV);
   });
 
