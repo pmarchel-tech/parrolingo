@@ -1171,7 +1171,7 @@ const KANJI_TO_HIRAGANA_TTS = {
         <div className="card no-press" style={{ textAlign: 'center', padding: '16px 16px', maxHeight: 'calc(100% - 10px)', display: 'flex', flexDirection: 'column', backgroundColor: '#ffffff', zIndex: 10, boxShadow: 'var(--shadow-md)', borderRadius: 'var(--radius-lg)', overflow: 'hidden' }}>
           {passed ? (
             <img 
-              src="/mascot_cheering.png" 
+              src="/logo_kakatua.png" 
               alt="Cheering Mascot" 
               style={{ 
                 width: '100px', 
