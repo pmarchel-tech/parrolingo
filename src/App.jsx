@@ -255,47 +255,47 @@ export default function App() {
         )}
       </main>
 
-      {/* Bottom Navigation (Hidden during learning sessions) */}
+      {/* Floating Bottom Navigation (Duolingo/Bento Style) */}
       {activeScreen !== 'learn' && (
-        <nav className="bottom-nav">
+        <nav className="bottom-nav-floating">
           <button 
-            className={`nav-item ${activeScreen === 'map' ? 'active' : ''}`}
+            className={`nav-item-floating ${activeScreen === 'map' ? 'active' : ''}`}
             onClick={() => setActiveScreen('map')}
+            title="Map"
           >
-            <div className="nav-item-icon-wrapper">
-              <Map size={22} />
+            <div className="icon-circle">
+              <Map size={24} />
             </div>
-            Map
           </button>
 
           <button 
-            className={`nav-item ${activeScreen === 'dictionary' ? 'active' : ''}`}
+            className={`nav-item-floating ${activeScreen === 'dictionary' ? 'active' : ''}`}
             onClick={() => setActiveScreen('dictionary')}
+            title="Dictionary"
           >
-            <div className="nav-item-icon-wrapper">
-              <BookOpen size={22} />
+            <div className="icon-circle">
+              <BookOpen size={24} />
             </div>
-            Dictionary
           </button>
 
           <button 
-            className={`nav-item ${activeScreen === 'dashboard' ? 'active' : ''}`}
+            className={`nav-item-floating ${activeScreen === 'dashboard' ? 'active' : ''}`}
             onClick={() => setActiveScreen('dashboard')}
+            title="LPK B2B"
           >
-            <div className="nav-item-icon-wrapper">
-              <BarChart3 size={22} />
+            <div className="icon-circle">
+              <BarChart3 size={24} />
             </div>
-            LPK B2B
           </button>
 
           <button 
-            className={`nav-item ${activeScreen === 'profile' ? 'active' : ''}`}
+            className={`nav-item-floating ${activeScreen === 'profile' ? 'active' : ''}`}
             onClick={() => setActiveScreen('profile')}
+            title="Profile"
           >
-            <div className="nav-item-icon-wrapper">
-              <User size={22} />
+            <div className="icon-circle">
+              <User size={24} />
             </div>
-            Profile
           </button>
         </nav>
       )}
