@@ -97,8 +97,9 @@ body {
 .app-container {
   width: 100%;
   max-width: 430px; /* iPhone 15 Pro Max width */
-  height: 100vh;
-  max-height: 926px; /* iPhone 15 Pro Max height */
+  height: 100dvh; /* Dynamic Viewport Height for mobile */
+  height: 100vh; /* Fallback for older browsers */
+  max-height: 100dvh;
   background-color: var(--background);
   display: flex;
   flex-direction: column;
@@ -108,7 +109,7 @@ body {
   border-radius: 0;
 }
 
-@media (min-width: 440px) {
+@media (min-width: 768px) {
   .app-container {
     border-radius: var(--radius-lg);
     height: 90vh;
@@ -120,13 +121,65 @@ body {
 /* Screen wrapper */
 .screen-content {
   flex: 1;
+  width: 100%;
+  max-width: 100%;
   overflow-y: auto;
   padding: var(--space-margin) var(--space-margin) 100px var(--space-margin); /* Padding bottom for nav */
   background-color: var(--background);
 }
 
 /* Bottom Navigation */
-.bottom-nav {
+.bottom-nav-floating {
+  position: fixed;
+  bottom: calc(20px + env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 64px);
+  max-width: 420px;
+  height: 64px;
+  background: var(--surface-container-low);
+  border-radius: 32px;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  padding: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 200;
+}
+
+.nav-item-floating {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.2s ease;
+}
+
+.nav-item-floating .icon-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--surface-container);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background 0.2s ease;
+}
+
+.nav-item-floating.active .icon-circle {
+  background: var(--primary);
+  color: var(--on-primary);
+  transform: translateY(-6px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* Hide the old bottom-nav */
+.bottom-nav { display: none; }
+
   position: absolute;
   bottom: 0;
   left: 0;
@@ -583,6 +636,20 @@ h3, .headline-md {
   color: var(--on-surface-variant);
 }
 
+@media (max-width: 768px) {
+  .question-option {
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    font-size: 15px;
+  }
+  .option-badge {
+    width: 28px;
+    height: 28px;
+    margin-right: 12px;
+    font-size: 13px;
+  }
+}
+
 .question-option.selected .option-badge {
   background-color: var(--primary);
   color: var(--on-primary);
@@ -728,6 +795,10 @@ h3, .headline-md {
 /* Hide scrollbar */
 ::-webkit-scrollbar {
   display: none;
+}
+* {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
 }
 
 /* Canvas overlay for object scan */
