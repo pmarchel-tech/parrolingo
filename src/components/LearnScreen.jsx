@@ -1271,24 +1271,7 @@ const KANJI_TO_HIRAGANA_TTS = {
             </div>
           )}
 
-          {/* Animated Cheering Crowd Emojis */}
-          {passed && (
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', margin: '4px 0 12px 0', overflow: 'hidden', height: '36px', alignItems: 'flex-end', flexShrink: 0 }}>
-              {['🙌', '🧑‍⚕️', '🎉', '👵', '👴', '👏', '🥳'].map((emoji, idx) => (
-                <span 
-                  key={idx} 
-                  style={{ 
-                    fontSize: '20px',
-                    animation: `jump 0.5s ease-in-out infinite alternate`,
-                    animationDelay: `${idx * 0.08}s`,
-                    display: 'inline-block'
-                  }}
-                >
-                  {emoji}
-                </span>
-              ))}
-            </div>
-          )}
+
 
           {/* Action Buttons */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%', marginTop: '4px', flexShrink: 0 }}>

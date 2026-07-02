@@ -6,7 +6,7 @@ const copyMascotPlugin = () => {
   return {
     name: 'copy-mascot',
     buildStart() {
-      const srcPath = 'C:/Users/WELCOME/.gemini/antigravity/brain/d2e2037d-49c8-4cf9-9dff-871457b77ef3/mascot_cheering_1782818311523.png';
+      const srcPath = 'C:/Users/WELCOME/.gemini/antigravity/brain/b10e39dd-ce5f-4d4e-a3d8-f1efcaed14d3/media__1782957017681.png';
       const destPath = './public/mascot_cheering.png';
       try {
         if (fs.existsSync(srcPath)) {
