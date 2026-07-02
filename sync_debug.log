@@ -1,0 +1,47 @@
+=== Git Sync Script Starting === 
+[1] Running git add... 
+warning: in the working copy of 'copy_mascot.js', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'index.html', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'package-lock.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'public/manifest.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/App.jsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/LearnScreen.jsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/LearnScreen.test.jsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/MapScreen.jsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/ProfileScreen.jsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/index.css', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/utils/db.js', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'vite.config.js', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'check_tools.js', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'create_icons.js', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'generate_icons.js', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'git_sync_now.js', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'public/questions.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'public/vocabulary.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'run.bat', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'take_screenshot.js', LF will be replaced by CRLF the next time Git touches it
+[2] Running git commit... 
+[main ec00be9] feat: add app icon + hide floating nav when modal opens
+ 25 files changed, 8936 insertions(+), 4843 deletions(-)
+ create mode 100644 check_tools.js
+ create mode 100644 create_icons.js
+ create mode 100644 generate_icons.js
+ create mode 100644 git_sync_now.js
+ create mode 100644 public/icon-192x192.svg
+ create mode 100644 public/icon-512x512.svg
+ create mode 100644 public/icon-maskable.svg
+ create mode 100644 public/logo_kakatua.png
+ create mode 100644 public/questions.json
+ create mode 100644 public/vocabulary.json
+ create mode 100644 run.bat
+ create mode 100644 sync_debug.log
+ create mode 100644 take_screenshot.js
+[3] Running git pull... 
+From https://github.com/pmarchel-tech/parrolingo
+ * branch            main       -> FETCH_HEAD
+warning: in the working copy of 'sync_debug.log', LF will be replaced by CRLF the next time Git touches it
+Auto-merging package.json
+Auto-merging src/components/LearnScreen.jsx
+CONFLICT (content): Merge conflict in src/components/LearnScreen.jsx
+Automatic merge failed; fix conflicts and then commit the result.
+[4] Running git push... 
