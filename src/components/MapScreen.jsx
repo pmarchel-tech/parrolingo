@@ -229,7 +229,7 @@ const PATH_SEGMENTS = [
   "L 180 140"                        // 11 -> 12
 ];
 
-export default function MapScreen({ progress, onStartSession }) {
+export default function MapScreen({ progress, onStartSession, onModalOpen, onModalClose }) {
   const [selectedWeek, setSelectedWeek] = useState(null);
   const scrollContainerRef = useRef(null);
 
@@ -247,6 +247,7 @@ export default function MapScreen({ progress, onStartSession }) {
   const handleNodeClick = (week) => {
     if (week.number > activeWeek) return; // Locked
     setSelectedWeek(week);
+    if (onModalOpen) onModalOpen();
   };
 
   // Build the completed path segment dynamically
@@ -524,14 +525,14 @@ export default function MapScreen({ progress, onStartSession }) {
 
       {/* Week Details Modal */}
       {selectedWeek && (
-        <div className="modal-backdrop" onClick={() => setSelectedWeek(null)}>
+        <div className="modal-backdrop" onClick={() => { setSelectedWeek(null); if (onModalClose) onModalClose(); }}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <span className={`badge ${selectedWeek.color}`} style={{ fontSize: '11px', fontWeight: '700' }}>
                 {selectedWeek.phaseName}
               </span>
               <button 
-                onClick={() => setSelectedWeek(null)}
+                onClick={() => { setSelectedWeek(null); if (onModalClose) onModalClose(); }}
                 style={{ background: 'none', border: 'none', fontSize: '28px', cursor: 'pointer', color: 'var(--outline)', padding: '4px' }}
               >
                 &times;

@@ -63,13 +63,15 @@ class SafeErrorBoundary extends React.Component {
 }
 
 export default function App() {
-  const [activeScreen, setActiveScreen] = useState('map'); // map, dictionary, dashboard, profile, learn
-  const [progress, setProgress] = useState(null);
-  const [sessionWeek, setSessionWeek] = useState(null);
-  const [sessionType, setSessionType] = useState(null);
   const [apiKey, setApiKey] = useState('');
-  const [isDbReady, setIsDbReady] = useState(false);
   const [dbError, setDbError] = useState(null);
+  const [isDbReady, setIsDbReady] = useState(false);
+  const [activeScreen, setActiveScreen] = useState('map');
+  const [sessionWeek, setSessionWeek] = useState(1);
+  const [sessionType, setSessionType] = useState('practice');
+  const [progress, setProgress] = useState(null);
+  // Controls visibility of floating navigation; hide only after learning starts
+  const [showNav, setShowNav] = useState(true);
   const [selectedProgram, setSelectedProgram] = useState(() => {
     return localStorage.getItem('kaigolingo_selected_program') || 'kaigo';
   });
@@ -105,6 +107,7 @@ export default function App() {
   const handleStartSession = (weekNum, type) => {
     setSessionWeek(weekNum);
     setSessionType(type);
+    setShowNav(false); // hide navigation when learning begins
     setActiveScreen('learn');
   };
 
@@ -112,9 +115,12 @@ export default function App() {
     // Reload progress stats after session completes
     const userProgress = await getProgress();
     setProgress(userProgress);
+    // When session ends, ensure navigation is visible again
+    setShowNav(true);
     if (nextWeekNum && nextWeekNum <= 12) {
       setSessionWeek(nextWeekNum);
       setSessionType('practice'); // Default to practice for next week
+      setShowNav(false);
       setActiveScreen('learn');
     } else {
       setActiveScreen('map');
@@ -227,7 +233,12 @@ export default function App() {
       {/* Screen Router */}
       <main style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         {activeScreen === 'map' && (
-          <MapScreen progress={progress} onStartSession={handleStartSession} />
+          <MapScreen
+            progress={progress}
+            onStartSession={handleStartSession}
+            onModalOpen={() => setShowNav(false)}
+            onModalClose={() => setShowNav(true)}
+          />
         )}
         {activeScreen === 'dictionary' && (
           <DictScreen apiKey={apiKey} />
@@ -255,12 +266,12 @@ export default function App() {
         )}
       </main>
 
-      {/* Floating Bottom Navigation (Duolingo/Bento Style) */}
-      {activeScreen !== 'learn' && (
+      {/* Render navigation only when not in learning mode */}
+      {showNav && activeScreen !== 'learn' && (
         <nav className="bottom-nav-floating">
           <button 
             className={`nav-item-floating ${activeScreen === 'map' ? 'active' : ''}`}
-            onClick={() => setActiveScreen('map')}
+            onClick={() => { setShowNav(true); setActiveScreen('map'); }}
             title="Map"
           >
             <div className="icon-circle">
@@ -270,7 +281,7 @@ export default function App() {
 
           <button 
             className={`nav-item-floating ${activeScreen === 'dictionary' ? 'active' : ''}`}
-            onClick={() => setActiveScreen('dictionary')}
+            onClick={() => { setShowNav(true); setActiveScreen('dictionary'); }}
             title="Dictionary"
           >
             <div className="icon-circle">
@@ -280,7 +291,7 @@ export default function App() {
 
           <button 
             className={`nav-item-floating ${activeScreen === 'dashboard' ? 'active' : ''}`}
-            onClick={() => setActiveScreen('dashboard')}
+            onClick={() => { setShowNav(true); setActiveScreen('dashboard'); }}
             title="LPK B2B"
           >
             <div className="icon-circle">
@@ -290,7 +301,7 @@ export default function App() {
 
           <button 
             className={`nav-item-floating ${activeScreen === 'profile' ? 'active' : ''}`}
-            onClick={() => setActiveScreen('profile')}
+            onClick={() => { setShowNav(true); setActiveScreen('profile'); }}
             title="Profile"
           >
             <div className="icon-circle">
