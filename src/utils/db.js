@@ -16,8 +16,23 @@ export function initDB() {
       reject(event.target.error);
     };
 
+    request.onblocked = () => {
+      console.warn('Database upgrade blocked. Closing connection to allow upgrade.');
+      if (dbInstance) {
+        dbInstance.close();
+        dbInstance = null;
+      }
+    };
+
     request.onsuccess = (event) => {
       dbInstance = event.target.result;
+      
+      dbInstance.onversionchange = () => {
+        dbInstance.close();
+        dbInstance = null;
+        console.log('Database connection closed due to version change.');
+      };
+
       resolve(dbInstance);
     };
 
