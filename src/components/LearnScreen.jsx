@@ -465,53 +465,47 @@ export default function LearnScreen({ weekNumber, sessionType, progress, onEndSe
     
     let generated = [...staticQuestions];
     
-    // Filter out vocab items that are already in staticQuestions to prevent duplication
-    const staticJaTexts = [];
-    staticQuestions.forEach(q => {
-      if (q.audioText) staticJaTexts.push(q.audioText);
-      if (q.targetJa) staticJaTexts.push(q.targetJa);
-      if (q.pairs) {
-        q.pairs.forEach(p => {
-          const rawJa = p.ja.split(' ')[0].split('(')[0].trim();
-          staticJaTexts.push(rawJa);
-        });
-      }
-    });
-    
-    const filteredVocab = vocab.filter(item => 
-      !staticJaTexts.some(ja => ja.includes(item.ja) || item.ja.includes(ja))
-    );
-    
-    // If we need more questions, generate them dynamically from filteredVocab
     if (generated.length < targetCount && vocab.length > 0) {
-      // Shuffle filteredVocab to get random items
-      const pool = filteredVocab.length > 0 ? filteredVocab : vocab;
-      const shuffledPool = shuffleArray(pool);
+      const needed = targetCount - generated.length;
       
-      let poolIndex = 0;
-      let attempts = 0;
-      
-      while (generated.length < targetCount && attempts < 50) {
-        attempts++;
-        const item = shuffledPool[poolIndex % shuffledPool.length];
-        poolIndex++;
-        
-        // Ensure no immediate duplicate within current session
-        const alreadyIn = generated.some(q => {
-          if (q.audioText && (q.audioText.includes(item.ja) || item.ja.includes(q.audioText))) return true;
-          if (q.targetJa && (q.targetJa.includes(item.ja) || item.ja.includes(q.targetJa))) return true;
-          if (q.pairs && q.pairs.some(p => p.ja.includes(item.ja) || item.ja.includes(p.ja))) return true;
-          return false;
+      for (let step = 0; step < needed; step++) {
+        // 1. Calculate count of each vocab item in current generated list
+        const counts = vocab.map(item => {
+          let count = 0;
+          generated.forEach(q => {
+            if (q.audioText && (q.audioText === item.ja || q.audioText.includes(item.ja))) count++;
+            else if (q.targetJa && (q.targetJa === item.ja || q.targetJa.includes(item.ja))) count++;
+            else if (q.pairs && q.pairs.some(p => p.ja && p.ja.includes(item.ja))) count++;
+          });
+          return { item, count };
         });
         
-        if (alreadyIn && attempts <= 30) {
-          continue;
-        }
-
-        // Randomly pick a question type (B: Listening, C: Typing, D: Shadowing)
-        const rand = Math.random();
-        if (rand < 0.35) {
-          // Type B: Listening & Choose
+        // 2. Find minimum count among all items in vocabulary
+        const minCount = Math.min(...counts.map(c => c.count));
+        const candidates = counts.filter(c => c.count === minCount).map(c => c.item);
+        
+        // 3. Choose a random candidate from the least-used items
+        const item = candidates[Math.floor(Math.random() * candidates.length)];
+        
+        // 4. Determine which question types are already used for this item in the session
+        const usedTypes = [];
+        generated.forEach(q => {
+          if (q.audioText && (q.audioText === item.ja || q.audioText.includes(item.ja))) {
+            usedTypes.push(q.type);
+          } else if (q.targetJa && (q.targetJa === item.ja || q.targetJa.includes(item.ja))) {
+            usedTypes.push(q.type);
+          }
+        });
+        
+        // Try to pick an unused type among B (listening), C (typing), D (shadowing) to vary exercises
+        const allTypes = ['B', 'C', 'D'];
+        const unusedTypes = allTypes.filter(t => !usedTypes.includes(t));
+        const chosenType = unusedTypes.length > 0 
+          ? unusedTypes[Math.floor(Math.random() * unusedTypes.length)]
+          : allTypes[Math.floor(Math.random() * allTypes.length)];
+          
+        // 5. Generate question based on chosenType
+        if (chosenType === 'B') {
           const otherTranslations = vocab
             .filter(v => v.ja !== item.ja)
             .map(v => v.id);
@@ -534,8 +528,7 @@ export default function LearnScreen({ weekNumber, sessionType, progress, onEndSe
               example: item.example
             }
           });
-        } else if (rand < 0.7) {
-          // Type C: Typing
+        } else if (chosenType === 'C') {
           generated.push({
             type: 'C',
             prompt: `Ketik ejaan Romaji untuk "${item.id}"!`,
@@ -544,7 +537,7 @@ export default function LearnScreen({ weekNumber, sessionType, progress, onEndSe
             meaning: item.id
           });
         } else {
-          // Type D: Shadowing
+          // Shadowing
           const formattedRomaji = item.romaji.split('').join('-');
           generated.push({
             type: 'D',
