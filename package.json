@@ -9,7 +9,9 @@
     "copy-mascot": "node copy_mascot.js",
     "test": "npx -y vitest run src/components/LearnScreen.test.jsx --environment jsdom",
     "test-session": "node test_session.js",
-    "export-questions": "node export_questions.js"
+    "export-questions": "node export_questions.js",
+    "git-sync": "node git_sync_now.js",
+    "gen-icons": "node generate_icons.js"
   },
   "dependencies": {
     "react": "^18.3.1",

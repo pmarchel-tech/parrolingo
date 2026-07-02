@@ -3,6 +3,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
 import App from '../App';
 
+
 // Mock IndexedDB database utilities
 vi.mock('../utils/db', () => ({
   initDB: vi.fn().mockResolvedValue({}),
