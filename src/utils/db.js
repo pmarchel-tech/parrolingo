@@ -1,7 +1,7 @@
 // IndexedDB local storage utility for KaigoLingo
 
 const DB_NAME = 'kaigolingo_db';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 let dbInstance = null;
 
@@ -46,6 +46,18 @@ export function initDB() {
       if (!db.objectStoreNames.contains('logs')) {
         const logsStore = db.createObjectStore('logs', { keyPath: 'id', autoIncrement: true });
         logsStore.createIndex('lpkId', 'lpkId', { unique: false });
+      }
+
+      // 5. Questions Store
+      if (!db.objectStoreNames.contains('questions')) {
+        const qStore = db.createObjectStore('questions', { keyPath: 'id' });
+        qStore.createIndex('week', 'week', { unique: false });
+      }
+
+      // 6. Vocabulary Store
+      if (!db.objectStoreNames.contains('vocabulary')) {
+        const vStore = db.createObjectStore('vocabulary', { keyPath: 'id' });
+        vStore.createIndex('week', 'week', { unique: false });
       }
     };
   });
@@ -239,4 +251,129 @@ export async function seedDefaultLogs() {
   for (const log of defaultLogs) {
     await addLog(log);
   }
+}
+
+// --- QUESTIONS & VOCABULARY API ---
+export async function getQuestionsByWeek(weekNum) {
+  const store = await getStore('questions');
+  return new Promise((resolve) => {
+    const index = store.index('week');
+    const request = index.getAll(IDBKeyRange.only(parseInt(weekNum)));
+    request.onsuccess = () => {
+      const results = request.result || [];
+      results.sort((a, b) => a.orderIndex - b.orderIndex);
+      resolve(results);
+    };
+  });
+}
+
+export async function getVocabByWeek(weekNum) {
+  const store = await getStore('vocabulary');
+  return new Promise((resolve) => {
+    const index = store.index('week');
+    const request = index.getAll(IDBKeyRange.only(parseInt(weekNum)));
+    request.onsuccess = () => {
+      const results = request.result || [];
+      results.sort((a, b) => a.orderIndex - b.orderIndex);
+      resolve(results);
+    };
+  });
+}
+
+export async function seedQuestionsAndVocab(questionsData, vocabData) {
+  // Seed Questions
+  await new Promise(async (resolve, reject) => {
+    try {
+      const qStore = await getStore('questions', 'readwrite');
+      const clearReq = qStore.clear();
+      clearReq.onsuccess = () => {
+        const weeks = Object.keys(questionsData);
+        if (weeks.length === 0) return resolve();
+        
+        weeks.forEach((week) => {
+          const list = questionsData[week] || [];
+          list.forEach((q, idx) => {
+            qStore.put({
+              ...q,
+              id: `${week}_${idx}`,
+              week: parseInt(week),
+              orderIndex: idx
+            });
+          });
+        });
+        resolve();
+      };
+      clearReq.onerror = () => reject(clearReq.error);
+    } catch (err) {
+      reject(err);
+    }
+  });
+
+  // Seed Vocabulary
+  await new Promise(async (resolve, reject) => {
+    try {
+      const vStore = await getStore('vocabulary', 'readwrite');
+      const clearReq = vStore.clear();
+      clearReq.onsuccess = () => {
+        const weeks = Object.keys(vocabData);
+        if (weeks.length === 0) return resolve();
+        
+        weeks.forEach((week) => {
+          const list = vocabData[week] || [];
+          list.forEach((v, idx) => {
+            vStore.put({
+              ...v,
+              id: `${week}_${idx}`,
+              week: parseInt(week),
+              orderIndex: idx
+            });
+          });
+        });
+        resolve();
+      };
+      clearReq.onerror = () => reject(clearReq.error);
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
+export async function exportQuestionsAndVocab() {
+  const qStore = await getStore('questions');
+  const vStore = await getStore('vocabulary');
+
+  const questions = await new Promise((resolve) => {
+    const req = qStore.getAll();
+    req.onsuccess = () => resolve(req.result);
+  });
+
+  const vocabulary = await new Promise((resolve) => {
+    const req = vStore.getAll();
+    req.onsuccess = () => resolve(req.result);
+  });
+
+  const questionsByWeek = {};
+  const vocabByWeek = {};
+
+  questions.forEach(q => {
+    const w = q.week.toString();
+    if (!questionsByWeek[w]) questionsByWeek[w] = [];
+    const { id, week, orderIndex, ...cleanQ } = q;
+    questionsByWeek[w].push(cleanQ);
+  });
+
+  vocabulary.forEach(v => {
+    const w = v.week.toString();
+    if (!vocabByWeek[w]) vocabByWeek[w] = [];
+    const { id, week, orderIndex, ...cleanV } = v;
+    vocabByWeek[w].push(cleanV);
+  });
+
+  return { questions: questionsByWeek, vocabulary: vocabByWeek };
+}
+
+export async function importQuestionsAndVocab(data) {
+  const questions = data.questions || {};
+  const vocabulary = data.vocabulary || {};
+  await seedQuestionsAndVocab(questions, vocabulary);
 }

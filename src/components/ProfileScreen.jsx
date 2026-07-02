@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { ShieldCheck, Flame, Award, Key, Volume2, Mic, Check, RefreshCw } from 'lucide-react';
-import { saveVoiceSignature, getVoiceSignature, getProgress } from '../utils/db';
+import { ShieldCheck, Flame, Award, Key, Volume2, Mic, Check, RefreshCw, Download, Upload } from 'lucide-react';
+import { saveVoiceSignature, getVoiceSignature, getProgress, exportQuestionsAndVocab, importQuestionsAndVocab } from '../utils/db';
 
 export default function ProfileScreen({ progress, onProgressUpdate, apiKey, onApiKeyChange }) {
   const [enrollStatus, setEnrollStatus] = useState('none'); // none, recording, enrolled
@@ -306,6 +306,65 @@ export default function ProfileScreen({ progress, onProgressUpdate, apiKey, onAp
           <button className="btn btn-primary" onClick={handleSaveApiKey}>
             Simpan API Key
           </button>
+        </div>
+      </div>
+
+      {/* Offline Database Management (Questions & Vocab Backup/Restore) */}
+      <div className="card no-press">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+          <Download size={24} color="var(--primary)" />
+          <h3 style={{ margin: 0 }}>Manajemen Soal & Kosakata (JSON)</h3>
+        </div>
+        <p className="body-md" style={{ marginBottom: '16px' }}>
+          Unduh database soal dan kosakata Anda untuk cadangan, atau unggah file JSON baru untuk memperbarui pelajaran secara offline.
+        </p>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <button className="btn btn-outline" onClick={async () => {
+            try {
+              const data = await exportQuestionsAndVocab();
+              const jsonStr = JSON.stringify(data, null, 2);
+              const blob = new Blob([jsonStr], { type: 'application/json' });
+              const url = URL.createObjectURL(blob);
+              const link = document.createElement('a');
+              link.href = url;
+              link.download = 'kaigolingo_database.json';
+              link.click();
+            } catch (err) {
+              alert('Gagal mengekspor data: ' + err.message);
+            }
+          }} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+            <Download size={18} />
+            Unduh Database (JSON)
+          </button>
+          
+          <label className="btn btn-primary" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer', margin: 0 }}>
+            <Upload size={18} />
+            Unggah Database (JSON)
+            <input
+              type="file"
+              accept=".json"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = async (event) => {
+                  try {
+                    const data = JSON.parse(event.target?.result);
+                    if (!data.questions || !data.vocabulary) {
+                      throw new Error('Format file JSON tidak valid (harus berisi questions dan vocabulary)');
+                    }
+                    await importQuestionsAndVocab(data);
+                    alert('Data soal dan kosakata berhasil diimpor ke IndexedDB!');
+                  } catch (err) {
+                    alert('Gagal mengimpor data: ' + err.message);
+                  }
+                };
+                reader.readAsText(file);
+              }}
+              style={{ display: 'none' }}
+            />
+          </label>
         </div>
       </div>
     </div>

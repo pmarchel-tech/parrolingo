@@ -1,0 +1,874 @@
+{
+  "1": [
+    {
+      "ja": "いち",
+      "romaji": "Ichi",
+      "id": "Satu",
+      "context": "Menghitung jumlah barang atau waktu.",
+      "tip": "Gunakan saat menghitung obat atau porsi.",
+      "example": "Kusuri o ichi-jou nonde kudasai."
+    },
+    {
+      "ja": "に",
+      "romaji": "Ni",
+      "id": "Dua",
+      "context": "Menghitung jumlah.",
+      "tip": "Perhatikan pengucapan agar tidak tertukar.",
+      "example": "Mikan o ni-ko tabemashita."
+    },
+    {
+      "ja": "さん",
+      "romaji": "San",
+      "id": "Tiga",
+      "context": "Menghitung jumlah.",
+      "tip": "Gunakan saat menghitung porsi makanan.",
+      "example": "San-ji ni oyatsu o tabemashou."
+    },
+    {
+      "ja": "し / よん",
+      "romaji": "Shi / Yon",
+      "id": "Empat",
+      "context": "Menghitung jumlah.",
+      "tip": "Yon' lebih sering digunakan untuk menghindari kata 'shi' (mati).",
+      "example": "Yon-kai ni ikimasu."
+    },
+    {
+      "ja": "ご",
+      "romaji": "Go",
+      "id": "Lima",
+      "context": "Menghitung jumlah.",
+      "tip": "Berguna untuk waktu (jam 5).",
+      "example": "Go-fun matte kudasai."
+    },
+    {
+      "ja": "ろく",
+      "romaji": "Roku",
+      "id": "Enam",
+      "context": "Menghitung jumlah.",
+      "tip": "Jelas saat mengucapkan 'ro'.",
+      "example": "Roku-ji ni okimasu."
+    },
+    {
+      "ja": "しち / なな",
+      "romaji": "Shichi / Nana",
+      "id": "Tujuh",
+      "context": "Menghitung jumlah.",
+      "tip": "Nana' lebih umum dipakai untuk jam/waktu.",
+      "example": "Nana-ji ni asagohan o tabemasu."
+    },
+    {
+      "ja": "はち",
+      "romaji": "Hachi",
+      "id": "Delapan",
+      "context": "Menghitung jumlah.",
+      "tip": "Perhatikan saat menghitung jam.",
+      "example": "Hachi-ji ni kusuri o nomimasu."
+    },
+    {
+      "ja": "きゅう / く",
+      "romaji": "Kyuu / Ku",
+      "id": "Sembilan",
+      "context": "Menghitung jumlah.",
+      "tip": "Kyuu' lebih umum digunakan.",
+      "example": "Kyuu-ji ni nemasu."
+    },
+    {
+      "ja": "じゅう",
+      "romaji": "Juu",
+      "id": "Sepuluh",
+      "context": "Menghitung puluhan.",
+      "tip": "Gunakan untuk menghitung jumlah yang banyak.",
+      "example": "Juu-pun yasumimasu."
+    },
+    {
+      "ja": "おはよう ございます",
+      "romaji": "Ohayou gozaimasu",
+      "id": "Selamat pagi (Diucapkan saat mulai masuk kerja)",
+      "context": "Salam saat datang ke fasilitas.",
+      "tip": "Ucapkan dengan suara ceria dan senyum.",
+      "example": "Suzuki-san, ohayou gozaimasu."
+    },
+    {
+      "ja": "こんにちは",
+      "romaji": "Konnichiwa",
+      "id": "Selamat siang / sore",
+      "context": "Salam saat bertemu di siang hari.",
+      "tip": "Gunakan saat berpapasan di lorong.",
+      "example": "Konnichiwa, kyou wa ii tenki desu ne."
+    },
+    {
+      "ja": "こんばんは",
+      "romaji": "Konbanwa",
+      "id": "Selamat malam",
+      "context": "Salam saat shift malam dimulai.",
+      "tip": "Ucapkan dengan nada lebih lembut.",
+      "example": "Konbanwa, yoku nemuremashita ka?"
+    },
+    {
+      "ja": "おやすみなさい",
+      "romaji": "Oyasuminasai",
+      "id": "Selamat tidur (Sering digunakan saat menidurkan lansia)",
+      "context": "Diucapkan saat lansia bersiap tidur.",
+      "tip": "Ucapkan dengan lembut agar lansia tenang.",
+      "example": "Oyasuminasai, mata ashita."
+    },
+    {
+      "ja": "さようなら",
+      "romaji": "Sayounara",
+      "id": "Selamat tinggal / Sampai jumpa",
+      "context": "Salam perpisahan (jarang di fasilitas).",
+      "tip": "Lebih baik gunakan 'Mata ashita' (sampai besok).",
+      "example": "Sayounara, ki o tsukete kudasai."
+    },
+    {
+      "ja": "はい",
+      "romaji": "Hai",
+      "id": "Ya / Baik (Jawaban refleks utama saat dipanggil)",
+      "context": "Menanggapi panggilan lansia/atasan.",
+      "tip": "Jawab dengan sigap dan jelas.",
+      "example": "Hai, sugu ikimasu."
+    },
+    {
+      "ja": "いいえ",
+      "romaji": "Iie",
+      "id": "Tidak / Bukan",
+      "context": "Menyangkal atau menjawab pertanyaan.",
+      "tip": "Ucapkan dengan sopan agar tidak menyinggung.",
+      "example": "Iie, chigaimasu."
+    },
+    {
+      "ja": "みず",
+      "romaji": "Mizu",
+      "id": "Air putih (Paling sering diminta oleh lansia)",
+      "context": "Menawarkan minum.",
+      "tip": "Pastikan suhu air sesuai keinginan lansia.",
+      "example": "Mizu o nomimasu ka?"
+    },
+    {
+      "ja": "おちゃ",
+      "romaji": "Ocha",
+      "id": "Teh Jepang",
+      "context": "Waktu minum teh atau makan.",
+      "tip": "Lansia sering menyukai teh hangat.",
+      "example": "Ocha o iremashita yo."
+    },
+    {
+      "ja": "ごはん",
+      "romaji": "Gohan",
+      "id": "Nasi / Makanan",
+      "context": "Waktu makan tiba.",
+      "tip": "Pastikan tekstur makanan sesuai kondisi lansia.",
+      "example": "Gohan no jikan desu yo."
+    },
+    {
+      "ja": "くすり",
+      "romaji": "Kusuri",
+      "id": "Obat",
+      "context": "Waktu minum obat setelah makan.",
+      "tip": "Awasi lansia saat minum obat.",
+      "example": "Kusuri o nomimashou."
+    },
+    {
+      "ja": "トイレ",
+      "romaji": "Toire",
+      "id": "Toilet",
+      "context": "Membantu lansia ke kamar mandi.",
+      "tip": "Selalu tanyakan apakah butuh ke toilet.",
+      "example": "Toire ni ikimasu ka?"
+    },
+    {
+      "ja": "いす",
+      "romaji": "Isu",
+      "id": "Kursi",
+      "context": "Membantu lansia duduk.",
+      "tip": "Pastikan kursi stabil dan aman.",
+      "example": "Isu ni suwatte kudasai."
+    },
+    {
+      "ja": "て",
+      "romaji": "Te",
+      "id": "Tangan",
+      "context": "Saat mencuci tangan atau membantu bergerak.",
+      "tip": "Pegang tangan lansia dengan lembut.",
+      "example": "Te o aaraimashou."
+    },
+    {
+      "ja": "め",
+      "romaji": "Me",
+      "id": "Mata",
+      "context": "Memeriksa kondisi wajah lansia.",
+      "tip": "Perhatikan jika mata lansia merah.",
+      "example": "Me ga itai desu ka?"
+    },
+    {
+      "ja": "ひ",
+      "romaji": "Hi",
+      "id": "Matahari / Api",
+      "context": "Membicarakan cuaca atau bahaya.",
+      "tip": "Jauhkan lansia dari sumber api.",
+      "example": "Hi ni ki o tsukete kudasai."
+    },
+    {
+      "ja": "つき",
+      "romaji": "Tsuki",
+      "id": "Bulan",
+      "context": "Membicarakan pemandangan malam.",
+      "tip": "Ajak ngobrol santai di malam hari.",
+      "example": "Kyou wa tsuki ga kirei desu ne."
+    },
+    {
+      "ja": "やま",
+      "romaji": "Yama",
+      "id": "Gunung",
+      "context": "Mengingat kenangan lansia.",
+      "tip": "Lansia suka bercerita tentang alam.",
+      "example": "Yama no keshiki ga suki desu ka?"
+    },
+    {
+      "ja": "うみ",
+      "romaji": "Umi",
+      "id": "Laut",
+      "context": "Mengobrol tentang musim panas atau rekreasi.",
+      "tip": "Gunakan untuk topik percakapan ringan.",
+      "example": "Umi ni ikitai desu ne."
+    },
+    {
+      "ja": "みどり",
+      "romaji": "Midori",
+      "id": "Tanaman / Hijau",
+      "context": "Menikmati taman panti jompo.",
+      "tip": "Ajak jalan-jalan melihat tanaman.",
+      "example": "Midori ga kirei desu ne."
+    },
+    {
+      "ja": "やさい",
+      "romaji": "Yasai",
+      "id": "Sayur",
+      "context": "Menjelaskan menu makanan.",
+      "tip": "Potong sayur kecil-kecil agar mudah dikunyah.",
+      "example": "Yasai o takusan tabete kudasai."
+    },
+    {
+      "ja": "くだもの",
+      "romaji": "Kudamono",
+      "id": "Buah",
+      "context": "Makanan penutup atau camilan.",
+      "tip": "Kupas dan potong buah sebelum disajikan.",
+      "example": "Kyou no kudamono wa ringo desu."
+    },
+    {
+      "ja": "あつい",
+      "romaji": "Atsui",
+      "id": "Panas (Kondisi air minum atau sup makanan lansia)",
+      "context": "Memperingatkan suhu makanan/minuman.",
+      "tip": "Tiup makanan jika terlalu panas.",
+      "example": "Atsui kara ki o tsukete kudasai."
+    },
+    {
+      "ja": "つめたい",
+      "romaji": "Tsumetai",
+      "id": "Dingin (Kondisi air minum atau kompres pasien)",
+      "context": "Memberikan kompres atau minuman dingin.",
+      "tip": "Jangan berikan minuman terlalu dingin.",
+      "example": "Tsumetai ocha desu."
+    },
+    {
+      "ja": "へや",
+      "romaji": "Heya",
+      "id": "Kamar / Ruangan",
+      "context": "Mengantar lansia kembali ke kamar.",
+      "tip": "Pastikan suhu kamar nyaman.",
+      "example": "Heya ni modorimashou."
+    },
+    {
+      "ja": "ありがとう ございます",
+      "romaji": "Arigatou gozaimasu",
+      "id": "Terima kasih banyak",
+      "context": "Berterima kasih pada rekan kerja atau atasan.",
+      "tip": "Bungkukkan badan sedikit (ojigi).",
+      "example": "Tetsudatte kurete arigatou gozaimasu."
+    },
+    {
+      "ja": "すみません",
+      "romaji": "Sumimasen",
+      "id": "Permisi / Maaf",
+      "context": "Masuk ke kamar lansia atau minta tolong.",
+      "tip": "Ketuk pintu sebelum mengucapkan ini.",
+      "example": "Sumimasen, hairimasu."
+    },
+    {
+      "ja": "どうぞ",
+      "romaji": "Douzo",
+      "id": "Silakan",
+      "context": "Mempersilakan duduk atau memberikan barang.",
+      "tip": "Gunakan gestur tangan terbuka.",
+      "example": "Ocha o douzo."
+    },
+    {
+      "ja": "これ",
+      "romaji": "Kore",
+      "id": "Ini (Menunjuk barang di dekat pekerja)",
+      "context": "Menunjukkan barang di dekat perawat.",
+      "tip": "Tunjuk barang dengan sopan.",
+      "example": "Kore wa Tanaka-san no kusuri desu."
+    },
+    {
+      "ja": "それ",
+      "romaji": "Sore",
+      "id": "Itu (Menunjuk barang di dekat lansia/atasan)",
+      "context": "Menunjuk barang di dekat lansia.",
+      "tip": "Pastikan barang mudah dijangkau lansia.",
+      "example": "Sore o totte kuremasu ka?"
+    },
+    {
+      "ja": "あれ",
+      "romaji": "Are",
+      "id": "Itu (Menunjuk barang yang jauh dari keduanya)",
+      "context": "Menunjuk barang yang jauh dari keduanya.",
+      "tip": "Gunakan saat mencari barang.",
+      "example": "Are wa nan desu ka?"
+    },
+    {
+      "ja": "だめ",
+      "romaji": "Dame",
+      "id": "Jangan / Tidak boleh (Penting untuk mencegah lansia bahaya)",
+      "context": "Menghentikan lansia dari tindakan berbahaya.",
+      "tip": "Gunakan nada tegas tapi tidak membentak.",
+      "example": "Sore o tabete wa dame desu."
+    },
+    {
+      "ja": "あぶない",
+      "romaji": "Abunai",
+      "id": "Bahaya!",
+      "context": "Lansia hampir jatuh atau tersandung.",
+      "tip": "Teriakkan dengan cepat sambil bertindak.",
+      "example": "Abunai! Ki o tsukete!"
+    },
+    {
+      "ja": "ちょっと まって",
+      "romaji": "Chotto matte",
+      "id": "Tunggu sebentar",
+      "context": "Meminta lansia menunggu sebentar.",
+      "tip": "Gunakan bentuk sopan \"Chotto matte kudasai\".",
+      "example": "Chotto matte kudasai ne."
+    },
+    {
+      "ja": "きて ください",
+      "romaji": "Kite kudasai",
+      "id": "Tolong kemari",
+      "context": "Meminta bantuan rekan kerja.",
+      "tip": "Panggil rekan saat butuh bantuan fisik.",
+      "example": "Sumimasen, chotto kite kudasai."
+    },
+    {
+      "ja": "わかります",
+      "romaji": "Wakarimasu",
+      "id": "Paham / Mengerti",
+      "context": "Mengkonfirmasi instruksi atasan.",
+      "tip": "Anggukkan kepala tanda mengerti.",
+      "example": "Hai, wakarimashita."
+    },
+    {
+      "ja": "わかりません",
+      "romaji": "Wakarimasen",
+      "id": "Tidak paham",
+      "context": "Tidak mengerti instruksi bahasa Jepang.",
+      "tip": "Segera tanyakan kembali agar tidak salah.",
+      "example": "Sumimasen, wakarimasen. Mou ichido onegaishimasu."
+    },
+    {
+      "ja": "たすけて",
+      "romaji": "Tasukete",
+      "id": "Tolong saya! (Situasi darurat)",
+      "context": "Keadaan darurat medis atau kecelakaan.",
+      "tip": "Panggil dengan suara keras.",
+      "example": "Tasukete! Hito ga taoremashita!"
+    },
+    {
+      "ja": "おわり",
+      "romaji": "Owari",
+      "id": "Selesai",
+      "context": "Selesai mandi atau makan.",
+      "tip": "Beri tahu lansia bahwa aktivitas sudah selesai.",
+      "example": "Ofuro ga owarimashita yo."
+    },
+    {
+      "ja": "おつかれさま です",
+      "romaji": "Otsukaresama desu",
+      "id": "Terima kasih atas kerja kerasnya (Diucapkan saat pulang sif)",
+      "context": "Salam saat berpapasan dengan rekan atau pulang.",
+      "tip": "Wajib diucapkan di lingkungan kerja Jepang.",
+      "example": "Otsukaresama desu. Osaki ni shitsurei shimasu."
+    }
+  ],
+  "2": [
+    {
+      "ja": "お疲れ様です",
+      "romaji": "otsukaresamadesu",
+      "id": "Terima kasih atas kerja keras Anda",
+      "context": "Salam kerja harian.",
+      "tip": "Ucapkan saat berganti shift.",
+      "example": "Otsukaresama desu, Minako-san."
+    },
+    {
+      "ja": "失礼します",
+      "romaji": "shitsureishimasu",
+      "id": "Permisi",
+      "context": "Permisi masuk/keluar.",
+      "tip": "Gunakan saat mengetuk pintu.",
+      "example": "Shitsureishimasu, Budi desu."
+    },
+    {
+      "ja": "お邪魔します",
+      "romaji": "ojamashimasu",
+      "id": "Permisi (masuk kamar)",
+      "context": "Masuk ke area pribadi.",
+      "tip": "Ucapkan dengan membungkuk sedikit.",
+      "example": "Ojamashimasu, Tanaka-san."
+    },
+    {
+      "ja": "かしこまりました",
+      "romaji": "kashikomarimashita",
+      "id": "Baik, saya mengerti",
+      "context": "Persetujuan sopan.",
+      "tip": "Gunakan saat menerima instruksi.",
+      "example": "Kashikomarimashita, riidaa."
+    },
+    {
+      "ja": "申し訳ありません",
+      "romaji": "moushiwakearimasen",
+      "id": "Mohon maaf yang sebesar-besarnya",
+      "context": "Permintaan maaf formal.",
+      "tip": "Gunakan jika melakukan kesalahan.",
+      "example": "Moushiwake arimasen, kotsuzure shimashita."
+    }
+  ],
+  "3": [
+    {
+      "ja": "食堂",
+      "romaji": "shokudou",
+      "id": "Ruang Makan / Kantin",
+      "context": "Tempat makan bersama.",
+      "tip": "Antar lansia ke sini saat jam makan.",
+      "example": "Shokudou wa achira desu."
+    },
+    {
+      "ja": "トイレ",
+      "romaji": "toire",
+      "id": "Toilet",
+      "context": "Fasilitas sanitasi.",
+      "tip": "Tanyakan secara berkala ke lansia.",
+      "example": "Toire ni ikimashou ka?"
+    },
+    {
+      "ja": "お風呂",
+      "romaji": "ofuro",
+      "id": "Kamar Mandi / Ofuro",
+      "context": "Tempat mandi berendam.",
+      "tip": "Periksa suhu air sebelum berendam.",
+      "example": "Ofuro wa kochira desu."
+    },
+    {
+      "ja": "右",
+      "romaji": "migi",
+      "id": "Kanan",
+      "context": "Arah kanan.",
+      "tip": "Gunakan saat menuntun jalan.",
+      "example": "Migi ni magarimasu."
+    },
+    {
+      "ja": "左",
+      "romaji": "hidari",
+      "id": "Kiri",
+      "context": "Arah kiri.",
+      "tip": "Gunakan saat menuntun jalan.",
+      "example": "Hidari ni magarimasu."
+    },
+    {
+      "ja": "まっすぐ",
+      "romaji": "massugu",
+      "id": "Lurus",
+      "context": "Arah lurus ke depan.",
+      "tip": "Bimbing lansia jalan lurus.",
+      "example": "Massugu susumimasu."
+    }
+  ],
+  "4": [
+    {
+      "ja": "危ない",
+      "romaji": "abunai",
+      "id": "Bahaya / Awas",
+      "context": "Peringatan bahaya fisik.",
+      "tip": "Teriakkan dengan cepat jika darurat.",
+      "example": "Abunai! Kaki wo tsukete!"
+    },
+    {
+      "ja": "注意",
+      "romaji": "chuui",
+      "id": "Hati-hati / Peringatan",
+      "context": "Perhatian ekstra.",
+      "tip": "Ingatkan lansia di area basah.",
+      "example": "Ashimoto ni go-chuui kudasai."
+    },
+    {
+      "ja": "火事",
+      "romaji": "kaji",
+      "id": "Kebakaran",
+      "context": "Situasi darurat kebakaran.",
+      "tip": "Segera evakuasi ke pintu keluar.",
+      "example": "Kaji desu! Soto ni demashou!"
+    },
+    {
+      "ja": "地震",
+      "romaji": "jishin",
+      "id": "Gempa Bumi",
+      "context": "Guncangan gempa bumi.",
+      "tip": "Lindungi kepala lansia.",
+      "example": "Jishin desu! Ochitsuite kudasai."
+    },
+    {
+      "ja": "助けて",
+      "romaji": "tasukete",
+      "id": "Tolong",
+      "context": "Meminta bantuan darurat.",
+      "tip": "Teriakkan keras jika butuh staff lain.",
+      "example": "Tasukete kudasai!"
+    }
+  ],
+  "5": [
+    {
+      "ja": "頭",
+      "romaji": "atama",
+      "id": "Kepala",
+      "context": "Bagian kepala.",
+      "tip": "Periksa jika ada benturan.",
+      "example": "Atama wa daijoubu desu ka?"
+    },
+    {
+      "ja": "手",
+      "romaji": "te",
+      "id": "Tangan",
+      "context": "Bagian tangan.",
+      "tip": "Bantu regangkan tangan.",
+      "example": "Te wo nobashite kudasai."
+    },
+    {
+      "ja": "足",
+      "romaji": "ashi",
+      "id": "Kaki",
+      "context": "Bagian kaki.",
+      "tip": "Perhatikan kekuatan langkah kaki.",
+      "example": "Ashi ni chikara wo irete."
+    },
+    {
+      "ja": "腰",
+      "romaji": "koshi",
+      "id": "Pinggang",
+      "context": "Bagian pinggang.",
+      "tip": "Jaga posisi tubuh saat mengangkat.",
+      "example": "Koshi ga itai desu ka?"
+    },
+    {
+      "ja": "背中",
+      "romaji": "senaka",
+      "id": "Punggung",
+      "context": "Bagian punggung.",
+      "tip": "Usap dengan lembut saat mandi.",
+      "example": "Senaka wo araimasu."
+    }
+  ],
+  "6": [
+    {
+      "ja": "痛い",
+      "romaji": "itai",
+      "id": "Sakit",
+      "context": "Keluhan rasa sakit.",
+      "tip": "Tanyakan letak rasa sakitnya.",
+      "example": "Doko ga itai desu ka?"
+    },
+    {
+      "ja": "熱",
+      "romaji": "netsu",
+      "id": "Demam / Panas",
+      "context": "Suhu tubuh tinggi.",
+      "tip": "Ukur suhu dengan termometer.",
+      "example": "Netsu ga arimasu ne."
+    },
+    {
+      "ja": "吐き気",
+      "romaji": "hakike",
+      "id": "Mual / Ingin Muntah",
+      "context": "Rasa ingin muntah.",
+      "tip": "Siapkan wadah pembuangan segera.",
+      "example": "Hakike ga shimasu ka?"
+    },
+    {
+      "ja": "寒気",
+      "romaji": "samuke",
+      "id": "Menggigil",
+      "context": "Merasa dingin menggigil.",
+      "tip": "Berikan selimut tambahan.",
+      "example": "Samuke ga suru node kake-buton wo."
+    },
+    {
+      "ja": "めまい",
+      "romaji": "memai",
+      "id": "Pusing / Kliyengan",
+      "context": "Hilang keseimbangan.",
+      "tip": "Bantu lansia untuk duduk segera.",
+      "example": "Memai ga shimasu, yasumi-mashou."
+    }
+  ],
+  "7": [
+    {
+      "ja": "車椅子",
+      "romaji": "kurumaisu",
+      "id": "Kursi Roda",
+      "context": "Alat bantu duduk roda.",
+      "tip": "Selalu kunci rem saat diam.",
+      "example": "Kurumaisu ni norimashou."
+    },
+    {
+      "ja": "杖",
+      "romaji": "tsue",
+      "id": "Tongkat",
+      "context": "Alat bantu jalan tongkat.",
+      "tip": "Pastikan karet bawah tidak licin.",
+      "example": "Tsue wo tsukaimashou."
+    },
+    {
+      "ja": "歩行器",
+      "romaji": "hokouki",
+      "id": "Alat Bantu Jalan (Walker)",
+      "context": "Alat bantu jalan dorong.",
+      "tip": "Jaga jarak aman di belakang.",
+      "example": "Hokouki de yukkuri arukimasu."
+    },
+    {
+      "ja": "ベッド",
+      "romaji": "beddo",
+      "id": "Tempat Tidur",
+      "context": "Tempat tidur pasien.",
+      "tip": "Atur tinggi bed sesuai kenyamanan.",
+      "example": "Beddo ni modorimashou."
+    },
+    {
+      "ja": "スリング",
+      "romaji": "suringu",
+      "id": "Sling / Gendongan Lift",
+      "context": "Alat angkat pasien.",
+      "tip": "Periksa sabuk pengaman sling.",
+      "example": "Suringu wo souchaku shimasu."
+    }
+  ],
+  "8": [
+    {
+      "ja": "薬",
+      "romaji": "kusuri",
+      "id": "Obat",
+      "context": "Zat medis penyembuh.",
+      "tip": "Pastikan 3 cek (nama, obat, waktu).",
+      "example": "Okusuri no jikan desu."
+    },
+    {
+      "ja": "食後",
+      "romaji": "shokugo",
+      "id": "Setelah Makan",
+      "context": "Waktu minum obat.",
+      "tip": "Minum maksimal 30 menit setelah makan.",
+      "example": "食後に薬を飲みましょう"
+    },
+    {
+      "ja": "食前",
+      "romaji": "shokuzen",
+      "id": "Sebelum Makan",
+      "context": "Waktu minum obat.",
+      "tip": "Minum 30 menit sebelum makan.",
+      "example": "食前に飲んでください"
+    },
+    {
+      "ja": "水",
+      "romaji": "mizu",
+      "id": "Air Putih",
+      "context": "Air untuk minum obat.",
+      "tip": "Siapkan air hangat jika perlu.",
+      "example": "Mizu wo nomimashou."
+    },
+    {
+      "ja": "胃薬",
+      "romaji": "igusuri",
+      "id": "Obat Lambung",
+      "context": "Obat untuk maag/lambung.",
+      "tip": "Biasanya diminum sebelum makan.",
+      "example": "Igusuri wo dase-mashou."
+    }
+  ],
+  "9": [
+    {
+      "ja": "報告",
+      "romaji": "houkoku",
+      "id": "Melapor / Laporan",
+      "context": "Melaporkan hasil kerja.",
+      "tip": "Laporkan segera jika ada keanehan.",
+      "example": "Riidaa ni houkoku shimasu."
+    },
+    {
+      "ja": "連絡",
+      "romaji": "renraku",
+      "id": "Menghubungi / Informasi",
+      "context": "Berbagi info singkat.",
+      "tip": "Hubungi rekan saat butuh bantuan.",
+      "example": "Moushi-okuri de renraku shimasu."
+    },
+    {
+      "ja": "相談",
+      "romaji": "soudan",
+      "id": "Berkonsultasi",
+      "context": "Diskusi mencari solusi.",
+      "tip": "Konsultasikan masalah sulit ke senior.",
+      "example": "Chotto soudan ga arimasu."
+    },
+    {
+      "ja": "故障",
+      "romaji": "koshou",
+      "id": "Kerusakan / Rusak",
+      "context": "Alat tidak berfungsi.",
+      "tip": "Tulis label RUSAK pada alat.",
+      "example": "Tsue ga koshou shite imasu."
+    },
+    {
+      "ja": "申し送り",
+      "romaji": "moushiokuri",
+      "id": "Over Shift / Operan",
+      "context": "Transfer info antar shift.",
+      "tip": "Catat poin penting pasien.",
+      "example": "Moushiokuri wo hajimemasu."
+    }
+  ],
+  "10": [
+    {
+      "ja": "避難",
+      "romaji": "hinan",
+      "id": "Evakuasi",
+      "context": "Menyelamatkan diri.",
+      "tip": "Utamakan lansia yang tidak bisa jalan.",
+      "example": "Soto he hinan shimashou."
+    },
+    {
+      "ja": "出口",
+      "romaji": "deguchi",
+      "id": "Pintu Keluar",
+      "context": "Akses keluar gedung.",
+      "tip": "Pastikan jalan ke pintu bebas hambatan.",
+      "example": "Deguchi wa kochira desu."
+    },
+    {
+      "ja": "非常口",
+      "romaji": "hijouguchi",
+      "id": "Pintu Darurat",
+      "context": "Pintu khusus evakuasi.",
+      "tip": "Hafalkan posisi pintu darurat.",
+      "example": "Hijouguchi ni mukaimashou."
+    },
+    {
+      "ja": "消火器",
+      "romaji": "shoukaki",
+      "id": "Alat Pemadam Api (APAR)",
+      "context": "Pemadam api awal.",
+      "tip": "Tarik pin, arahkan ke sumber api.",
+      "example": "Shoukaki wo motte kite!"
+    },
+    {
+      "ja": "担架",
+      "romaji": "tanka",
+      "id": "Tandu Evakuasi",
+      "context": "Alat gotong pasien.",
+      "tip": "Gotong berdua dengan langkah stabil.",
+      "example": "Tanka de hakobimasu."
+    }
+  ],
+  "11": [
+    {
+      "ja": "問題",
+      "romaji": "mondai",
+      "id": "Soal / Masalah",
+      "context": "Pertanyaan evaluasi.",
+      "tip": "Baca soal dengan teliti.",
+      "example": "Mondai wo yomimashou."
+    },
+    {
+      "ja": "文法",
+      "romaji": "bunpou",
+      "id": "Tata Bahasa",
+      "context": "Aturan struktur kalimat.",
+      "tip": "Pelajari pola kalimat penting.",
+      "example": "Bunpou no benkyou desu."
+    },
+    {
+      "ja": "読解",
+      "romaji": "dokkai",
+      "id": "Membaca",
+      "context": "Kemampuan membaca teks.",
+      "tip": "Cari kata kunci dalam teks.",
+      "example": "Dokkai mondai wo tokimasu."
+    },
+    {
+      "ja": "聴解",
+      "romaji": "choukai",
+      "id": "Mendengarkan",
+      "context": "Kemampuan mendengar audio.",
+      "tip": "Fokus pada intonasi pembicara.",
+      "example": "Choukai no latihan desu."
+    },
+    {
+      "ja": "合格",
+      "romaji": "goukaku",
+      "id": "Lulus Ujian",
+      "context": "Mencapai nilai kelulusan.",
+      "tip": "Belajar rajin agar lulus JFT.",
+      "example": "JFT-Basic ni goukaku shimasu!"
+    }
+  ],
+  "12": [
+    {
+      "ja": "面接",
+      "romaji": "mensetsu",
+      "id": "Wawancara Kerja",
+      "context": "Wawancara dengan panti.",
+      "tip": "Jaga kontak mata dan tersenyum.",
+      "example": "Mensetsu ga arimasu."
+    },
+    {
+      "ja": "志望動機",
+      "romaji": "shiboudouki",
+      "id": "Alasan Melamar",
+      "context": "Motivasi bekerja.",
+      "tip": "Hubungkan dengan keinginan menolong.",
+      "example": "Shiboudouki wo hanashimasu."
+    },
+    {
+      "ja": "自己紹介",
+      "romaji": "jikoshoukai",
+      "id": "Perkenalan Diri",
+      "context": "Memperkenalkan profil.",
+      "tip": "Ucapkan nama dan asal LPK.",
+      "example": "Jikoshoukai wo onegai shimasu."
+    },
+    {
+      "ja": "長所",
+      "romaji": "chousho",
+      "id": "Kelebihan / Kekuatan",
+      "context": "Karakter positif diri.",
+      "tip": "Contoh: sabar, ceria, rajin.",
+      "example": "Watashi no chousho wa akarui tokoro desu."
+    },
+    {
+      "ja": "短所",
+      "romaji": "tansho",
+      "id": "Kelemahan / Kekurangan",
+      "context": "Karakter negatif diri.",
+      "tip": "Sebutkan juga cara mengatasinya.",
+      "example": "Tansho wa chotto shinpaishou desu."
+    }
+  ]
+}
