@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Map, BookOpen, BarChart3, User, Award, Flame, Coins, ShieldAlert, ChevronDown } from 'lucide-react';
-import { initDB, seedDefaultDictionary, seedDefaultLogs, getProgress } from './utils/db';
+import { initDB, seedDefaultDictionary, seedDefaultLogs, getProgress, resetDB } from './utils/db';
 
 // Import Screens
 import MapScreen from './components/MapScreen';
@@ -69,6 +69,7 @@ export default function App() {
   const [sessionType, setSessionType] = useState(null);
   const [apiKey, setApiKey] = useState('');
   const [isDbReady, setIsDbReady] = useState(false);
+  const [dbError, setDbError] = useState(null);
   const [selectedProgram, setSelectedProgram] = useState(() => {
     return localStorage.getItem('kaigolingo_selected_program') || 'kaigo';
   });
@@ -95,6 +96,7 @@ export default function App() {
         setIsDbReady(true);
       } catch (err) {
         console.error('Failed to initialize local DB:', err);
+        setDbError(err.message || String(err));
       }
     };
     setup();
@@ -118,6 +120,40 @@ export default function App() {
       setActiveScreen('map');
     }
   };
+
+  const handleResetDatabase = async () => {
+    if (window.confirm('Apakah Anda yakin ingin mereset database lokal? Semua progress belajar Anda akan dihapus.')) {
+      try {
+        await resetDB();
+        alert('Database berhasil direset. Halaman akan dimuat ulang.');
+        window.location.reload();
+      } catch (err) {
+        alert('Gagal mereset database: ' + err.message);
+      }
+    }
+  };
+
+  if (dbError) {
+    return (
+      <div className="app-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--surface)', padding: '20px' }}>
+        <div className="card no-press" style={{ textAlign: 'center', padding: '24px', border: '2px solid var(--tertiary)', backgroundColor: '#ffffff', borderRadius: 'var(--radius-lg)' }}>
+          <ShieldAlert size={48} color="var(--tertiary)" style={{ margin: '0 auto 16px auto' }} />
+          <h3 style={{ fontFamily: 'var(--font-display)', color: 'var(--tertiary)', marginBottom: '8px' }}>Gagal Memuat Database</h3>
+          <p className="body-md" style={{ color: 'var(--on-surface-variant)', fontSize: '13px', lineHeight: '1.4', marginBottom: '20px' }}>
+            Detail: {dbError}
+          </p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <button className="btn btn-primary" onClick={() => window.location.reload()}>
+              Muat Ulang Halaman
+            </button>
+            <button className="btn btn-outline" onClick={handleResetDatabase} style={{ borderColor: 'var(--tertiary)', color: 'var(--tertiary)' }}>
+              Reset Database Lokal
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (!isDbReady || !progress) {
     return (

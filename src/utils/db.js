@@ -377,3 +377,12 @@ export async function importQuestionsAndVocab(data) {
   const vocabulary = data.vocabulary || {};
   await seedQuestionsAndVocab(questions, vocabulary);
 }
+
+export async function resetDB() {
+  dbInstance = null;
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.deleteDatabase(DB_NAME);
+    req.onsuccess = () => resolve();
+    req.onerror = () => reject(req.error);
+  });
+}
