@@ -204,7 +204,7 @@ export default function DictScreen({ apiKey }) {
           body: JSON.stringify({
             contents: [{
               parts: [
-                { text: 'Identify the object in this image. Translate it to Japanese Kanji/Kana, Romaji, and Indonesian contextually suited for the elderly care (Kaigo) environment. Provide output in JSON format with keys: "kanji", "romaji", "indonesian", "category" (choose from: "Dasar Perawatan", "Medis", "Alat Bantu", "Makanan", "Lainnya"). Respond ONLY with JSON, no markdown.' },
+                { text: 'Analyze this image. If there is visible Japanese text (OCR), transcribe it. If there is a physical object, identify it. Translate/adapt it contextually for a Japanese elderly care (Kaigo) nursing home environment. Output MUST be in JSON format with keys: "kanji" (the Japanese name, e.g. 車椅子), "romaji" (Hepburn romaji, e.g. kuruma isu), "indonesian" (accurate Indonesian translation, e.g. Kursi Roda), "category" (choose exactly one: "Dasar Perawatan", "Medis", "Alat Bantu", "Makanan", "Lainnya"). Respond ONLY with the raw JSON object, no markdown code blocks, no text before or after.' },
                 { inlineData: { mimeType: mimeType, data: base64Data } }
               ]
             }]
@@ -483,6 +483,22 @@ export default function DictScreen({ apiKey }) {
               <h3>Scan Kamera (OCR Mandiri)</h3>
               <button onClick={stopCamera} style={{ background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer' }}>&times;</button>
             </div>
+
+            {!apiKey && !scannedResult && !isProcessingImage && (
+              <div style={{ 
+                padding: '8px 12px', 
+                backgroundColor: '#fef3c7', 
+                color: '#d97706', 
+                borderRadius: '8px', 
+                fontSize: '11px', 
+                fontWeight: '600', 
+                textAlign: 'center', 
+                marginBottom: '12px',
+                border: '1px solid #fcd34d'
+              }}>
+                ⚠️ Mode Simulasi Aktif: Masukkan API Key Gemini di menu Profil untuk mengaktifkan analisa objek real-time menggunakan AI!
+              </div>
+            )}
 
             {!scannedResult && !isProcessingImage && (
               <div className="camera-container" style={{ height: '420px' }}>
