@@ -248,7 +248,7 @@ export async function seedDefaultLogs() {
   if (logs.length > 0) return;
 
   const defaultLogs = [
-    // LPK Karya Mulia (lpk_a)
+    // LPK Sakura Mitra Internasional (lpk_a)
     { timestamp: Date.now() - 86400000 * 3, duration: 30, activity: 'Latihan Shadowing: Dasar Aisatsu', studentName: 'Budi Utomo', lpkId: 'lpk_a', isAlumni: false },
     { timestamp: Date.now() - 86400000 * 2, duration: 45, activity: 'Kamus Mandiri: Scan Sendok Makan', studentName: 'Budi Utomo', lpkId: 'lpk_a', isAlumni: false },
     { timestamp: Date.now() - 86400000 * 1, duration: 25, activity: 'Belajar Mandiri: Arah Ruangan Panti', studentName: 'Budi Utomo', lpkId: 'lpk_a', isAlumni: false },

@@ -100,7 +100,7 @@ export default function ProfileScreen({ progress, onProgressUpdate, apiKey, onAp
         />
         <div>
           <h2>Budi Utomo</h2>
-          <p className="body-md" style={{ fontWeight: '600', color: 'var(--primary)' }}>Siswa LPK Karya Mulia</p>
+          <p className="body-md" style={{ fontWeight: '600', color: 'var(--primary)' }}>Siswa LPK Sakura Mitra Internasional</p>
           <span className="badge badge-blue" style={{ fontSize: '10px', marginTop: '4px' }}>
             Level 1: Dasar Kaigo
           </span>

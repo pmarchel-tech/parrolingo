@@ -1,11 +1,75 @@
 import React, { useState, useEffect } from 'react';
 import { getLogs, getProgress, saveProgress } from '../utils/db';
-import { ShieldCheck, Calendar, Clock, User, Award, QrCode } from 'lucide-react';
+import { ShieldCheck, Calendar, Clock, User, Award, QrCode, CheckSquare, Square, Plane, HeartHandshake } from 'lucide-react';
+
+const PROCESS_ITEMS = {
+  departure: [
+    { id: 'briefing', label: 'Edukasi & Briefing Seputar Info Peluang Karir, Jenis Program, Pengalaman Kerja & Hidup di Jepang, dll' },
+    { id: 'kaiwa_n4', label: 'Kelas Kaiwa N4 (kondisional) dengan Native Jepang' },
+    { id: 'kaiwa_mensetsu', label: 'Kelas Kaiwa Pra Mensetsu dengan Native Jepang' },
+    { id: 'matching_job', label: 'Biaya Jasa Matching Job' },
+    { id: 'doc_admin', label: 'Bantuan Administrasi & Pengurusan Dokumen (Rirekisho, Kyujinhyo, Kontrak Kerja, EKTLN, BPJS Ketenagakerjaan, CoE & Visa)' },
+    { id: 'mcu_2', label: 'MCU Akhir (ke-2) jika dibutuhkan, biasanya jika menunggu CoE di atas 4 bulan' },
+    { id: 'n3_basic', label: 'Kelas N3 Basic' },
+    { id: 'p3mi', label: 'Biaya P3MI (kondisional)' },
+    { id: 'bpjs_visa', label: 'Biaya BPJS Ketenagakerjaan & Visa' },
+    { id: 'jacket', label: 'Jaket SAMIT' },
+    { id: 'pre_departure', label: 'Persiapan & Pendampingan Pra Keberangkatan ke Jepang' }
+  ],
+  support: [
+    { id: 'jlpt_prep', label: 'Kelas Persiapan Ujian JLPT N3 & N2 *S&K' },
+    { id: 'alumni_visit', label: 'Kunjungan & Evaluasi ALUMNI di Jepang oleh tim SAMIT' },
+    { id: 'alumni_monitoring', label: 'Pengawasan & Pelayanan ALUMNI selama kerja di Jepang (Konsultasi, Update Data, Pindah Kerja, dll)' },
+    { id: 'alumni_gathering', label: 'Gathering ALUMNI, Seminar & Info Workshop ALUMNI *kondisional' }
+  ]
+};
+
+const STUDENTS_BY_LPK = {
+  lpk_a: ['Budi Utomo', 'Siti Rahma'],
+  lpk_b: ['Agus Wijaya', 'Dewi Lestari']
+};
 
 export default function B2BDashboard({ progress, onProgressUpdate }) {
-  const [selectedLpk, setSelectedLpk] = useState('lpk_a'); // lpk_a (Karya Mulia), lpk_b (Prima Husada)
+  const [selectedLpk, setSelectedLpk] = useState('lpk_a'); // lpk_a (Sakura Mitra Internasional), lpk_b (Prima Husada)
   const [logs, setLogs] = useState([]);
   const [viewAlumni, setViewAlumni] = useState(false);
+  
+  // Student Checklist State
+  const [selectedStudent, setSelectedStudent] = useState('Budi Utomo');
+  const [checklists, setChecklists] = useState(() => {
+    const saved = localStorage.getItem('kaigolingo_lpk_checklists');
+    return saved ? JSON.parse(saved) : {};
+  });
+
+  useEffect(() => {
+    const students = STUDENTS_BY_LPK[selectedLpk] || [];
+    if (students.length > 0 && !students.includes(selectedStudent)) {
+      setSelectedStudent(students[0]);
+    }
+  }, [selectedLpk]);
+
+  const handleToggleChecklist = (studentName, itemId, checked) => {
+    const updated = {
+      ...checklists,
+      [studentName]: {
+        ...(checklists[studentName] || {}),
+        [itemId]: checked
+      }
+    };
+    setChecklists(updated);
+    localStorage.setItem('kaigolingo_lpk_checklists', JSON.stringify(updated));
+  };
+
+  const getStudentProgress = (studentName) => {
+    const studentChecklist = checklists[studentName] || {};
+    const totalItems = PROCESS_ITEMS.departure.length + PROCESS_ITEMS.support.length;
+    const checkedItems = Object.keys(studentChecklist).filter(key => studentChecklist[key]).length;
+    return {
+      percentage: Math.round((checkedItems / totalItems) * 100) || 0,
+      checkedCount: checkedItems,
+      totalCount: totalItems
+    };
+  };
   
   // Simulator State
   const [isDay85Simulated, setIsDay85Simulated] = useState(false);
@@ -66,7 +130,7 @@ export default function B2BDashboard({ progress, onProgressUpdate }) {
           onChange={(e) => setSelectedLpk(e.target.value)}
           style={{ appearance: 'none', cursor: 'pointer', fontWeight: '700' }}
         >
-          <option value="lpk_a">LPK Karya Mulia (Budi, Siti)</option>
+          <option value="lpk_a">LPK Sakura Mitra Internasional (Budi, Siti)</option>
           <option value="lpk_b">LPK Prima Husada (Agus, Dewi)</option>
         </select>
       </div>
@@ -103,6 +167,130 @@ export default function B2BDashboard({ progress, onProgressUpdate }) {
             Status Akun: B2C Premium Aktif Selamanya
           </div>
         )}
+      </div>
+
+      {/* Student Checklist Tracker Card */}
+      <div className="card no-press" style={{ padding: '24px', backgroundColor: '#ffffff', border: '1px solid var(--surface-container-high)' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+            <div>
+              <h2 style={{ color: 'var(--primary)', margin: 0, fontSize: '18px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <ShieldCheck size={20} color="var(--primary)" />
+                Pemantauan Alur Proses & Kesiapan Siswa
+              </h2>
+              <p className="body-md" style={{ margin: '4px 0 0 0', color: 'var(--outline)' }}>Pantau dan kelola ceklis kesiapan program keberangkatan & dukungan alumni.</p>
+            </div>
+            
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span className="body-md" style={{ fontWeight: '600' }}>Siswa:</span>
+              <select
+                className="input-field"
+                value={selectedStudent}
+                onChange={(e) => setSelectedStudent(e.target.value)}
+                style={{ width: '180px', padding: '6px 12px', height: '36px', appearance: 'none', cursor: 'pointer', fontSize: '13px' }}
+              >
+                {(STUDENTS_BY_LPK[selectedLpk] || []).map(student => (
+                  <option key={student} value={student}>{student}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Progress Bar */}
+          {selectedStudent && (
+            <div style={{ backgroundColor: 'var(--surface-container-low)', padding: '16px', borderRadius: '12px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <span style={{ fontWeight: '700', fontSize: '14px', color: 'var(--primary)' }}>
+                  Persentase Kesiapan Belajar & Bekerja
+                </span>
+                <span style={{ fontWeight: '700', fontSize: '15px', color: 'var(--secondary)' }}>
+                  {getStudentProgress(selectedStudent).percentage}% ({getStudentProgress(selectedStudent).checkedCount} dari {getStudentProgress(selectedStudent).totalCount} Selesai)
+                </span>
+              </div>
+              <div style={{ width: '100%', height: '8px', backgroundColor: 'var(--surface-container-high)', borderRadius: '4px', overflow: 'hidden' }}>
+                <div style={{ 
+                  width: `${getStudentProgress(selectedStudent).percentage}%`, 
+                  height: '100%', 
+                  backgroundColor: getStudentProgress(selectedStudent).percentage === 100 ? 'var(--secondary)' : 'var(--primary)', 
+                  transition: 'width 0.4s ease' 
+                }} />
+              </div>
+            </div>
+          )}
+
+          {/* Checklist Sections */}
+          {selectedStudent && (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px', marginTop: '8px' }}>
+              {/* Section 1: Pra & Pasca Keberangkatan */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <h3 style={{ fontSize: '14px', borderBottom: '2px solid var(--primary)', paddingBottom: '6px', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '6px', margin: 0 }}>
+                  <Plane size={16} />
+                  Pra & Pasca Keberangkatan ke Jepang
+                </h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '350px', overflowY: 'auto', paddingRight: '4px' }}>
+                  {PROCESS_ITEMS.departure.map(item => {
+                    const isChecked = !!(checklists[selectedStudent]?.[item.id]);
+                    return (
+                      <label 
+                        key={item.id} 
+                        style={{ 
+                          display: 'flex', alignItems: 'flex-start', gap: '10px', padding: '10px', 
+                          borderRadius: '8px', border: '1px solid var(--surface-container-high)', 
+                          backgroundColor: isChecked ? '#f0fdf4' : '#ffffff',
+                          cursor: 'pointer', transition: 'all 0.2s', fontSize: '12px', lineHeight: '1.4'
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={(e) => handleToggleChecklist(selectedStudent, item.id, e.target.checked)}
+                          style={{ marginTop: '3px', cursor: 'pointer' }}
+                        />
+                        <span style={{ color: isChecked ? 'var(--on-surface)' : 'var(--on-surface-variant)', fontWeight: isChecked ? '600' : '400' }}>
+                          {item.label}
+                        </span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Section 2: Support Lainnya */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <h3 style={{ fontSize: '14px', borderBottom: '2px solid var(--secondary)', paddingBottom: '6px', color: 'var(--secondary)', display: 'flex', alignItems: 'center', gap: '6px', margin: 0 }}>
+                  <HeartHandshake size={16} />
+                  Dukungan & Evaluasi Alumni (Pasca Kerja)
+                </h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {PROCESS_ITEMS.support.map(item => {
+                    const isChecked = !!(checklists[selectedStudent]?.[item.id]);
+                    return (
+                      <label 
+                        key={item.id} 
+                        style={{ 
+                          display: 'flex', alignItems: 'flex-start', gap: '10px', padding: '10px', 
+                          borderRadius: '8px', border: '1px solid var(--surface-container-high)', 
+                          backgroundColor: isChecked ? '#f0fdf4' : '#ffffff',
+                          cursor: 'pointer', transition: 'all 0.2s', fontSize: '12px', lineHeight: '1.4'
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={(e) => handleToggleChecklist(selectedStudent, item.id, e.target.checked)}
+                          style={{ marginTop: '3px', cursor: 'pointer' }}
+                        />
+                        <span style={{ color: isChecked ? 'var(--on-surface)' : 'var(--on-surface-variant)', fontWeight: isChecked ? '600' : '400' }}>
+                          {item.label}
+                        </span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Student Audit & Logs Tracker */}
