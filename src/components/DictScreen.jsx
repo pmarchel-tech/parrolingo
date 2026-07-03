@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Camera, Mic, Type, Search, Volume2, Bookmark, Trash2, Check, RefreshCw, AlertCircle } from 'lucide-react';
+import { Camera, Mic, Type, Search, Volume2, Bookmark, Trash2, Check, RefreshCw, AlertCircle, CheckCircle } from 'lucide-react';
 import { getDictionary, addDictionaryEntry, updateDictionaryEntry, deleteDictionaryEntry } from '../utils/db';
 
 export default function DictScreen({ apiKey }) {
@@ -477,18 +477,18 @@ export default function DictScreen({ apiKey }) {
 
       {/* CAMERA SCAN MODAL */}
       {scanModal && (
-        <div className="modal-backdrop" onClick={stopCamera}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ paddingBottom: '30px' }}>
+        <div className="modal-backdrop" onClick={stopCamera} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ width: '90%', maxWidth: '600px', borderRadius: '16px', paddingBottom: '30px', animation: 'popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <h3>Scan Kamera (OCR Mandiri)</h3>
               <button onClick={stopCamera} style={{ background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer' }}>&times;</button>
             </div>
 
             {!scannedResult && !isProcessingImage && (
-              <div className="camera-container">
+              <div className="camera-container" style={{ height: '420px' }}>
                 <video ref={videoRef} autoPlay playsInline className="camera-preview" />
                 <div className="camera-overlay" />
-                <div className="camera-target" />
+                <div className="camera-target" style={{ width: '240px', height: '240px' }} />
                 <button className="camera-button" onClick={captureAndCompressImage} />
               </div>
             )}
@@ -536,8 +536,8 @@ export default function DictScreen({ apiKey }) {
 
       {/* VOICE TRANSLATE MODAL */}
       {voiceModal && (
-        <div className="modal-backdrop" onClick={() => setVoiceModal(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-backdrop" onClick={() => setVoiceModal(false)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ width: '90%', maxWidth: '440px', borderRadius: '16px', animation: 'popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <h3>Terjemahan Suara Mandiri</h3>
               <button onClick={() => setVoiceModal(false)} style={{ background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer' }}>&times;</button>
@@ -595,8 +595,8 @@ export default function DictScreen({ apiKey }) {
 
       {/* TEXT TRANSLATE MODAL */}
       {textModal && (
-        <div className="modal-backdrop" onClick={() => setTextModal(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-backdrop" onClick={() => setTextModal(false)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ width: '90%', maxWidth: '440px', borderRadius: '16px', animation: 'popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <h3>Terjemahan Teks Manual</h3>
               <button onClick={() => setTextModal(false)} style={{ background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer' }}>&times;</button>
