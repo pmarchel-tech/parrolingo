@@ -178,8 +178,8 @@ body {
 }
 
 /* Hide the old bottom-nav */
-.bottom-nav { display: none; }
-
+.bottom-nav {
+  display: none;
   position: absolute;
   bottom: 0;
   left: 0;
