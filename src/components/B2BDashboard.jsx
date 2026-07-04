@@ -239,6 +239,7 @@ export default function B2BDashboard({ progress, onProgressUpdate }) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
             <div>
+              <span className="badge badge-orange" style={{ marginBottom: '8px', fontSize: '10px', display: 'inline-block' }}>Akses Peran: Staf LPK (Admin)</span>
               <h2 style={{ color: 'var(--primary)', margin: 0, fontSize: '18px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <ShieldCheck size={20} color="var(--primary)" />
                 Kelola Alur & Dokumen Keberangkatan

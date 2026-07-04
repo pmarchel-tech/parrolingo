@@ -199,6 +199,7 @@ export default function PathScreen({ progress }) {
     <div className="screen-content">
       {/* Header & Overall Progress */}
       <div className="card no-press" style={{ backgroundColor: 'var(--surface-container-low)', padding: '20px', textAlign: 'center', marginBottom: '20px' }}>
+        <span className="badge badge-blue" style={{ marginBottom: '10px', fontSize: '11px', display: 'inline-block' }}>Akses Peran: Siswa (Peserta)</span>
         <Compass size={32} color="var(--primary)" style={{ margin: '0 auto 8px auto' }} />
         <h2 style={{ color: 'var(--primary)' }}>Alur Keberangkatan</h2>
         <p className="body-md">Pantau status pendaftaran, pelatihan, & dokumen kerja Anda.</p>
@@ -215,27 +216,48 @@ export default function PathScreen({ progress }) {
         </div>
       </div>
 
-      {/* Stage Tabs */}
-      <div style={{ display: 'flex', overflowX: 'auto', gap: '8px', marginBottom: '16px', paddingBottom: '4px' }}>
-        {PROCESS_STEPS.map(stage => (
-          <button
-            key={stage.stage}
-            onClick={() => setActiveStage(stage.stage)}
-            style={{
-              padding: '8px 16px',
-              borderRadius: 'var(--radius-full)',
-              border: activeStage === stage.stage ? '2px solid var(--primary)' : '1px solid var(--outline-variant)',
-              backgroundColor: activeStage === stage.stage ? 'var(--primary-container)' : 'transparent',
-              color: activeStage === stage.stage ? 'var(--on-primary-container)' : 'var(--on-surface-variant)',
-              fontWeight: '700',
-              fontSize: '12px',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer'
-            }}
-          >
-            Tahap {stage.stage}
-          </button>
-        ))}
+      {/* Stage Tabs (Breadcrumb Style) */}
+      <div className="card no-press" style={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        gap: '8px', 
+        padding: '12px 16px', 
+        marginBottom: '20px', 
+        backgroundColor: 'var(--surface-container-low)',
+        borderRadius: '12px'
+      }}>
+        <span style={{ fontSize: '11px', fontWeight: '800', color: 'var(--outline)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+          Tahapan:
+        </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+          {PROCESS_STEPS.map((stage, idx) => (
+            <React.Fragment key={stage.stage}>
+              {idx > 0 && <span style={{ color: 'var(--outline-variant)', fontWeight: 'bold', fontSize: '12px', margin: '0 2px' }}>&gt;</span>}
+              <button
+                onClick={() => setActiveStage(stage.stage)}
+                style={{
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '50%',
+                  border: activeStage === stage.stage ? '2px solid var(--primary)' : '1px solid var(--outline-variant)',
+                  backgroundColor: activeStage === stage.stage ? 'var(--primary)' : 'transparent',
+                  color: activeStage === stage.stage ? 'white' : 'var(--on-surface-variant)',
+                  fontWeight: '800',
+                  fontSize: '13px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'all 0.2s'
+                }}
+                title={stage.title}
+              >
+                {stage.stage}
+              </button>
+            </React.Fragment>
+          ))}
+        </div>
       </div>
 
       {/* Active Stage Details */}
