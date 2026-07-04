@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Map, BookOpen, BarChart3, User, Award, Flame, Coins, ShieldAlert, ChevronDown } from 'lucide-react';
+import { Map, BookOpen, BarChart3, User, Award, Flame, Coins, ShieldAlert, ChevronDown, Compass } from 'lucide-react';
 import { initDB, seedDefaultDictionary, seedDefaultLogs, getProgress, resetDB } from './utils/db';
 
 // Import Screens
@@ -8,6 +8,7 @@ import LearnScreen from './components/LearnScreen';
 import DictScreen from './components/DictScreen';
 import B2BDashboard from './components/B2BDashboard';
 import ProfileScreen from './components/ProfileScreen';
+import PathScreen from './components/PathScreen';
 
 // Safe Error Boundary to catch rendering and runtime errors in screens
 class SafeErrorBoundary extends React.Component {
@@ -240,6 +241,9 @@ export default function App() {
             onModalClose={() => setShowNav(true)}
           />
         )}
+        {activeScreen === 'path' && (
+          <PathScreen progress={progress} />
+        )}
         {activeScreen === 'dictionary' && (
           <DictScreen apiKey={apiKey} />
         )}
@@ -276,6 +280,16 @@ export default function App() {
           >
             <div className="icon-circle">
               <Map size={24} />
+            </div>
+          </button>
+
+          <button 
+            className={`nav-item-floating ${activeScreen === 'path' ? 'active' : ''}`}
+            onClick={() => { setShowNav(true); setActiveScreen('path'); }}
+            title="Alur Kerja"
+          >
+            <div className="icon-circle">
+              <Compass size={24} />
             </div>
           </button>
 

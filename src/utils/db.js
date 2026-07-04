@@ -1,27 +1,32 @@
 // IndexedDB local storage utility for KaigoLingo
 
 const DB_NAME = 'kaigolingo_db';
-const DB_VERSION = 3;
+const DB_VERSION = 4;
 
 let dbInstance = null;
+let dbPromise = null;
 
 export function initDB() {
   if (dbInstance) return Promise.resolve(dbInstance);
+  if (dbPromise) return dbPromise;
 
-  return new Promise((resolve, reject) => {
+  dbPromise = new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, DB_VERSION);
 
     request.onerror = (event) => {
       console.error('Database error:', event.target.error);
+      dbPromise = null;
       reject(event.target.error);
     };
 
     request.onblocked = () => {
-      console.warn('Database upgrade blocked. Closing connection to allow upgrade.');
+      console.warn('Database upgrade blocked. Please close other tabs of this app.');
       if (dbInstance) {
         dbInstance.close();
         dbInstance = null;
       }
+      dbPromise = null;
+      reject(new Error('Database upgrade blocked. Please close other tabs and refresh.'));
     };
 
     request.onsuccess = (event) => {
@@ -33,6 +38,7 @@ export function initDB() {
         console.log('Database connection closed due to version change.');
       };
 
+      dbPromise = null;
       resolve(dbInstance);
     };
 
@@ -75,6 +81,11 @@ export function initDB() {
       }
       const vStore = db.createObjectStore('vocabulary', { keyPath: 'vocabId' });
       vStore.createIndex('week', 'week', { unique: false });
+
+      // 7. Student Checklists Store (Process Tracker)
+      if (!db.objectStoreNames.contains('student_checklists')) {
+        db.createObjectStore('student_checklists', { keyPath: 'studentName' });
+      }
     };
   });
 }
@@ -401,4 +412,120 @@ export async function resetDB() {
     req.onsuccess = () => resolve();
     req.onerror = () => reject(req.error);
   });
+}
+
+// --- STUDENT CHECKLISTS API ---
+export async function getStudentChecklist(studentName) {
+  const store = await getStore('student_checklists');
+  return new Promise((resolve) => {
+    const request = store.get(studentName);
+    request.onsuccess = () => {
+      resolve(request.result || null);
+    };
+    request.onerror = () => resolve(null);
+  });
+}
+
+export async function updateStudentChecklist(studentName, checklistData) {
+  const store = await getStore('student_checklists', 'readwrite');
+  return new Promise((resolve, reject) => {
+    const request = store.put({
+      studentName,
+      ...checklistData,
+      lastUpdated: Date.now()
+    });
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+export async function seedDefaultChecklists() {
+  const store = await getStore('student_checklists', 'readwrite');
+  
+  // Check if already seeded
+  const checkReq = store.getAll();
+  const existing = await new Promise(resolve => {
+    checkReq.onsuccess = () => resolve(checkReq.result || []);
+    checkReq.onerror = () => resolve([]);
+  });
+  
+  if (existing.length > 0) return;
+
+  const defaultChecklists = [
+    {
+      studentName: 'Budi Utomo',
+      lpkId: 'lpk_a',
+      statuses: {
+        briefing: 'completed',
+        kaiwa_n4: 'completed',
+        kaiwa_mensetsu: 'in_progress',
+        matching_job: 'pending',
+        doc_admin: 'needs_action'
+      },
+      documents: {
+        doc_admin: null
+      },
+      notes: {
+        doc_admin: 'Foto Akta Kelahiran buram, mohon unggah ulang.'
+      }
+    },
+    {
+      studentName: 'Siti Rahma',
+      lpkId: 'lpk_a',
+      statuses: {
+        briefing: 'completed',
+        kaiwa_n4: 'completed',
+        kaiwa_mensetsu: 'completed',
+        matching_job: 'completed',
+        doc_admin: 'completed',
+        mcu_2: 'completed',
+        n3_basic: 'completed',
+        p3mi: 'completed',
+        bpjs_visa: 'completed',
+        jacket: 'completed',
+        pre_departure: 'completed',
+        jlpt_prep: 'completed',
+        alumni_visit: 'completed',
+        alumni_monitoring: 'in_progress'
+      },
+      documents: {},
+      notes: {}
+    },
+    {
+      studentName: 'Agus Wijaya',
+      lpkId: 'lpk_b',
+      statuses: {
+        briefing: 'completed',
+        kaiwa_n4: 'in_progress'
+      },
+      documents: {},
+      notes: {}
+    },
+    {
+      studentName: 'Dewi Lestari',
+      lpkId: 'lpk_b',
+      statuses: {
+        briefing: 'completed',
+        kaiwa_n4: 'completed',
+        kaiwa_mensetsu: 'completed',
+        matching_job: 'completed',
+        doc_admin: 'completed',
+        mcu_2: 'completed',
+        n3_basic: 'completed',
+        p3mi: 'completed',
+        bpjs_visa: 'completed',
+        jacket: 'completed',
+        pre_departure: 'completed'
+      },
+      documents: {},
+      notes: {}
+    }
+  ];
+
+  for (const checklist of defaultChecklists) {
+    await store.put({
+      ...checklist,
+      lastUpdated: Date.now()
+    });
+  }
 }
