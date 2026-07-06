@@ -1,7 +1,7 @@
 // IndexedDB local storage utility for KaigoLingo
 
 const DB_NAME = 'kaigolingo_db';
-const DB_VERSION = 4;
+const DB_VERSION = 5;
 
 let dbInstance = null;
 let dbPromise = null;
@@ -85,6 +85,31 @@ export function initDB() {
       // 7. Student Checklists Store (Process Tracker)
       if (!db.objectStoreNames.contains('student_checklists')) {
         db.createObjectStore('student_checklists', { keyPath: 'studentName' });
+      }
+
+      // 8. Dorm Rooms Store
+      if (!db.objectStoreNames.contains('dorm_rooms')) {
+        db.createObjectStore('dorm_rooms', { keyPath: 'roomId' });
+      }
+
+      // 9. Financial Ledgers Store
+      if (!db.objectStoreNames.contains('financial_ledgers')) {
+        db.createObjectStore('financial_ledgers', { keyPath: 'studentName' });
+      }
+
+      // 10. Job Listings Store
+      if (!db.objectStoreNames.contains('job_listings')) {
+        db.createObjectStore('job_listings', { keyPath: 'jobId' });
+      }
+
+      // 11. LPK Registrations Store
+      if (!db.objectStoreNames.contains('lpk_registrations')) {
+        db.createObjectStore('lpk_registrations', { keyPath: 'email' });
+      }
+
+      // 12. Referral Claims Store
+      if (!db.objectStoreNames.contains('referral_claims')) {
+        db.createObjectStore('referral_claims', { keyPath: 'claimId', autoIncrement: true });
       }
     };
   });
@@ -440,6 +465,18 @@ export async function updateStudentChecklist(studentName, checklistData) {
 }
 
 export async function seedDefaultChecklists() {
+  // Call new B2B seed functions first (self-guarding)
+  try {
+    await seedDormRooms();
+    await seedFinancialLedgers();
+    await seedJobListings();
+    await seedRegistrations();
+    await seedReferralClaims();
+    await seedDynamicVocab();
+  } catch (err) {
+    console.error("B2B Seeding failed: ", err);
+  }
+
   const store = await getStore('student_checklists', 'readwrite');
   
   // Check if already seeded
@@ -526,6 +563,329 @@ export async function seedDefaultChecklists() {
     await store.put({
       ...checklist,
       lastUpdated: Date.now()
+    });
+  }
+
+}
+
+// --- DORM ROOMS API ---
+export async function getDormRooms() {
+  const store = await getStore('dorm_rooms');
+  return new Promise((resolve) => {
+    const request = store.getAll();
+    request.onsuccess = () => resolve(request.result || []);
+  });
+}
+
+export async function saveDormRoom(room) {
+  const store = await getStore('dorm_rooms', 'readwrite');
+  return new Promise((resolve, reject) => {
+    const request = store.put(room);
+    request.onsuccess = () => resolve(true);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+export async function seedDormRooms() {
+  const rooms = await getDormRooms();
+  if (rooms.length > 0) return;
+
+  const defaultRooms = [
+    { roomId: 'A1', name: 'Asrama Sakura - Kamar A1', beds: [
+      { bedId: 'A1_1', status: 'occupied', studentName: 'Budi Utomo' },
+      { bedId: 'A1_2', status: 'available', studentName: '' },
+      { bedId: 'A1_3', status: 'available', studentName: '' },
+      { bedId: 'A1_4', status: 'available', studentName: '' }
+    ]},
+    { roomId: 'A2', name: 'Asrama Sakura - Kamar A2', beds: [
+      { bedId: 'A2_1', status: 'occupied', studentName: 'Siti Rahma' },
+      { bedId: 'A2_2', status: 'available', studentName: '' }
+    ]},
+    { roomId: 'B1', name: 'Asrama Prima - Kamar B1', beds: [
+      { bedId: 'B1_1', status: 'occupied', studentName: 'Agus Wijaya' },
+      { bedId: 'B1_2', status: 'occupied', studentName: 'Dewi Lestari' }
+    ]}
+  ];
+
+  for (const r of defaultRooms) {
+    await saveDormRoom(r);
+  }
+}
+
+// --- FINANCIAL LEDGERS API ---
+export async function getFinancialLedgers() {
+  const store = await getStore('financial_ledgers');
+  return new Promise((resolve) => {
+    const request = store.getAll();
+    request.onsuccess = () => resolve(request.result || []);
+  });
+}
+
+export async function getFinancialLedger(studentName) {
+  const store = await getStore('financial_ledgers');
+  return new Promise((resolve) => {
+    const request = store.get(studentName);
+    request.onsuccess = () => resolve(request.result || null);
+  });
+}
+
+export async function updateFinancialLedger(ledger) {
+  const store = await getStore('financial_ledgers', 'readwrite');
+  return new Promise((resolve, reject) => {
+    const request = store.put(ledger);
+    request.onsuccess = () => resolve(true);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+export async function seedFinancialLedgers() {
+  const ledgers = await getFinancialLedgers();
+  if (ledgers.length > 0) return;
+
+  const defaultLedgers = [
+    {
+      studentName: 'Budi Utomo',
+      lpkId: 'lpk_a',
+      program: 'kaigo',
+      totalCost: 15000000,
+      paidAmount: 5000000,
+      remainingAmount: 10000000,
+      isBridgingLoan: true,
+      loanPaidToDate: 0,
+      loanInstallments: [
+        { month: 'Bulan 1', amount: 1000000, status: 'pending' },
+        { month: 'Bulan 2', amount: 1000000, status: 'pending' },
+        { month: 'Bulan 3', amount: 1000000, status: 'pending' },
+        { month: 'Bulan 4', amount: 1000000, status: 'pending' },
+        { month: 'Bulan 5', amount: 1000000, status: 'pending' },
+        { month: 'Bulan 6', amount: 1000000, status: 'pending' },
+        { month: 'Bulan 7', amount: 1000000, status: 'pending' },
+        { month: 'Bulan 8', amount: 1000000, status: 'pending' },
+        { month: 'Bulan 9', amount: 1000000, status: 'pending' },
+        { month: 'Bulan 10', amount: 1000000, status: 'pending' }
+      ],
+      agencyCommission: 5000000,
+      commissionStatus: 'pending'
+    },
+    {
+      studentName: 'Siti Rahma',
+      lpkId: 'lpk_a',
+      program: 'kaigo',
+      totalCost: 15000000,
+      paidAmount: 15000000,
+      remainingAmount: 0,
+      isBridgingLoan: false,
+      loanPaidToDate: 0,
+      loanInstallments: [],
+      agencyCommission: 5000000,
+      commissionStatus: 'received'
+    },
+    {
+      studentName: 'Agus Wijaya',
+      lpkId: 'lpk_b',
+      program: 'seizogyo',
+      totalCost: 12000000,
+      paidAmount: 2000000,
+      remainingAmount: 10000000,
+      isBridgingLoan: true,
+      loanPaidToDate: 2000000,
+      loanInstallments: [
+        { month: 'Bulan 1', amount: 2000000, status: 'paid' },
+        { month: 'Bulan 2', amount: 2000000, status: 'pending' },
+        { month: 'Bulan 3', amount: 2000000, status: 'pending' },
+        { month: 'Bulan 4', amount: 2000000, status: 'pending' },
+        { month: 'Bulan 5', amount: 2000000, status: 'pending' }
+      ],
+      agencyCommission: 4000000,
+      commissionStatus: 'pending'
+    },
+    {
+      studentName: 'Dewi Lestari',
+      lpkId: 'lpk_b',
+      program: 'seizogyo',
+      totalCost: 12000000,
+      paidAmount: 12000000,
+      remainingAmount: 0,
+      isBridgingLoan: false,
+      loanPaidToDate: 0,
+      loanInstallments: [],
+      agencyCommission: 4000000,
+      commissionStatus: 'received'
+    }
+  ];
+
+  for (const l of defaultLedgers) {
+    await updateFinancialLedger(l);
+  }
+}
+
+// --- JOB LISTINGS API ---
+export async function getJobListings() {
+  const store = await getStore('job_listings');
+  return new Promise((resolve) => {
+    const request = store.getAll();
+    request.onsuccess = () => resolve(request.result || []);
+  });
+}
+
+export async function addJobListing(job) {
+  const store = await getStore('job_listings', 'readwrite');
+  return new Promise((resolve, reject) => {
+    const request = store.put(job);
+    request.onsuccess = () => resolve(true);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+export async function seedJobListings() {
+  const jobs = await getJobListings();
+  if (jobs.length > 0) return;
+
+  const defaultJobs = [
+    { jobId: 'job_1', title: 'Perawat Lansia Senior', company: 'Sakura Care Home, Tokyo', salary: 190000, requirements: 'JLPT N4 / JFT-Basic A2 + SSW Caregiver', program: 'kaigo', slots: 5 },
+    { jobId: 'job_2', title: 'Asisten Pendamping Mandiri', company: 'Osaka Elderly Center, Osaka', salary: 185000, requirements: 'JLPT N4 / JFT-Basic A2 + SSW Caregiver', program: 'kaigo', slots: 3 },
+    { jobId: 'job_3', title: 'Operator Perakitan Otomotif', company: 'Toyota Kanto Plant, Kanagawa', salary: 210000, requirements: 'JLPT N4 + SSW Seizogyo', program: 'seizogyo', slots: 10 },
+    { jobId: 'job_4', title: 'Pekerja Konstruksi Struktur', company: 'Kajima Construction, Kyoto', salary: 220000, requirements: 'JLPT N5 + SSW Kensetsugyo', program: 'kensetsugyo', slots: 8 },
+    { jobId: 'job_5', title: 'Pemeliharaan Tanaman & Panen', company: 'Hokkaido Farms, Hokkaido', salary: 175000, requirements: 'SSW Nogyo', program: 'nogyo', slots: 12 }
+  ];
+
+  for (const j of defaultJobs) {
+    await addJobListing(j);
+  }
+}
+
+// --- LPK REGISTRATIONS API ---
+export async function getRegistrations() {
+  const store = await getStore('lpk_registrations');
+  return new Promise((resolve) => {
+    const request = store.getAll();
+    request.onsuccess = () => resolve(request.result || []);
+  });
+}
+
+export async function addRegistration(reg) {
+  const store = await getStore('lpk_registrations', 'readwrite');
+  return new Promise((resolve, reject) => {
+    const request = store.put({
+      email: reg.email,
+      name: reg.name,
+      phone: reg.phone,
+      height: parseInt(reg.height) || 0,
+      weight: parseInt(reg.weight) || 0,
+      education: reg.education || 'SMA',
+      colorBlind: reg.colorBlind || 'no',
+      program: reg.program || 'kaigo',
+      status: reg.status || 'applied',
+      date: reg.date || new Date().toISOString().split('T')[0]
+    });
+    request.onsuccess = () => resolve(true);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+export async function updateRegistrationStatus(email, status) {
+  const store = await getStore('lpk_registrations', 'readwrite');
+  return new Promise((resolve, reject) => {
+    const getReq = store.get(email);
+    getReq.onsuccess = () => {
+      const data = getReq.result;
+      if (!data) return reject(new Error('Registration not found'));
+      data.status = status;
+      const putReq = store.put(data);
+      putReq.onsuccess = () => resolve(true);
+      putReq.onerror = () => reject(putReq.error);
+    };
+  });
+}
+
+export async function seedRegistrations() {
+  const regs = await getRegistrations();
+  if (regs.length > 0) return;
+
+  const defaultRegs = [
+    { email: 'eko@gmail.com', name: 'Eko Prasetyo', phone: '08123456789', height: 165, weight: 60, education: 'SMK Keperawatan', colorBlind: 'no', program: 'kaigo', status: 'short_listed', date: '2026-06-30' },
+    { email: 'ratna@gmail.com', name: 'Ratna Sari', phone: '08223456789', height: 155, weight: 48, education: 'SMA', colorBlind: 'no', program: 'kaigo', status: 'applied', date: '2026-07-01' },
+    { email: 'joko@gmail.com', name: 'Joko Widodo', phone: '08323456789', height: 145, weight: 55, education: 'SMK Teknik', colorBlind: 'yes', program: 'seizogyo', status: 'rejected', date: '2026-07-02' }
+  ];
+
+  for (const r of defaultRegs) {
+    await addRegistration(r);
+  }
+}
+
+// --- REFERRAL CLAIMS API ---
+export async function getReferralClaims() {
+  const store = await getStore('referral_claims');
+  return new Promise((resolve) => {
+    const request = store.getAll();
+    request.onsuccess = () => resolve(request.result || []);
+  });
+}
+
+export async function addReferralClaim(claim) {
+  const store = await getStore('referral_claims', 'readwrite');
+  return new Promise((resolve, reject) => {
+    const request = store.add({
+      referrerName: claim.referrerName,
+      referrerRole: claim.referrerRole || 'alumni',
+      referredStudent: claim.referredStudent,
+      rewardAmount: claim.rewardAmount || 1000000,
+      status: claim.status || 'pending',
+      date: claim.date || new Date().toISOString().split('T')[0]
+    });
+    request.onsuccess = () => resolve(true);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+export async function updateReferralStatus(claimId, status) {
+  const store = await getStore('referral_claims', 'readwrite');
+  return new Promise((resolve, reject) => {
+    const getReq = store.get(claimId);
+    getReq.onsuccess = () => {
+      const data = getReq.result;
+      if (!data) return reject(new Error('Claim not found'));
+      data.status = status;
+      const putReq = store.put(data);
+      putReq.onsuccess = () => resolve(true);
+      putReq.onerror = () => reject(putReq.error);
+    };
+  });
+}
+
+export async function seedReferralClaims() {
+  const claims = await getReferralClaims();
+  if (claims.length > 0) return;
+
+  const defaultClaims = [
+    { referrerName: 'Siti Rahma', referrerRole: 'alumni', referredStudent: 'Eko Prasetyo', rewardAmount: 1000000, status: 'pending', date: '2026-07-01' },
+    { referrerName: 'Staff Andi', referrerRole: 'staff', referredStudent: 'Agus Wijaya', rewardAmount: 500000, status: 'approved', date: '2026-06-25' }
+  ];
+
+  for (const c of defaultClaims) {
+    await addReferralClaim(c);
+  }
+}
+
+// --- Dynamic Vocabulary Seeding Logic ---
+export async function seedDynamicVocab() {
+  const store = await getStore('vocabulary', 'readwrite');
+  const additionalVocabs = [
+    { vocabId: 'seizogyo_1', word: '安全第一', reading: 'Anzen Daiichi', meaning: 'Utamakan Keselamatan', week: 1, category: 'Pabrik', orderIndex: 0 },
+    { vocabId: 'seizogyo_2', word: '作業服', reading: 'Sagyoufuku', meaning: 'Baju Kerja Pabrik', week: 1, category: 'Pabrik', orderIndex: 1 },
+    { vocabId: 'seizogyo_3', word: '点検', reading: 'Tenken', meaning: 'Inspeksi / Pemeriksaan', week: 2, category: 'Pabrik', orderIndex: 0 },
+    { vocabId: 'kensetsugyo_1', word: 'ヘルメット', reading: 'Herumetto', meaning: 'Helm Proyek', week: 1, category: 'Konstruksi', orderIndex: 0 },
+    { vocabId: 'kensetsugyo_2', word: '足場', reading: 'Ashiba', meaning: 'Scaffolding / Stang Perancah', week: 1, category: 'Konstruksi', orderIndex: 1 },
+    { vocabId: 'kensetsugyo_3', word: '図面', reading: 'Zumen', meaning: 'Gambar Cetak Biru / Desain', week: 2, category: 'Konstruksi', orderIndex: 0 },
+    { vocabId: 'nogyo_1', word: '収穫', reading: 'Shuukaku', meaning: 'Panen', week: 1, category: 'Pertanian', orderIndex: 0 },
+    { vocabId: 'nogyo_2', word: '肥料', reading: 'Hiryou', meaning: 'Pupuk', week: 1, category: 'Pertanian', orderIndex: 1 },
+    { vocabId: 'nogyo_3', word: '温室', reading: 'Onshitsu', meaning: 'Rumah Kaca (Greenhouse)', week: 2, category: 'Pertanian', orderIndex: 0 }
+  ];
+  for (const v of additionalVocabs) {
+    await store.put({
+      ...v,
+      week: parseInt(v.week),
+      orderIndex: parseInt(v.orderIndex)
     });
   }
 }

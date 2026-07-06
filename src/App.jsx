@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Map, BookOpen, BarChart3, User, Award, Flame, Coins, ShieldAlert, ChevronDown, Compass } from 'lucide-react';
+import { Map, BookOpen, BarChart3, User, Award, Flame, Coins, ShieldAlert, ChevronDown, Compass, Wallet } from 'lucide-react';
 import { initDB, seedDefaultDictionary, seedDefaultLogs, getProgress, resetDB } from './utils/db';
 
 // Import Screens
 import MapScreen from './components/MapScreen';
 import LearnScreen from './components/LearnScreen';
 import DictScreen from './components/DictScreen';
-import B2BDashboard from './components/B2BDashboard';
+import StudentStatusScreen from './components/StudentStatusScreen';
 import ProfileScreen from './components/ProfileScreen';
 import PathScreen from './components/PathScreen';
 
@@ -248,7 +248,7 @@ export default function App() {
           <DictScreen apiKey={apiKey} />
         )}
         {activeScreen === 'dashboard' && (
-          <B2BDashboard progress={progress} onProgressUpdate={setProgress} />
+          <StudentStatusScreen progress={progress} />
         )}
         {activeScreen === 'profile' && (
           <ProfileScreen 
@@ -306,10 +306,10 @@ export default function App() {
           <button 
             className={`nav-item-floating ${activeScreen === 'dashboard' ? 'active' : ''}`}
             onClick={() => { setShowNav(true); setActiveScreen('dashboard'); }}
-            title="LPK B2B"
+            title="Visa & Cicilan"
           >
             <div className="icon-circle">
-              <BarChart3 size={24} />
+              <Wallet size={24} />
             </div>
           </button>
 

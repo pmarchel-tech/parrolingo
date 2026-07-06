@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rencana Implementasi: Pemisahan Standalone LPK Dashboard (Visual)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600&family=Quicksand:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #004ac6;
+            --secondary: #006c49;
+            --tertiary: #9d2940;
+            --background: #f7f9fb;
+            --on-surface: #191c1e;
+            --outline: #737686;
+            --border-radius: 12px;
+        }
+
+        body {
+            font-family: 'Noto Sans', sans-serif;
+            color: var(--on-surface);
+            background-color: var(--background);
+            line-height: 1.6;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(37, 99, 235, 0.08);
+            border: 1px solid #e2e8f0;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        h1 {
+            font-size: 28px;
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 12px;
+            margin-top: 0;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 22px;
+            margin-top: 32px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 8px;
+        }
+
+        h3 {
+            font-size: 18px;
+            color: var(--secondary);
+            margin-top: 24px;
+        }
+
+        p, li {
+            font-size: 15px;
+            color: #334155;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .mockup-img {
+            width: 100%;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin: 15px 0 25px 0;
+        }
+
+        .alert {
+            background-color: #eff6ff;
+            border-left: 4px solid var(--primary);
+            padding: 16px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .alert-warning {
+            background-color: #fffbeb;
+            border-left: 4px solid #d97706;
+            padding: 16px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .alert-title {
+            font-weight: 700;
+            font-family: 'Quicksand', sans-serif;
+            margin-bottom: 6px;
+        }
+
+        .flowchart-container {
+            margin: 30px 0;
+            text-align: center;
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            border: 1px solid #e2e8f0;
+        }
+
+        .btn-print {
+            display: block;
+            width: fit-content;
+            margin: 0 auto 30px auto;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 74, 198, 0.2);
+            transition: all 0.2s;
+        }
+
+        .btn-print:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(0, 74, 198, 0.3);
+        }
+
+        @media print {
+            body {
+                background-color: #ffffff;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                border: none;
+                padding: 0;
+                max-width: 100%;
+            }
+            .btn-print {
+                display: none;
+            }
+            .page-break {
+                page-break-before: always;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <button class="btn-print" onclick="window.print()">🖨️ Cetak Dokumen / Simpan PDF</button>
+
+    <div class="container">
+        <h1>Rencana Pemisahan: Standalone LPK Dashboard Application</h1>
+        <p style="text-align: center; color: var(--outline); font-size: 14px;">Arsitektur Pemisahan Portal Operasional LPK dari Aplikasi Belajar Siswa</p>
+
+        <div class="alert">
+            <div class="alert-title">💡 Alasan Pemisahan Arsitektur</div>
+            <p style="margin: 0;">Untuk mempermudah manajemen & pemantauan yang leluasa oleh Direktur dan Owner LPK, portal administrasi/operasional dipisah menjadi satu aplikasi web mandiri desktop-first (Hikari LPK Center), terisolasi dari aplikasi mobile belajar siswa (Hikari Kaigo Learn).</p>
+        </div>
+
+        <h2>🔄 Arsitektur & Sinkronisasi Data (Flowchart)</h2>
+        <div class="flowchart-container">
+            <div id="mermaid-root"></div>
+        </div>
+
+        <div class="page-break"></div>
+
+        <h2>🎨 Visualisasi Desain Antarmuka (UI Mockups)</h2>
+        
+        <h3>1. Dashboard Utama LPK Admin</h3>
+        <p>Antarmuka desktop-first untuk peninjauan kas keuangan, status asrama secara umum, log siswa terbaru, dan pemutar video panduan:</p>
+        <!-- Use absolute paths relative to local filesystem for offline browser preview -->
+        <img class="mockup-img" src="C:\Users\WELCOME\.gemini\antigravity\brain\ddd34c4e-5a9f-4b91-8f34-f0a14ba2b422\lpk_dashboard_mockup_1783233312251.png" alt="Dashboard LPK">
+
+        <h3>2. Modul Asrama & Ranjang (Dormitory Map)</h3>
+        <p>Denah kamar tidur asrama LPK interaktif. Kamar akan dilepas statusnya ketika siswa telah dinyatakan terbang ke Jepang:</p>
+        <img class="mockup-img" src="C:\Users\WELCOME\.gemini\antigravity\brain\ddd34c4e-5a9f-4b91-8f34-f0a14ba2b422\dormitory_ui_mockup_1783234461303.png" alt="Denah Asrama LPK">
+
+        <div class="page-break"></div>
+
+        <h3>3. Modul Buku Kas, Dana Talangan & Piutang Komisi</h3>
+        <p>Pelacakan tagihan siswa, cicilan bulanan dari pemotongan gaji di Jepang, serta status piutang komisi dari Perusahaan Jepang:</p>
+        <img class="mockup-img" src="C:\Users\WELCOME\.gemini\antigravity\brain\ddd34c4e-5a9f-4b91-8f34-f0a14ba2b422\finance_ui_mockup_1783234473789.png" alt="Kas Keuangan LPK">
+
+        <h3>4. Modul Pendaftaran Calon Siswa (Pre-screening)</h3>
+        <p>Form pendaftaran cepat dengan filter kelayakan fisik/medis otomatis (tinggi badan, usia, buta warna):</p>
+        <img class="mockup-img" src="C:\Users\WELCOME\.gemini\antigravity\brain\ddd34c4e-5a9f-4b91-8f34-f0a14ba2b422\screening_ui_mockup_1783234485230.png" alt="Pendaftaran LPK">
+
+        <div class="page-break"></div>
+
+        <h2>💡 Masukan & Saran Konstruktif (Grill Section)</h2>
+
+        <div class="alert-warning">
+            <div class="alert-title">⚠️ 1. Batasan Sinkronisasi Lokal (IndexedDB)</div>
+            <p style="margin: 0;">Saat ini kita menggunakan IndexedDB lokal browser yang sama untuk mensimulasikan integrasi. Di dunia nyata, LPK Admin membuka sistem dari komputer kantor LPK, sedangkan siswa membukanya dari handphone masing-masing di rumah/asrama. Di dokumen arsitektur akhir, kita harus merancang REST API terpusat (contoh: PostgreSQL/Supabase) agar sinkronisasi data lintas perangkat berjalan aman.</p>
+        </div>
+
+        <div class="alert-warning">
+            <div class="alert-title">⚠️ 2. Keamanan Pembebasan Ranjang Asrama (Auto-Release)</div>
+            <p style="margin: 0;">Mengotomatiskan pelepasan kasur asrama 100% saat status penerbangan siswa diset "Completed" memiliki risiko tinggi jika penerbangan siswa ditunda akibat masalah visa di bandara. Ranjang siswa sebaiknya dibebaskan secara manual menggunakan tombol <b>"Konfirmasi Penerbangan & Kosongkan Asrama"</b> setelah status penerbangan diset selesai.</p>
+        </div>
+
+        <div class="alert-warning">
+            <div class="alert-title">⚠️ 3. Pembuatan Akun Siswa Baru Setelah Lolos Seleksi</div>
+            <p style="margin: 0;">Ketika admin mengeklik tombol "Terima ke LPK" pada pelamar yang lolos filter, sistem sebaiknya secara otomatis men-generate <b>Kode Aktivasi/Akun Sementara</b> (misal dikirim via WhatsApp API) sehingga siswa tersebut bisa langsung masuk ke aplikasi belajar mereka.</p>
+        </div>
+    </div>
+
+    <!-- Load Mermaid for browser rendering -->
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: false, theme: 'default' });
+        
+        const graphDefinition = `
+        flowchart TD
+            subgraph MobileApp [Hikari Kaigo Learn - Mobile App]
+                Siswa[Siswa: Input & Belajar]
+                Wali[Wali: Pantau Nilai & Biaya]
+            end
+
+            subgraph Database [Database Terpusat - IndexedDB Demo]
+                DB[(Shared Local Store)]
+            end
+
+            subgraph DesktopPortal [Hikari LPK Center - Standalone Portal]
+                LPK[LPK Admin: Dorm, Kas, & Ref]
+                Mitra[Mitra Jepang: Talent & Review]
+            end
+
+            Siswa -->|1. Simpan Data Belajar & Berkas| DB
+            Wali <-->|2. Tarik Data Akademik & Kasir| DB
+            DB <-->|3. Sinkronisasi Data LPK & Verifikasi| LPK
+            DB <-->|4. Tarik Profil Siswa & Kirim Evaluasi| Mitra
+        `;
+
+        const element = document.getElementById('mermaid-root');
+        const { svg } = await mermaid.render('mermaid-svg', graphDefinition);
+        element.innerHTML = svg;
+    </script>
+</body>
+</html>

@@ -1,0 +1,460 @@
+              onClick={() => {
+                if (this.props.onFallback) {
+                  this.props.onFallback();
+                }
+              }}
+              style={{ width: '100%' }}
+            >
+              Kembali ke Map
+            </button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+// Database variables are now stored in IndexedDB and public JSON files.
+const QUESTIONS_BY_WEEK = {};
+const VOCAB_BY_WEEK = {};
+
+// Syllable-level romaji chunks for karaoke highlighting (falls back to word-level if empty)
+const ROMAJI_CHUNKS = {};
+
+// Algorithmic Hepburn Romaji to Hiragana converter
+const romajiToHiragana = (romaji) => {
+  if (!romaji) return '';
+  let str = romaji.toLowerCase().trim();
+  
+  // Standardize common romaji variations
+  str = str.replace(/tsu/g, 'tsu')
+           .replace(/chi/g, 'chi')
+           .replace(/sh/g, 'sh')
+           .replace(/ch/g, 'ch')
+           .replace(/fu/g, 'fu')
+           .replace(/jy/g, 'j')
+           .replace(/j/g, 'j');
+
+  const mapping = {
+    'kya': 'きゃ', 'kyu': 'きゅ', 'kyo': 'きょ',
+    'sha': 'しゃ', 'shu': 'しゅ', 'sho': 'しょ',
+    'cha': 'ちゃ', 'chu': 'ちゅ', 'cho': 'ちょ',
+    'nya': 'にゃ', 'nyu': 'にゅ', 'nyo': 'にょ',
+    'hya': 'ひゃ', 'hyu': 'ひゅ', 'hyo': 'ひょ',
+    'mya': 'みゃ', 'myu': 'みゅ', 'myo': 'みょ',
+    'rya': 'りゃ', 'ryu': 'りゅ', 'ryo': 'りょ',
+    'gya': 'ぎゃ', 'gyu': 'ぎゅ', 'gyo': 'ぎょ',
+    'ja': 'じゃ', 'ju': 'じゅ', 'jo': 'じょ',
+    'bya': 'びゃ', 'byu': 'びゅ', 'byo': 'びょ',
+    'pya': 'ぴゃ', 'pyu': 'ぴゅ', 'pyo': 'ぴょ',
+    'ka': 'か', 'ki': 'き', 'ku': 'く', 'ke': 'け', 'ko': 'こ',
+    'sa': 'さ', 'shi': 'し', 'su': 'す', 'se': 'せ', 'so': 'そ',
+    'ta': 'た', 'chi': 'ち', 'tsu': 'つ', 'te': 'て', 'to': 'と',
+    'na': 'な', 'ni': 'に', 'nu': 'ぬ', 'ne': 'ね', 'no': 'の',
+    'ha': 'は', 'hi': 'ひ', 'fu': 'ふ', 'he': 'へ', 'ho': 'ほ',
+    'ma': 'ま', 'mi': 'み', 'mu': 'む', 'me': 'め', 'mo': 'も',
+    'ya': 'や', 'yu': 'ゆ', 'yo': 'よ',
+    'ra': 'ら', 'ri': 'り', 'ru': 'る', 're': 'れ', 'ro': 'ろ',
+    'wa': 'わ', 'wo': 'を', 'nn': 'ん', 'n': 'ん',
+    'ga': 'が', 'gi': 'ぎ', 'gu': 'ぐ', 'ge': 'げ', 'go': 'ご',
+    'za': 'ざ', 'ji': 'じ', 'zu': 'ず', 'ze': 'ぜ', 'zo': 'ぞ',
+    'da': 'だ', 'de': 'で', 'do': 'ど',
+    'ba': 'ば', 'bi': 'び', 'bu': 'ぶ', 'be': 'べ', 'bo': 'ぼ',
+    'pa': 'ぱ', 'pi': 'ぴ', 'pu': 'ぷ', 'pe': 'ぺ', 'po': 'ぽ',
+    'a': 'あ', 'i': 'い', 'u': 'う', 'e': 'え', 'o': 'お'
+  };
+
+  let result = '';
+  let i = 0;
+  while (i < str.length) {
+    // Check double consonants (sokuon - small tsu) e.g., 'pp', 'tt', 'ss', 'kk'
+    if (i < str.length - 1 && str[i] === str[i+1] && str[i] !== 'n' && str[i] !== 'a' && str[i] !== 'i' && str[i] !== 'u' && str[i] !== 'e' && str[i] !== 'o') {
+      result += 'っ';
+      i++;
+      continue;
+    }
+
+    // Try to match 3 characters
+    if (i < str.length - 2) {
+      const part3 = str.substring(i, i + 3);
+      if (mapping[part3]) {
+        result += mapping[part3];
+        i += 3;
+        continue;
+      }
+    }
+
+    // Try to match 2 characters
+    if (i < str.length - 1) {
+      const part2 = str.substring(i, i + 2);
+      if (mapping[part2]) {
+        result += mapping[part2];
+        i += 2;
+        continue;
+      }
+    }
+
+    // Try to match 1 character
+    const part1 = str.substring(i, i + 1);
+    if (mapping[part1]) {
+      result += mapping[part1];
+      i += 1;
+      continue;
+    }
+
+    // Keep original character if no match
+    result += str[i];
+    i += 1;
+  }
+  
+  return result;
+};
+
+// Dynamically generated Kanji-to-Hiragana mapping at runtime
+let DYNAMIC_KANJI_MAP = {};
+
+const initDynamicKanjiMap = (vocabList) => {
+  DYNAMIC_KANJI_MAP = {};
+  (vocabList || []).forEach(item => {
+    if (item.ja && item.romaji) {
+      const hiragana = romajiToHiragana(item.romaji);
+      // If the Kanji text differs from its Hiragana representation, add it to the map
+      if (item.ja !== hiragana && !item.ja.includes('(')) {
+        const cleanKanji = item.ja.replace(/[\s、。]/g, '');
+        const cleanHiragana = hiragana.replace(/[\s、。]/g, '');
+        
+        if (cleanKanji && cleanHiragana) {
+          DYNAMIC_KANJI_MAP[cleanKanji] = cleanHiragana;
+        }
+      }
+    }
+  });
+  
+  // Manual overrides for digits and common phrases
+  const overrides = {
+    '10': 'じゅう', '１０': 'じゅう',
+    '1': 'いち', '１': 'いち',
+    '2': 'に', '２': 'に',
+    '3': 'さん', '３': 'さん',
+    '4': 'よん', '４': 'よん',
+    '5': 'ご', '５': 'ご',
+    '6': 'ろく', '６': 'ろく',
+    '7': 'なな', '７': 'なな',
+    '8': 'はち', '８': 'はち',
+    '9': 'きゅう', '９': 'きゅう',
+    '一': 'いち', '二': 'に', '三': 'さん', '四': 'よん', '五': 'ご',
+    '六': 'ろく', '七': 'なな', '八': 'はち', '九': 'きゅう', '十': 'じゅう',
+    'お疲れ様': 'おつかれさま',
+    'お疲れ様です': 'おつかれさまです',
+    'お疲れ様でした': 'おつかれさまでした',
+    '失礼します': 'しつれいします',
+    'お邪魔します': 'おじゃまします',
+    '申し訳ありません': 'もうしわけありません',
+    '申し訳ございません': 'もうしわけございません',
+    'ありがとうございます': 'ありがとうございます',
+    '山': 'やま',
+    '川': 'かわ',
+    '月': 'つき',
+    '水': 'みず',
+    'お茶': 'おちゃ',
+    'ご飯': 'ごはん',
+    '御飯': 'ごはん',
+    '椅子': 'いす',
+    '手': 'て',
+    '目': 'め',
+    '耳': 'みみ',
+    '口': 'くち',
+    '鼻': 'はな',
+    '花': 'はな',
+    '足': 'あし',
+    '左': 'ひだり',
+    '右': 'みぎ',
+    '前': 'まえ',
+    '後ろ': 'うしろ',
+    'お風呂': 'おふろ',
+    '薬': 'くすり',
+    '朝': 'あさ',
+    '昼': 'ひる',
+    '夜': 'よる',
+    '暑い': 'あつい',
+    '熱い': 'あつい',
+    '厚い': 'あつい',
+    '危ない': 'あぶない',
+    '海': 'うみ',
+    'お早うございます': 'おはようございます',
+    'お休みなさい': 'おやすみなさい',
+    '終わり': 'おわり',
+    '畏まりました': 'かしこまりました',
+    '来て下さい': 'きてください',
+    '来てください': 'きてください',
+    '果物': 'くだもの',
+    '今日は': 'こんにちは',
+    '今晩は': 'こんばんは',
+    '済みません': 'すみません',
+    '助けて': 'たすけて',
+    '駄目': 'だめ',
+    'ちょっと待って': 'ちょっとまって',
+    '冷たい': 'つめたい',
+    '火': 'ひ',
+    '日': 'ひ',
+    '真っ直ぐ': 'まっすぐ',
+    '緑': 'みどり',
+    '眩暈': 'めまい',
+    '野菜': 'やさい',
+    '分かります': 'わかります',
+    '判ります': 'わかります',
+    '分かりません': 'わかりません',
+    '判りません': 'わかりません'
+  };
+  
+  overrides['2'] = 'に';
+
+  Object.assign(DYNAMIC_KANJI_MAP, overrides);
+};
+
+// Trigger initialization was moved to runtime useEffect
+
+// A beautiful, self-contained CSS-only Confetti Effect component that lasts exactly 2 seconds
+const ConfettiEffect = () => {
+  const [active, setActive] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setActive(false);
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!active) return null;
+
+  const colors = ['#f43f5e', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4'];
+  const particles = Array.from({ length: 80 }).map((_, i) => {
+    const left = Math.random() * 100;
+    const size = Math.random() * 8 + 6;
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    // Delay and fall speed adjusted so particles fall nicely within the 2-second window
+    const delay = Math.random() * 1.0; 
+    const duration = Math.random() * 0.8 + 1.0; 
+    const shape = Math.random() > 0.5 ? '50%' : '0%';
+    const rotation = Math.random() * 360;
+
+    return (
+      <div
+        key={i}
+        style={{
+          position: 'absolute',
+          top: '-20px',
+          left: `${left}%`,
+          width: `${size}px`,
+          height: `${size}px`,
+          backgroundColor: color,
+          borderRadius: shape,
+          opacity: Math.random() * 0.4 + 0.6,
+          transform: `rotate(${rotation}deg)`,
+          animation: `fall ${duration}s linear infinite`,
+          animationDelay: `${delay}s`,
+          pointerEvents: 'none',
+          zIndex: 9999
+        }}
+      />
+    );
+  });
+
+  return (
+    <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 999 }}>
+      <style>{`
+        @keyframes fall {
+          0% {
+            top: -20px;
+            transform: translateX(0) rotate(0deg);
+          }
+          50% {
+            transform: translateX(20px) rotate(180deg);
+          }
+          100% {
+            top: 100%;
+            transform: translateX(-20px) rotate(360deg);
+          }
+        }
+      `}</style>
+      {particles}
+    </div>
+  );
+};
+
+// Helper to convert Kanji/Katakana to Hiragana for uniform phonetic matching
+const convertKanjiToHiragana = (text) => {
+  if (!text) return '';
+  let result = text;
+
+  // Sort by length descending to prevent partial replacements of longer words
+  const sortedKanji = Object.keys(DYNAMIC_KANJI_MAP).sort((a, b) => b.length - a.length);
+
+  sortedKanji.forEach(kanji => {
+    const regex = new RegExp(kanji, 'g');
+    result = result.replace(regex, DYNAMIC_KANJI_MAP[kanji]);
+  });
+
+  // Convert Katakana to Hiragana (Unicode offset shifting)
+  result = result.replace(/[\u30a1-\u30f6]/g, (match) => {
+    return String.fromCharCode(match.charCodeAt(0) - 0x60);
+  });
+
+  return result;
+};
+
+// Helper to calculate Levenshtein distance similarity between two strings
+const editDistance = (s1, s2) => {
+  s1 = s1.toLowerCase();
+  s2 = s2.toLowerCase();
+
+  const costs = [];
+  for (let i = 0; i <= s1.length; i++) {
+    let lastValue = i;
+    for (let j = 0; j <= s2.length; j++) {
+      if (i === 0) {
+        costs[j] = j;
+      } else {
+        if (j > 0) {
+          let newValue = costs[j - 1];
+          if (s1.charAt(i - 1) !== s2.charAt(j - 1)) {
+            newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
+          }
+          costs[j - 1] = lastValue;
+          lastValue = newValue;
+        }
+      }
+    }
+    if (i > 0) {
+      costs[s2.length] = lastValue;
+    }
+  }
+  return costs[s2.length];
+};
+
+const getSimilarity = (s1, s2) => {
+  let longer = s1;
+  let shorter = s2;
+  if (s1.length < s2.length) {
+    longer = s2;
+    shorter = s1;
+  }
+  const longerLength = longer.length;
+  if (longerLength === 0) {
+    return 1.0;
+  }
+  return (longerLength - editDistance(longer, shorter)) / parseFloat(longerLength);
+};
+
+export default function LearnScreen({ weekNumber, sessionType, progress, onEndSession }) {
+  const [step, setStep] = useState(sessionType === 'practice' ? 'quiz' : 'biometric'); // biometric -> quiz -> result
+  const [currentQIndex, setCurrentQIndex] = useState(0);
+  const [selectedOption, setSelectedOption] = useState(null);
+  const [typedInput, setTypedInput] = useState('');
+  const [isAnswerChecked, setIsAnswerChecked] = useState(false);
+  const [isCorrect, setIsCorrect] = useState(false);
+  const [shadowingResult, setShadowingResult] = useState('');
+  const [isRecording, setIsRecording] = useState(false);
+  const [score, setScore] = useState(0);
+  const [questionPoints, setQuestionPoints] = useState({});
+  const [xpEarned, setXpEarned] = useState(0);
+  const [coinsEarned, setCoinsEarned] = useState(0);
+  const [startTime] = useState(Date.now());
+  const [audioSpeed, setAudioSpeed] = useState(1.0);
+  const [speakingWord, setSpeakingWord] = useState('');
+  const [highlightRange, setHighlightRange] = useState(null);
+  const [wrongAnswers, setWrongAnswers] = useState([]);
+  const [sessionQuestions, setSessionQuestions] = useState([]);
+  const [initialLength, setInitialLength] = useState(0);
+
+  // Ref to hold the latest evaluateSpeech function to avoid stale closures in web speech API listeners
+  const evaluateSpeechRef = React.useRef(null);
+
+  // Global error diagnostic listener to alert any uncaught crashes on screen
+  useEffect(() => {
+    const handleError = (event) => {
+      alert("CRITICAL ERROR: " + event.message + "\nFile: " + event.filename + "\nLine: " + event.lineno);
+    };
+    window.addEventListener('error', handleError);
+    return () => window.removeEventListener('error', handleError);
+  }, []);
+
+  // Helper to shuffle an array
+  const shuffleArray = (array) => {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  };
+
+  // Helper to generate dynamic questions for the session using IndexedDB data
+  const generateQuestionsForSession = (dbQuestions, dbVocab, weekNum) => {
+    const staticQuestions = dbQuestions || [];
+    const vocab = dbVocab.length > 0 ? dbVocab : [];
+    
+    // Target count scales from 10 (Week 1) to 20 (Week 11 & 12)
+    const targetCount = Math.min(20, 10 + (weekNum - 1));
+    
+    let generated = [...staticQuestions];
+    
+    // Filter out vocab items that are already in staticQuestions to prevent duplication
+    const staticJaTexts = [];
+    staticQuestions.forEach(q => {
+      if (q.audioText) staticJaTexts.push(q.audioText);
+      if (q.targetJa) staticJaTexts.push(q.targetJa);
+      if (q.pairs) {
+        q.pairs.forEach(p => {
+          const rawJa = p.ja.split(' ')[0].split('(')[0].trim();
+          staticJaTexts.push(rawJa);
+        });
+      }
+    });
+    
+    const filteredVocab = vocab.filter(item => 
+      !staticJaTexts.some(ja => ja.includes(item.ja) || item.ja.includes(ja))
+    );
+    
+    // If we need more questions, generate them dynamically from filteredVocab
+    if (generated.length < targetCount && vocab.length > 0) {
+      // Shuffle filteredVocab to get random items
+      const pool = filteredVocab.length > 0 ? filteredVocab : vocab;
+      const shuffledPool = shuffleArray(pool);
+      
+      let poolIndex = 0;
+      let attempts = 0;
+      
+      while (generated.length < targetCount && attempts < 50) {
+        attempts++;
+        const item = shuffledPool[poolIndex % shuffledPool.length];
+        poolIndex++;
+        
+        // Ensure no immediate duplicate within current session
+        const alreadyIn = generated.some(q => {
+          if (q.audioText && (q.audioText.includes(item.ja) || item.ja.includes(q.audioText))) return true;
+          if (q.targetJa && (q.targetJa.includes(item.ja) || item.ja.includes(q.targetJa))) return true;
+          if (q.pairs && q.pairs.some(p => p.ja.includes(item.ja) || item.ja.includes(p.ja))) return true;
+          return false;
+        });
+        
+        if (alreadyIn && attempts <= 30) {
+          continue;
+        }
+
+        // Randomly pick a question type (B: Listening, C: Typing, D: Shadowing)
+        const rand = Math.random();
+        if (rand < 0.35) {
+          // Type B: Listening & Choose
+          const otherTranslations = vocab
+            .filter(v => v.ja !== item.ja)
+            .map(v => v.id);
+          const wrongOptions = shuffleArray(otherTranslations).slice(0, 2);
+          const options = shuffleArray([item.id, ...wrongOptions]);
+          const correctIndex = options.indexOf(item.id);
+          
+          generated.push({
+            type: 'B',
+            prompt: 'Dengar dan pilih arti yang tepat!',
+            audioText: item.ja,
