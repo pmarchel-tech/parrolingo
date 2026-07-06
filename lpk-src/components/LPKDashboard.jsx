@@ -20,7 +20,7 @@ import {
   ShieldCheck, Calendar, Clock, User, Award, CheckSquare, Square, Plane, 
   HeartHandshake, FileCheck, Ban, Edit3, BedDouble, Wallet, Users, Briefcase, 
   PlayCircle, RefreshCw, Send, CheckCircle2, AlertCircle, FileSignature, 
-  LogOut, PlusCircle, Check, Search, Sparkles, Building, Video
+  LogOut, PlusCircle, Check, Search, Sparkles, Building, Video, Download, Upload, FileText
 } from 'lucide-react';
 
 const PROCESS_ITEMS = {
@@ -33,7 +33,7 @@ const PROCESS_ITEMS = {
     { id: 'dormitory', label: '2.1 Masuk Asrama & Karakter' },
     { id: 'kaiwa_n4', label: '2.2 Kelas Bahasa Jepang (N4/JFT)' },
     { id: 'jlpt_prep', label: '2.3 Kelas Ujian JLPT Prep' },
-    { id: 'ssw_prep', label: '2.4 Pelatihan Caregiver (SSW)' },
+    { id: 'ssw_prep', label: '2.4 Pelatihan Keterampilan Caregiver' },
     { id: 'cultural_orientation', label: '2.5 Orientasi Budaya Jepang' },
     { id: 'kaiwa_mensetsu', label: '3.1 Wawancara Kerja (Mensetsu)' },
     { id: 'job_interview', label: '3.2 Wawancara dengan User Jepang' },
@@ -80,7 +80,8 @@ export default function LPKDashboard() {
     company: '',
     location: '',
     salary: '',
-    requirements: ''
+    requirements: '',
+    program: 'kaigo'
   });
   
   // Talent Filtering
@@ -278,7 +279,6 @@ export default function LPKDashboard() {
 
   // 4. LPK Admin Pre-screening Registration Approval & temporary key generation
   const handleApproveRegistration = async (email, name) => {
-    // Generate simple activation key for mobile app
     const tempKey = 'HK-' + Math.floor(100000 + Math.random() * 900000);
     await updateRegistrationStatus(email, 'Joined');
     await addLog({
@@ -302,7 +302,7 @@ export default function LPKDashboard() {
     await refreshData();
   };
 
-  // 5. Penyalur / Sending Agency: Add job listings
+  // 5. Penyalur / Sending Agency: Add job listings manually
   const handleCreateJob = async (e) => {
     e.preventDefault();
     if (!newJob.title || !newJob.company) return;
@@ -314,13 +314,81 @@ export default function LPKDashboard() {
       location: newJob.location,
       salary: newJob.salary,
       requirements: newJob.requirements,
+      program: newJob.program || 'kaigo',
       postedDate: new Date().toLocaleDateString('id-ID')
     };
 
     await addJobListing(job);
-    setNewJob({ title: '', company: '', location: '', salary: '', requirements: '' });
+    setNewJob({ title: '', company: '', location: '', salary: '', requirements: '', program: 'kaigo' });
     alert('Lowongan pekerjaan baru dipublikasikan untuk alumni & pekerja!');
     await refreshData();
+  };
+
+  // CSV Template Downloader
+  const downloadCSVTemplate = () => {
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + "title,company,location,salary,requirements,program\n"
+      + "\"Caregiver Lansia Senior\",\"Sakura Care Home\",\"Tokyo\",\"¥190,000\",\"JLPT N4 & SSW Caregiver\",\"kaigo\"\n"
+      + "\"Operator Perakitan Otomotif\",\"Toyota Kanto Plant\",\"Kanagawa\",\"¥210,000\",\"JLPT N4 & SSW Seizogyo\",\"seizogyo\"";
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "template_lowongan_jepang.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // CSV Importer
+  const handleImportCSV = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      try {
+        const text = event.target.result;
+        const lines = text.split('\n');
+        let importedCount = 0;
+
+        for (let i = 1; i < lines.length; i++) {
+          const line = lines[i].trim();
+          if (!line) continue;
+
+          // Simple CSV line parser split by comma, ignoring commas inside quotes
+          const matches = line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || line.split(',');
+          if (matches.length < 2) continue;
+
+          const title = matches[0]?.replace(/"/g, '') || '';
+          const company = matches[1]?.replace(/"/g, '') || '';
+          const location = matches[2]?.replace(/"/g, '') || '';
+          const salary = matches[3]?.replace(/"/g, '') || '';
+          const requirements = matches[4]?.replace(/"/g, '') || '';
+          const program = matches[5]?.replace(/"/g, '') || 'kaigo';
+
+          const job = {
+            jobId: 'job-csv-' + Date.now() + '-' + i,
+            title,
+            company,
+            location,
+            salary,
+            requirements,
+            program,
+            postedDate: new Date().toLocaleDateString('id-ID')
+          };
+
+          await addJobListing(job);
+          importedCount++;
+        }
+
+        alert(`Berhasil mengimpor ${importedCount} lowongan kerja dari berkas CSV!`);
+        await refreshData();
+      } catch (err) {
+        alert('Gagal mengimpor berkas CSV. Pastikan format kolom sesuai dengan template.');
+        console.error(err);
+      }
+    };
+    reader.readAsText(file);
   };
 
   // 6. Mitra Jepang: Submit Alumnus Performance review
@@ -355,7 +423,7 @@ export default function LPKDashboard() {
     await refreshData();
   };
 
-  // LPK Admin: Checkbox checklist status
+  // LPK Admin: Toggle checklist status
   const handleToggleChecklist = async (itemId, currentStatus) => {
     if (!checklist) return;
     const newStatus = currentStatus === 'completed' ? 'pending' : 'completed';
@@ -377,22 +445,22 @@ export default function LPKDashboard() {
       {/* Sidebar Nav */}
       <aside className="lpk-sidebar">
         <div className="lpk-logo-area">
-          <Building size={28} color="var(--primary)" />
+          <Building size={24} color="var(--primary-accent)" />
           <h2 className="lpk-logo-title">Hikari LPK Center</h2>
         </div>
 
         {/* Global Role Switcher */}
         <div style={{ marginBottom: '24px' }}>
-          <label style={{ fontSize: '11px', textTransform: 'uppercase', color: 'var(--outline)', fontWeight: '700' }}>Simulasi Peran</label>
+          <label style={{ fontSize: '11px', textTransform: 'uppercase', color: 'var(--text-muted)', fontWeight: '700' }}>Simulasi Peran</label>
           <select 
             value={activeRole} 
             onChange={(e) => setActiveRole(e.target.value)}
             className="input-field"
-            style={{ marginTop: '4px', border: '2px solid var(--primary)', backgroundColor: 'var(--primary-container)', fontWeight: '700' }}
+            style={{ marginTop: '4px', border: '1px solid var(--primary-accent)', fontWeight: '700', color: 'var(--primary-accent)', backgroundColor: 'var(--primary-light)' }}
           >
-            <option value="lpk_admin">🏫 LPK Admin / Owner</option>
+            <option value="lpk_admin">🏫 LPK Admin & Owner</option>
             <option value="perusahaan_jepang">🏢 Mitra User (Jepang)</option>
-            <option value="penyalur_agency">🤝 Penyalur (Sending Agency)</option>
+            <option value="penyalur_agency">🤝 Penyalur / Agency</option>
           </select>
         </div>
 
@@ -424,16 +492,16 @@ export default function LPKDashboard() {
           )}
         </nav>
 
-        <div style={{ borderTop: '1px solid var(--surface-container-high)', paddingTop: '16px', marginTop: 'auto' }}>
+        <div style={{ borderTop: '1px solid var(--border)', paddingTop: '16px', marginTop: 'auto' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: 'var(--primary)', color: 'white', display: 'flex', alignItems: 'center', justifySelf: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: '700' }}>
+            <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: 'var(--primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: '700' }}>
               {activeRole === 'lpk_admin' ? 'AD' : activeRole === 'perusahaan_jepang' ? 'JP' : 'AG'}
             </div>
             <div>
               <div style={{ fontSize: '12px', fontWeight: '700' }}>
                 {activeRole === 'lpk_admin' ? 'Staff Admin LPK' : activeRole === 'perusahaan_jepang' ? 'Sakura Care Corp' : 'Penyalur Sakura'}
               </div>
-              <div style={{ fontSize: '10px', color: 'var(--outline)' }}>Simulasi Sesi</div>
+              <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Simulasi Sesi</div>
             </div>
           </div>
         </div>
@@ -447,8 +515,8 @@ export default function LPKDashboard() {
           <div>
             <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
               <div>
-                <h1 style={{ margin: 0, fontSize: '24px' }}>🏫 Panel LPK Admin (B2B)</h1>
-                <p style={{ color: 'var(--outline)', margin: '4px 0 0 0', fontSize: '13px' }}>Kelola ranjang asrama, monitoring cicilan dana talangan, filter pre-screening, dan alur terbang.</p>
+                <h1 style={{ margin: 0, fontSize: '22px' }}>🏫 Panel LPK Admin Overview</h1>
+                <p style={{ color: 'var(--text-muted)', margin: '4px 0 0 0', fontSize: '12px' }}>Kelola kapasitas fisik asrama, kas cicilan dana talangan, dan kualifikasi calon siswa.</p>
               </div>
               <div>
                 <select value={selectedLpk} onChange={(e) => setSelectedLpk(e.target.value)} className="input-field" style={{ width: '180px' }}>
@@ -458,47 +526,131 @@ export default function LPKDashboard() {
               </div>
             </header>
 
-            {/* SCREEN: OVERVIEW */}
+            {/* SCREEN: OVERVIEW (Interactive Dashboard with SVG Graphs) */}
             {activeTab === 'overview' && (
               <div>
+                {/* Clickable Kpi Summary Cards */}
                 <div className="finance-grid">
-                  <div className="finance-card">
-                    <div style={{ fontSize: '12px', color: 'var(--outline)', fontWeight: '700' }}>TOTAL KAS LPK</div>
+                  <div className="finance-card" onClick={() => setActiveTab('keuangan')} style={{ cursor: 'pointer', transition: 'transform 0.15s ease' }}>
+                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.02em' }}>TOTAL KAS LPK ➔</div>
                     <div className="finance-val">Rp {totalKas.toLocaleString('id-ID')}</div>
+                    <div style={{ fontSize: '11px', color: 'var(--secondary)', marginTop: '4px', fontWeight: '600' }}>Klik untuk detail transaksi</div>
                   </div>
-                  <div className="finance-card">
-                    <div style={{ fontSize: '12px', color: 'var(--outline)', fontWeight: '700' }}>OUTSTANDING DANA TALANGAN</div>
-                    <div className="finance-val">Rp {outstandingTalangan.toLocaleString('id-ID')}</div>
+                  
+                  <div className="finance-card" onClick={() => setActiveTab('keuangan')} style={{ cursor: 'pointer', transition: 'transform 0.15s ease' }}>
+                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.02em' }}>OUTSTANDING DANA TALANGAN ➔</div>
+                    <div className="finance-val" style={{ color: 'var(--danger)' }}>Rp {outstandingTalangan.toLocaleString('id-ID')}</div>
+                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px' }}>Verifikasi slip potong gaji</div>
                   </div>
-                  <div className="finance-card">
-                    <div style={{ fontSize: '12px', color: 'var(--outline)', fontWeight: '700' }}>KAPASITAS ASRAMA</div>
+
+                  <div className="finance-card" onClick={() => setActiveTab('asrama')} style={{ cursor: 'pointer', transition: 'transform 0.15s ease' }}>
+                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.02em' }}>KAPASITAS ASRAMA ➔</div>
                     <div className="finance-val">
                       {dormRooms.reduce((sum, r) => sum + r.beds.filter(b => b.status === 'occupied').length, 0)}
                       {' / '}
                       {dormRooms.reduce((sum, r) => sum + r.beds.length, 0)} Ranjang
                     </div>
+                    <div style={{ fontSize: '11px', color: 'var(--primary-accent)', marginTop: '4px', fontWeight: '600' }}>Klik untuk peta kamar tidur</div>
                   </div>
+                </div>
+
+                {/* VISUAL CHARTS & GRAPHS SECTION */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '24px' }}>
+                  
+                  {/* Graph 1: Student Pipeline Stage distribution */}
+                  <div className="card" onClick={() => setActiveTab('siswa_proses')} style={{ cursor: 'pointer' }}>
+                    <h3 style={{ fontSize: '14px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      📊 Grafik Distribusi Tahap Alur Terbang (Klik untuk Detail)
+                    </h3>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      <div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: '600', marginBottom: '4px' }}>
+                          <span>1. Persiapan Awal (Briefing & BMI)</span>
+                          <span>60% (Lulus 3/5 Siswa)</span>
+                        </div>
+                        <div style={{ width: '100%', height: '8px', backgroundColor: 'var(--primary-light)', borderRadius: '4px', overflow: 'hidden' }}>
+                          <div style={{ width: '60%', height: '100%', backgroundColor: 'var(--primary-accent)' }}></div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: '600', marginBottom: '4px' }}>
+                          <span>2. Kelas Bahasa & Asrama</span>
+                          <span>80% (Lulus 4/5 Siswa)</span>
+                        </div>
+                        <div style={{ width: '100%', height: '8px', backgroundColor: 'var(--primary-light)', borderRadius: '4px', overflow: 'hidden' }}>
+                          <div style={{ width: '80%', height: '100%', backgroundColor: 'var(--secondary)' }}></div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: '600', marginBottom: '4px' }}>
+                          <span>3. Wawancara Kerja & Kontrak</span>
+                          <span>40% (2 Siswa Match)</span>
+                        </div>
+                        <div style={{ width: '100%', height: '8px', backgroundColor: 'var(--primary-light)', borderRadius: '4px', overflow: 'hidden' }}>
+                          <div style={{ width: '40%', height: '100%', backgroundColor: 'var(--warning)' }}></div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: '600', marginBottom: '4px' }}>
+                          <span>4. Paspor & Kelayakan CoE</span>
+                          <span>20% (1 Siswa Terbit)</span>
+                        </div>
+                        <div style={{ width: '100%', height: '8px', backgroundColor: 'var(--primary-light)', borderRadius: '4px', overflow: 'hidden' }}>
+                          <div style={{ width: '20%', height: '100%', backgroundColor: 'var(--danger)' }}></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Graph 2: Financial collection target */}
+                  <div className="card" onClick={() => setActiveTab('keuangan')} style={{ cursor: 'pointer' }}>
+                    <h3 style={{ fontSize: '14px', marginBottom: '16px' }}>📉 Cash Flow: Cicilan Dana Talangan Terkumpul</h3>
+                    
+                    {/* SVG Minimalist Column Chart */}
+                    <div style={{ display: 'flex', alignItems: 'flex-end', height: '110px', gap: '20px', borderBottom: '1.5px solid var(--border)', paddingBottom: '8px', marginBottom: '8px' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
+                        <div style={{ height: '70px', width: '24px', backgroundColor: 'var(--secondary)', borderRadius: '4px' }}></div>
+                        <span style={{ fontSize: '10px', color: 'var(--text-muted)', marginTop: '4px' }}>Target</span>
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
+                        <div style={{ height: '23px', width: '24px', backgroundColor: 'var(--primary-accent)', borderRadius: '4px' }}></div>
+                        <span style={{ fontSize: '10px', color: 'var(--text-muted)', marginTop: '4px' }}>Diterima</span>
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
+                        <div style={{ height: '47px', width: '24px', backgroundColor: 'var(--danger)', borderRadius: '4px' }}></div>
+                        <span style={{ fontSize: '10px', color: 'var(--text-muted)', marginTop: '4px' }}>Tertunda</span>
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: 'var(--text-muted)' }}>
+                      <span>Target: Rp 15.000.000</span>
+                      <span>Tertunda (Dispute): Rp 10.000.000</span>
+                    </div>
+                  </div>
+
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px' }}>
                   <div className="card">
-                    <h2 style={{ fontSize: '16px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <Clock size={18} color="var(--primary)" /> Log Audit Aktivitas LPK
+                    <h2 style={{ fontSize: '14px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <Clock size={16} color="var(--primary-accent)" /> Log Audit Aktivitas LPK Terbaru
                     </h2>
-                    <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                    <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
                       {logs.length === 0 ? (
-                        <p style={{ color: 'var(--outline)', fontSize: '13px' }}>Belum ada log terekam.</p>
+                        <p style={{ color: 'var(--text-muted)', fontSize: '12px' }}>Belum ada aktivitas audit.</p>
                       ) : (
                         <table className="ledger-table">
                           <thead>
                             <tr>
                               <th>Waktu</th>
                               <th>Aksi</th>
-                              <th>Keterangan</th>
+                              <th>Rincian Audit</th>
                             </tr>
                           </thead>
                           <tbody>
-                            {[...logs].reverse().map((log) => (
+                            {[...logs].reverse().slice(0, 5).map((log) => (
                               <tr key={log.id}>
                                 <td style={{ whiteSpace: 'nowrap' }}>{new Date(log.timestamp).toLocaleTimeString('id-ID')}</td>
                                 <td><span className="badge badge-blue">{log.action}</span></td>
@@ -512,7 +664,7 @@ export default function LPKDashboard() {
                   </div>
 
                   <div className="card">
-                    <h2 style={{ fontSize: '16px', marginBottom: '16px' }}><Video size={18} /> Panduan Modul</h2>
+                    <h2 style={{ fontSize: '14px', marginBottom: '12px' }}><Video size={16} /> Panduan Video Operasional</h2>
                     <div 
                       className="video-mockup" 
                       onClick={() => {
@@ -522,11 +674,8 @@ export default function LPKDashboard() {
                     >
                       <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/0.jpg" alt="Video Thumbnail" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.4, position: 'absolute' }} />
                       <div className="video-play-btn">
-                        <PlayCircle size={32} />
+                        <PlayCircle size={24} />
                       </div>
-                      <span style={{ position: 'absolute', bottom: '12px', left: '12px', color: 'white', fontWeight: '700', fontSize: '11px', textShadow: '1px 1px 4px rgba(0,0,0,0.8)' }}>
-                        Modul Panduan Dana Talangan
-                      </span>
                     </div>
                   </div>
                 </div>
@@ -536,15 +685,18 @@ export default function LPKDashboard() {
             {/* SCREEN: ASRAMA */}
             {activeTab === 'asrama' && (
               <div className="card">
-                <h2 style={{ fontSize: '18px', marginBottom: '8px' }}>🛏️ Peta Alokasi Ranjang Asrama</h2>
-                <p style={{ color: 'var(--outline)', fontSize: '13px', marginBottom: '24px' }}>
-                  Atur ranjang secara visual. Klik ranjang kosong untuk check-in siswa. Ranjang dihuni dapat dibebaskan/check-out secara manual.
+                <h2 style={{ fontSize: '16px', marginBottom: '8px' }}>🛏️ Peta Alokasi Ranjang Asrama</h2>
+                <p style={{ color: 'var(--text-muted)', fontSize: '12px', marginBottom: '20px' }}>
+                  Klik ranjang kosong untuk check-in siswa. Ranjang dihuni dapat dibebaskan secara manual.
                 </p>
 
                 <div className="dorm-grid">
                   {dormRooms.map(room => (
                     <div key={room.roomId} className="room-card">
-                      <div className="room-title">{room.name} ({room.type})</div>
+                      <div className="room-title">
+                        <span>{room.name}</span>
+                        <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{room.type}</span>
+                      </div>
                       <div className="bed-grid">
                         {room.beds.map((bed, idx) => (
                           <div 
@@ -559,12 +711,12 @@ export default function LPKDashboard() {
                               }
                             }}
                           >
-                            <BedDouble size={20} />
-                            <span style={{ fontSize: '10px', marginTop: '4px' }}>Ranjang {idx + 1}</span>
+                            <BedDouble size={16} />
+                            <span style={{ fontSize: '10px', marginTop: '4px', fontWeight: '500' }}>Ranjang {idx + 1}</span>
                             {bed.status === 'occupied' ? (
                               <span className="bed-name">{bed.occupiedBy}</span>
                             ) : (
-                              <span style={{ fontSize: '9px', color: '#10b981', fontWeight: '700' }}>KOSONG</span>
+                              <span style={{ fontSize: '9px', color: 'var(--secondary)', fontWeight: '700', marginTop: '4px' }}>KOSONG</span>
                             )}
                           </div>
                         ))}
@@ -578,7 +730,7 @@ export default function LPKDashboard() {
             {/* SCREEN: KEUANGAN */}
             {activeTab === 'keuangan' && (
               <div className="card">
-                <h2 style={{ fontSize: '18px', marginBottom: '20px' }}>💵 Buku Ledger & Cicilan Dana Talangan</h2>
+                <h2 style={{ fontSize: '16px', marginBottom: '20px' }}>💵 Buku Ledger & Cicilan Dana Talangan</h2>
                 
                 {financialLedgers.map(l => {
                   const hasDispute = (l.loanInstallments || []).some(ins => ins.disputed);
@@ -586,29 +738,29 @@ export default function LPKDashboard() {
                     <div 
                       key={l.studentName} 
                       style={{ 
-                        border: '1px solid var(--surface-container-high)', 
-                        borderRadius: '12px', 
-                        padding: '20px', 
-                        marginBottom: '20px',
+                        border: '1px solid var(--border)', 
+                        borderRadius: '8px', 
+                        padding: '16px', 
+                        marginBottom: '16px',
                         backgroundColor: hasDispute ? '#fffbeb' : 'var(--surface)',
-                        borderLeft: hasDispute ? '6px solid #d97706' : '1px solid var(--surface-container-high)'
+                        borderLeft: hasDispute ? '4px solid var(--warning)' : '1px solid var(--border)'
                       }}
                     >
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                         <div>
-                          <h3 style={{ margin: 0, fontSize: '16px' }}>{l.studentName}</h3>
-                          <span style={{ fontSize: '12px', color: 'var(--outline)' }}>
+                          <h3 style={{ margin: 0, fontSize: '14px' }}>{l.studentName}</h3>
+                          <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
                             Program: {l.program === 'kaigo' ? 'Kaigo' : l.program === 'seizogyo' ? 'Pabrik' : 'Nogyo'}
                           </span>
                         </div>
                         {hasDispute && (
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#b45309', fontWeight: '700', fontSize: '12px' }}>
-                            <AlertCircle size={16} />
-                            <span>Terdapat Sanggahan Siswa (Dispute)!</span>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--warning)', fontWeight: '700', fontSize: '11px' }}>
+                            <AlertCircle size={14} />
+                            <span>Terdapat Sanggahan Siswa!</span>
                           </div>
                         )}
                         <div>
-                          <span style={{ fontSize: '13px', fontWeight: '700' }}>
+                          <span style={{ fontSize: '12px', fontWeight: '700' }}>
                             Terbayar: Rp {(l.paidAmount || 0).toLocaleString('id-ID')} / Rp {l.totalCost.toLocaleString('id-ID')}
                           </span>
                         </div>
@@ -620,22 +772,22 @@ export default function LPKDashboard() {
                           <div 
                             key={idx} 
                             style={{ 
-                              padding: '8px 12px', 
-                              borderRadius: '8px', 
+                              padding: '6px 10px', 
+                              borderRadius: '6px', 
                               border: '1px solid',
-                              borderColor: ins.status === 'Paid' ? '#10b981' : ins.disputed ? '#d97706' : 'var(--outline-variant)',
-                              backgroundColor: ins.status === 'Paid' ? '#ecfdf5' : ins.disputed ? '#fef3c7' : '#f8fafc',
+                              borderColor: ins.status === 'Paid' ? '#bbf7d0' : ins.disputed ? '#fde68a' : 'var(--border)',
+                              backgroundColor: ins.status === 'Paid' ? '#f0fdf4' : ins.disputed ? '#fffbeb' : '#f8fafc',
                               fontSize: '11px',
                               display: 'flex',
                               flexDirection: 'column',
-                              gap: '4px'
+                              gap: '2px'
                             }}
                           >
                             <span style={{ fontWeight: '700' }}>Bulan {idx + 1}</span>
                             <span>Rp {ins.amount.toLocaleString('id-ID')}</span>
                             <span style={{ 
                               fontWeight: '700', 
-                              color: ins.status === 'Paid' ? '#047857' : ins.disputed ? '#b45309' : 'var(--outline)' 
+                              color: ins.status === 'Paid' ? 'var(--secondary)' : ins.disputed ? 'var(--warning)' : 'var(--text-muted)' 
                             }}>
                               {ins.status === 'Paid' ? 'Paid' : ins.disputed ? 'SANGGAHAN' : 'Pending'}
                             </span>
@@ -645,7 +797,7 @@ export default function LPKDashboard() {
                               <button 
                                 onClick={() => handleVerifyInstallment(l.studentName, idx)}
                                 className="btn btn-secondary" 
-                                style={{ height: '24px', padding: '0 8px', fontSize: '10px', marginTop: '4px', borderRadius: '4px' }}
+                                style={{ height: '22px', padding: '0 6px', fontSize: '9px', marginTop: '4px', borderRadius: '4px' }}
                               >
                                 Tandai Lunas
                               </button>
@@ -656,15 +808,15 @@ export default function LPKDashboard() {
                                 <button 
                                   onClick={() => handleVerifyInstallment(l.studentName, idx)}
                                   className="btn btn-primary" 
-                                  style={{ height: '24px', padding: '0 6px', fontSize: '9px', borderRadius: '4px' }}
-                                  title="Gaji telah dipotong di Jepang. Klik untuk setuju."
+                                  style={{ height: '22px', padding: '0 4px', fontSize: '9px', borderRadius: '4px' }}
+                                  title="Gaji telah dipotong di Jepang."
                                 >
-                                  Terima Klaim
+                                  Setuju
                                 </button>
                                 <button 
                                   onClick={() => handleRejectDispute(l.studentName, idx)}
                                   className="btn btn-outline" 
-                                  style={{ height: '24px', padding: '0 6px', fontSize: '9px', borderColor: '#ef4444', color: '#ef4444', borderRadius: '4px' }}
+                                  style={{ height: '22px', padding: '0 4px', fontSize: '9px', borderColor: 'var(--danger)', color: 'var(--danger)', borderRadius: '4px' }}
                                 >
                                   Tolak
                                 </button>
@@ -683,9 +835,9 @@ export default function LPKDashboard() {
             {activeTab === 'siswa_proses' && (
               <div className="card">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                  <h2 style={{ fontSize: '18px', margin: 0 }}>📋 Checklist Alur Proses Kerja & Terbang</h2>
+                  <h2 style={{ fontSize: '16px', margin: 0 }}>📋 Checklist Alur Proses Kerja & Terbang</h2>
                   <div>
-                    <label style={{ fontSize: '12px', marginRight: '8px', color: 'var(--outline)', fontWeight: '600' }}>Siswa Aktif:</label>
+                    <label style={{ fontSize: '11px', marginRight: '6px', color: 'var(--text-muted)', fontWeight: '600' }}>Siswa Aktif:</label>
                     <select value={selectedStudent} onChange={(e) => setSelectedStudent(e.target.value)} className="input-field" style={{ width: '160px', display: 'inline-block' }}>
                       {(STUDENTS_BY_LPK[selectedLpk] || []).map(std => (
                         <option key={std} value={std}>{std}</option>
@@ -696,12 +848,12 @@ export default function LPKDashboard() {
 
                 {checklist ? (
                   <div>
-                    <div style={{ backgroundColor: 'var(--surface-container-low)', padding: '16px', borderRadius: '8px', marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontSize: '14px', fontWeight: '700' }}>Siswa: {checklist.studentName}</span>
+                    <div style={{ backgroundColor: 'var(--background)', padding: '12px 16px', borderRadius: '6px', marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: '1px solid var(--border)' }}>
+                      <span style={{ fontSize: '13px', fontWeight: '700' }}>Siswa: {checklist.studentName}</span>
                       <span className="badge badge-blue">Program: {checklist.program === 'kaigo' ? 'Kaigo' : 'Pabrik'}</span>
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '8px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '4px' }}>
                       {PROCESS_ITEMS.departure.map(item => {
                         const status = checklist.statuses[item.id] || 'pending';
                         return (
@@ -711,19 +863,19 @@ export default function LPKDashboard() {
                               display: 'flex', 
                               alignItems: 'center', 
                               justifyContent: 'space-between', 
-                              padding: '12px 16px', 
-                              borderBottom: '1px solid var(--surface-container-high)',
+                              padding: '10px 12px', 
+                              borderBottom: '1px solid var(--border)',
                               backgroundColor: status === 'completed' ? '#f0fdf4' : 'transparent'
                             }}
                           >
-                            <span style={{ fontSize: '14px', color: status === 'completed' ? '#047857' : 'var(--on-surface)' }}>
+                            <span style={{ fontSize: '13px', color: status === 'completed' ? 'var(--secondary)' : 'var(--text-main)' }}>
                               {item.label}
                             </span>
                             <button 
                               onClick={() => handleToggleChecklist(item.id, status)}
-                              style={{ background: 'none', border: 'none', cursor: 'pointer', color: status === 'completed' ? '#10b981' : 'var(--outline)' }}
+                              style={{ background: 'none', border: 'none', cursor: 'pointer', color: status === 'completed' ? 'var(--secondary)' : 'var(--text-light)' }}
                             >
-                              {status === 'completed' ? <CheckSquare size={22} /> : <Square size={22} />}
+                              {status === 'completed' ? <CheckSquare size={20} /> : <Square size={20} />}
                             </button>
                           </div>
                         );
@@ -731,7 +883,7 @@ export default function LPKDashboard() {
                     </div>
                   </div>
                 ) : (
-                  <p style={{ color: 'var(--outline)', fontSize: '13px' }}>Memuat checklist siswa...</p>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '12px' }}>Memuat checklist siswa...</p>
                 )}
               </div>
             )}
@@ -739,16 +891,16 @@ export default function LPKDashboard() {
             {/* SCREEN: PRE-SCREENING */}
             {activeTab === 'prescreening' && (
               <div className="card">
-                <h2 style={{ fontSize: '18px', marginBottom: '20px' }}>📝 Pendaftaran Calon Siswa Baru (Pre-screening)</h2>
+                <h2 style={{ fontSize: '16px', marginBottom: '16px' }}>📝 Calon Siswa Baru (Hasil Filter Otomatis)</h2>
                 
                 <table className="ledger-table">
                   <thead>
                     <tr>
                       <th>Calon Pelamar</th>
                       <th>Program</th>
-                      <th>Usia & Kualifikasi Fisik</th>
+                      <th>Usia & Fisik</th>
                       <th>Buta Warna</th>
-                      <th>Kualifikasi</th>
+                      <th>Sekolah</th>
                       <th>Status</th>
                       <th>Aksi</th>
                     </tr>
@@ -758,12 +910,12 @@ export default function LPKDashboard() {
                       <tr key={reg.email}>
                         <td>
                           <div style={{ fontWeight: '700' }}>{reg.name}</div>
-                          <div style={{ fontSize: '11px', color: 'var(--outline)' }}>{reg.email} | {reg.phone}</div>
+                          <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{reg.email}</div>
                         </td>
                         <td><span className="badge badge-blue">{reg.program.toUpperCase()}</span></td>
                         <td>{reg.age} Thn | {reg.height} cm / {reg.weight} kg</td>
                         <td>
-                          <span style={{ fontWeight: '700', color: reg.colorBlind === 'no' ? '#10b981' : '#ef4444' }}>
+                          <span style={{ fontWeight: '700', color: reg.colorBlind === 'no' ? 'var(--secondary)' : 'var(--danger)' }}>
                             {reg.colorBlind === 'no' ? 'Tidak' : 'Ya'}
                           </span>
                         </td>
@@ -777,29 +929,25 @@ export default function LPKDashboard() {
                         </td>
                         <td>
                           {reg.status === 'Applied' && (
-                            <div style={{ display: 'flex', gap: '8px' }}>
+                            <div style={{ display: 'flex', gap: '6px' }}>
                               <button 
                                 onClick={() => handleApproveRegistration(reg.email, reg.name)}
                                 className="btn btn-secondary" 
-                                style={{ height: '30px', padding: '0 12px', fontSize: '11px', borderRadius: '15px' }}
+                                style={{ height: '28px', padding: '0 10px', fontSize: '11px' }}
                               >
                                 Terima ke LPK
                               </button>
                               <button 
                                 onClick={() => handleRejectRegistration(reg.email, reg.name)}
                                 className="btn btn-outline" 
-                                style={{ height: '30px', padding: '0 12px', fontSize: '11px', borderColor: '#ef4444', color: '#ef4444', borderRadius: '15px' }}
+                                style={{ height: '28px', padding: '0 10px', fontSize: '11px', borderColor: 'var(--danger)', color: 'var(--danger)' }}
                               >
                                 Tolak
                               </button>
                             </div>
                           )}
-                          {reg.status === 'Joined' && (
-                            <span style={{ fontSize: '11px', color: '#10b981', fontWeight: '700' }}>✓ Akun Dibuat</span>
-                          )}
-                          {reg.status === 'Rejected' && (
-                            <span style={{ fontSize: '11px', color: '#ef4444', fontWeight: '700' }}>✗ Tidak Memenuhi</span>
-                          )}
+                          {reg.status === 'Joined' && <span style={{ fontSize: '11px', color: 'var(--secondary)', fontWeight: '700' }}>✓ Diterima</span>}
+                          {reg.status === 'Rejected' && <span style={{ fontSize: '11px', color: 'var(--danger)', fontWeight: '700' }}>✗ Gugur Fisik</span>}
                         </td>
                       </tr>
                     ))}
@@ -814,23 +962,67 @@ export default function LPKDashboard() {
         {activeRole === 'perusahaan_jepang' && (
           <div>
             <header style={{ marginBottom: '24px' }}>
-              <h1 style={{ margin: 0, fontSize: '24px' }}>🏢 Portal Mitra Kerja (Panti Lansia Jepang)</h1>
-              <p style={{ color: 'var(--outline)', margin: '4px 0 0 0', fontSize: '13px' }}>Pemberi kerja dapat menyaring siswa, memutar video Jikoshoukai, dan mengirim ulasan kinerja alumni.</p>
+              <h1 style={{ margin: 0, fontSize: '22px' }}>🏢 Portal Mitra Kerja (Panti Lansia Jepang)</h1>
+              <p style={{ color: 'var(--text-muted)', margin: '4px 0 0 0', fontSize: '12px' }}>Pemberi kerja dapat menyaring siswa, memutar video Jikoshoukai, dan mengimpor template lowongan.</p>
             </header>
 
-            {/* SCREEN: OVERVIEW */}
+            {/* SCREEN: OVERVIEW (Mitra Jepang Dashboard with Clickable SVG Graphics) */}
             {activeTab === 'overview' && (
-              <div className="card">
-                <h2 style={{ fontSize: '16px', marginBottom: '12px' }}>Pemberitahuan & Kuota Panti Anda</h2>
+              <div>
                 <div className="finance-grid">
-                  <div className="finance-card">
-                    <div style={{ fontSize: '12px', color: 'var(--outline)', fontWeight: '700' }}>ALUMNI AKTIF</div>
+                  <div className="finance-card" onClick={() => setActiveTab('talent_pool')} style={{ cursor: 'pointer' }}>
+                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '700', textTransform: 'uppercase' }}>KANDIDAT TERSEDIA ➔</div>
+                    <div className="finance-val">4 Siswa Siap</div>
+                    <div style={{ fontSize: '11px', color: 'var(--primary-accent)', marginTop: '4px', fontWeight: '600' }}>Klik untuk cari bakat</div>
+                  </div>
+
+                  <div className="finance-card" onClick={() => setActiveTab('evaluasi')} style={{ cursor: 'pointer' }}>
+                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '700', textTransform: 'uppercase' }}>ALUMNI DI PANTI ANDA ➔</div>
                     <div className="finance-val">2 Caregivers</div>
+                    <div style={{ fontSize: '11px', color: 'var(--secondary)', marginTop: '4px', fontWeight: '600' }}>Klik untuk ulasan bulanan</div>
                   </div>
-                  <div className="finance-card">
-                    <div style={{ fontSize: '12px', color: 'var(--outline)', fontWeight: '700' }}>KUOTA KONTRAK BARU</div>
-                    <div className="finance-val">4 Slot Terbuka</div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '24px' }}>
+                  
+                  {/* Alumnus Performance Distribution Graph */}
+                  <div className="card" onClick={() => setActiveTab('evaluasi')} style={{ cursor: 'pointer' }}>
+                    <h3 style={{ fontSize: '14px', marginBottom: '16px' }}>📊 Distribusi Penilaian Kinerja Alumni di Panti Anda (Klik untuk Nilai)</h3>
+                    <div style={{ display: 'flex', alignItems: 'flex-end', height: '100px', gap: '30px', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
+                        <div style={{ height: '70px', width: '32px', backgroundColor: 'var(--secondary)', borderRadius: '4px' }}></div>
+                        <span style={{ fontSize: '11px', fontWeight: '700', marginTop: '4px' }}>A (Sangat Baik)</span>
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
+                        <div style={{ height: '30px', width: '32px', backgroundColor: 'var(--primary-accent)', borderRadius: '4px' }}></div>
+                        <span style={{ fontSize: '11px', fontWeight: '700', marginTop: '4px' }}>B (Cukup)</span>
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
+                        <div style={{ height: '0px', width: '32px', backgroundColor: 'var(--danger)', borderRadius: '4px' }}></div>
+                        <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px' }}>C/D (Kurang)</span>
+                      </div>
+                    </div>
                   </div>
+
+                  {/* CSV Template & Upload Card */}
+                  <div className="card">
+                    <h3 style={{ fontSize: '14px', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <FileText size={16} color="var(--primary-accent)" /> Muat Pekerjaan Baru via Template CSV
+                    </h3>
+                    <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '16px' }}>
+                      Unduh berkas template CSV, masukkan daftar lowongan kerja dari Jepang, lalu unggah kembali untuk menyebarkannya ke LPK.
+                    </p>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button onClick={downloadCSVTemplate} className="btn btn-outline" style={{ flex: 1 }}>
+                        <Download size={14} /> Unduh Template
+                      </button>
+                      <label className="btn btn-secondary" style={{ flex: 1, cursor: 'pointer' }}>
+                        <Upload size={14} /> Unggah CSV
+                        <input type="file" accept=".csv" onChange={handleImportCSV} style={{ display: 'none' }} />
+                      </label>
+                    </div>
+                  </div>
+
                 </div>
               </div>
             )}
@@ -838,19 +1030,19 @@ export default function LPKDashboard() {
             {/* SCREEN: TALENT POOL */}
             {activeTab === 'talent_pool' && (
               <div className="card">
-                <h2 style={{ fontSize: '18px', marginBottom: '16px' }}>🔍 Talent Pool (Siswa Siap Salur)</h2>
+                <h2 style={{ fontSize: '16px', marginBottom: '16px' }}>🔍 Talent Pool (Siswa Siap Salur)</h2>
                 
                 {/* Filters */}
                 <div style={{ display: 'flex', gap: '16px', marginBottom: '24px' }}>
                   <div>
-                    <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--outline)' }}>Program Bidang Kerja:</label>
+                    <label style={{ fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)' }}>Program Bidang Kerja:</label>
                     <select value={filterProgram} onChange={(e) => setFilterProgram(e.target.value)} className="input-field" style={{ width: '160px', marginTop: '4px' }}>
                       <option value="kaigo">Caregiver (Kaigo)</option>
                       <option value="seizogyo">Pabrik (Seizogyo)</option>
                     </select>
                   </div>
                   <div>
-                    <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--outline)' }}>Sertifikat Bahasa:</label>
+                    <label style={{ fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)' }}>Sertifikat Bahasa:</label>
                     <select value={filterCert} onChange={(e) => setFilterCert(e.target.value)} className="input-field" style={{ width: '160px', marginTop: '4px' }}>
                       <option value="all">Semua</option>
                       <option value="n4">Lulus JLPT N4 / JFT</option>
@@ -859,12 +1051,12 @@ export default function LPKDashboard() {
                   </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '16px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '12px' }}>
                   {financialLedgers.map(l => (
-                    <div key={l.studentName} style={{ border: '1px solid var(--surface-container-high)', borderRadius: '12px', padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div key={l.studentName} style={{ border: '1px solid var(--border)', borderRadius: '8px', padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <div>
-                        <h3 style={{ margin: 0, fontSize: '15px' }}>{l.studentName}</h3>
-                        <div style={{ display: 'flex', gap: '8px', marginTop: '6px' }}>
+                        <h3 style={{ margin: 0, fontSize: '14px' }}>{l.studentName}</h3>
+                        <div style={{ display: 'flex', gap: '6px', marginTop: '4px' }}>
                           <span className="badge badge-blue">{l.program.toUpperCase()}</span>
                           <span className="badge badge-green">N4 & SSW Lulus</span>
                         </div>
@@ -876,16 +1068,16 @@ export default function LPKDashboard() {
                             setShowVideoModal(true);
                           }}
                           className="btn btn-outline" 
-                          style={{ height: '36px', padding: '0 16px', fontSize: '12px', borderRadius: '18px' }}
+                          style={{ height: '34px', padding: '0 12px', fontSize: '12px' }}
                         >
-                          <PlayCircle size={16} /> Video Jikoshoukai
+                          <PlayCircle size={14} /> Video Jikoshoukai
                         </button>
                         <button 
                           onClick={() => alert(`Undangan wawancara (Mensetsu) online dikirim untuk ${l.studentName}!`)}
                           className="btn btn-secondary" 
-                          style={{ height: '36px', padding: '0 16px', fontSize: '12px', borderRadius: '18px' }}
+                          style={{ height: '34px', padding: '0 12px', fontSize: '12px' }}
                         >
-                          Panggil Mensetsu
+                          Panggil Wawancara
                         </button>
                       </div>
                     </div>
@@ -897,14 +1089,14 @@ export default function LPKDashboard() {
             {/* SCREEN: EVALUASI */}
             {activeTab === 'evaluasi' && (
               <div className="card">
-                <h2 style={{ fontSize: '18px', marginBottom: '16px' }}>📝 Form Evaluasi Berkala Alumni</h2>
-                <p style={{ color: 'var(--outline)', fontSize: '13px', marginBottom: '24px' }}>
+                <h2 style={{ fontSize: '16px', marginBottom: '16px' }}>📝 Form Evaluasi Berkala Alumni</h2>
+                <p style={{ color: 'var(--text-muted)', fontSize: '12px', marginBottom: '24px' }}>
                   Berikan nilai kinerja dan penguasaan bahasa Jepang alumni LPK yang sedang bekerja di panti Anda.
                 </p>
 
                 <form onSubmit={handleSubmitEvaluation}>
                   <div style={{ marginBottom: '16px' }}>
-                    <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--outline)' }}>Pilih Pekerja:</label>
+                    <label style={{ fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)' }}>Pilih Pekerja:</label>
                     <select 
                       value={selectedAlumni} 
                       onChange={(e) => setSelectedAlumni(e.target.value)} 
@@ -918,7 +1110,7 @@ export default function LPKDashboard() {
                   </div>
 
                   <div style={{ marginBottom: '16px' }}>
-                    <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--outline)' }}>Nilai Kinerja & Bahasa Jepang:</label>
+                    <label style={{ fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)' }}>Nilai Kinerja & Bahasa Jepang:</label>
                     <select 
                       value={alumniEval.rating} 
                       onChange={(e) => setAlumniEval({ ...alumniEval, rating: e.target.value })} 
@@ -933,13 +1125,13 @@ export default function LPKDashboard() {
                   </div>
 
                   <div style={{ marginBottom: '24px' }}>
-                    <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--outline)' }}>Komentar Detail Kinerja:</label>
+                    <label style={{ fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)' }}>Komentar Detail Kinerja:</label>
                     <textarea 
                       value={alumniEval.comment}
                       onChange={(e) => setAlumniEval({ ...alumniEval, comment: e.target.value })}
                       placeholder="Masukkan ulasan harian atau kendala komunikasi siswa..."
                       className="input-field"
-                      style={{ height: '100px', borderRadius: '12px', padding: '12px', marginTop: '4px', resize: 'none' }}
+                      style={{ height: '80px', borderRadius: '8px', padding: '12px', marginTop: '4px', resize: 'none' }}
                       required
                     />
                   </div>
@@ -955,32 +1147,93 @@ export default function LPKDashboard() {
         {activeRole === 'penyalur_agency' && (
           <div>
             <header style={{ marginBottom: '24px' }}>
-              <h1 style={{ margin: 0, fontSize: '24px' }}>🤝 Portal Penyalur (Sending Agency Indonesia)</h1>
-              <p style={{ color: 'var(--outline)', margin: '4px 0 0 0', fontSize: '13px' }}>Buka lowongan kerja caregiver baru dan kelola piutang komisi rekrutmen.</p>
+              <h1 style={{ margin: 0, fontSize: '22px' }}>🤝 Portal Penyalur (Sending Agency Indonesia)</h1>
+              <p style={{ color: 'var(--text-muted)', margin: '4px 0 0 0', fontSize: '12px' }}>Kelola komisi sponsor pendaftaran dan import daftar lowongan kerja Jepang via CSV.</p>
             </header>
 
-            {/* SCREEN: OVERVIEW */}
+            {/* SCREEN: OVERVIEW (Penyalur Dashboard with SVG Graphs) */}
             {activeTab === 'overview' && (
-              <div className="card">
-                <h2 style={{ fontSize: '16px', marginBottom: '12px' }}>Ledger Rekrutmen Anda</h2>
+              <div>
                 <div className="finance-grid">
-                  <div className="finance-card">
-                    <div style={{ fontSize: '12px', color: 'var(--outline)', fontWeight: '700' }}>LOWONGAN AKTIF</div>
+                  <div className="finance-card" onClick={() => setActiveTab('lowongan')} style={{ cursor: 'pointer' }}>
+                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '700', textTransform: 'uppercase' }}>LOWONGAN AKTIF ➔</div>
                     <div className="finance-val">{jobListings.length} Pekerjaan</div>
+                    <div style={{ fontSize: '11px', color: 'var(--primary-accent)', marginTop: '4px', fontWeight: '600' }}>Klik untuk tambah lowongan</div>
                   </div>
-                  <div className="finance-card">
-                    <div style={{ fontSize: '12px', color: 'var(--outline)', fontWeight: '700' }}>KOMISI DISETUJUI LPK</div>
+
+                  <div className="finance-card" onClick={() => setActiveTab('referral')} style={{ cursor: 'pointer' }}>
+                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '700', textTransform: 'uppercase' }}>KOMISI DISETUJUI LPK ➔</div>
                     <div className="finance-val">Rp 25.000.000</div>
+                    <div style={{ fontSize: '11px', color: 'var(--secondary)', marginTop: '4px', fontWeight: '600' }}>Klik untuk ledger sponsor</div>
                   </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+                  
+                  {/* Graph 1: Desired Jobs by Category Chart */}
+                  <div className="card" onClick={() => setActiveTab('lowongan')} style={{ cursor: 'pointer' }}>
+                    <h3 style={{ fontSize: '14px', marginBottom: '16px' }}>📊 Distribusi Lowongan Kerja Aktif berdasarkan Sektor</h3>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                      <div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', marginBottom: '2px' }}>
+                          <span>Caregiver (Kaigo)</span>
+                          <span>{jobListings.filter(j => j.program === 'kaigo').length} Lowongan</span>
+                        </div>
+                        <div style={{ width: '100%', height: '6px', backgroundColor: 'var(--primary-light)', borderRadius: '3px' }}>
+                          <div style={{ width: `${(jobListings.filter(j => j.program === 'kaigo').length / Math.max(1, jobListings.length)) * 100}%`, height: '100%', backgroundColor: 'var(--secondary)', borderRadius: '3px' }}></div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', marginBottom: '2px' }}>
+                          <span>Pabrik (Seizogyo)</span>
+                          <span>{jobListings.filter(j => j.program === 'seizogyo').length} Lowongan</span>
+                        </div>
+                        <div style={{ width: '100%', height: '6px', backgroundColor: 'var(--primary-light)', borderRadius: '3px' }}>
+                          <div style={{ width: `${(jobListings.filter(j => j.program === 'seizogyo').length / Math.max(1, jobListings.length)) * 100}%`, height: '100%', backgroundColor: 'var(--primary-accent)', borderRadius: '3px' }}></div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', marginBottom: '2px' }}>
+                          <span>Pertanian & Perkebunan (Nogyo)</span>
+                          <span>{jobListings.filter(j => j.program === 'nogyo').length} Lowongan</span>
+                        </div>
+                        <div style={{ width: '100%', height: '6px', backgroundColor: 'var(--primary-light)', borderRadius: '3px' }}>
+                          <div style={{ width: `${(jobListings.filter(j => j.program === 'nogyo').length / Math.max(1, jobListings.length)) * 100}%`, height: '100%', backgroundColor: 'var(--warning)', borderRadius: '3px' }}></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* CSV Template & Upload Card */}
+                  <div className="card">
+                    <h3 style={{ fontSize: '14px', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <FileText size={16} color="var(--primary-accent)" /> Muat Pekerjaan Baru via Template CSV
+                    </h3>
+                    <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '16px' }}>
+                      Unduh berkas template CSV, masukkan daftar lowongan kerja dari Jepang, lalu unggah kembali untuk menyebarkannya ke LPK.
+                    </p>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button onClick={downloadCSVTemplate} className="btn btn-outline" style={{ flex: 1 }}>
+                        <Download size={14} /> Unduh Template
+                      </button>
+                      <label className="btn btn-secondary" style={{ flex: 1, cursor: 'pointer' }}>
+                        <Upload size={14} /> Unggah CSV
+                        <input type="file" accept=".csv" onChange={handleImportCSV} style={{ display: 'none' }} />
+                      </label>
+                    </div>
+                  </div>
+
                 </div>
               </div>
             )}
 
             {/* SCREEN: LOWONGAN */}
             {activeTab === 'lowongan' && (
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '24px' }}>
                 <div className="card">
-                  <h2 style={{ fontSize: '18px', marginBottom: '16px' }}>➕ Terbitkan Lowongan Kerja Baru</h2>
+                  <h2 style={{ fontSize: '16px', marginBottom: '16px' }}>➕ Terbitkan Lowongan Kerja Baru Manual</h2>
                   
                   <form onSubmit={handleCreateJob}>
                     <div style={{ marginBottom: '12px' }}>
@@ -1021,13 +1274,25 @@ export default function LPKDashboard() {
                         className="input-field"
                       />
                     </div>
+                    <div style={{ marginBottom: '12px' }}>
+                      <select 
+                        value={newJob.program} 
+                        onChange={(e) => setNewJob({ ...newJob, program: e.target.value })} 
+                        className="input-field"
+                      >
+                        <option value="kaigo">Caregiver (Kaigo)</option>
+                        <option value="seizogyo">Pabrik (Seizogyo)</option>
+                        <option value="kensetsugyo">Konstruksi (Kensetsugyo)</option>
+                        <option value="nogyo">Pertanian (Nogyo)</option>
+                      </select>
+                    </div>
                     <div style={{ marginBottom: '16px' }}>
                       <textarea 
-                        placeholder="Persyaratan Kualifikasi (Bahasa, Usia, Buta Warna...)" 
+                        placeholder="Persyaratan Kualifikasi..." 
                         value={newJob.requirements}
                         onChange={(e) => setNewJob({ ...newJob, requirements: e.target.value })}
                         className="input-field"
-                        style={{ height: '80px', borderRadius: '12px', padding: '12px', resize: 'none' }}
+                        style={{ height: '70px', borderRadius: '8px', padding: '10px', resize: 'none' }}
                       />
                     </div>
                     <button type="submit" className="btn btn-secondary">Terbitkan Lowongan</button>
@@ -1035,16 +1300,20 @@ export default function LPKDashboard() {
                 </div>
 
                 <div className="card">
-                  <h2 style={{ fontSize: '18px', marginBottom: '16px' }}>💼 Lowongan Aktif di Jepang</h2>
-                  <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                  <h2 style={{ fontSize: '16px', marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span>💼 Lowongan Kerja Terdaftar</span>
+                    <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Total: {jobListings.length} Sektor</span>
+                  </h2>
+                  <div style={{ maxHeight: '420px', overflowY: 'auto' }}>
                     {jobListings.map(job => (
-                      <div key={job.jobId} style={{ border: '1px solid var(--surface-container-high)', borderRadius: '12px', padding: '16px', marginBottom: '12px' }}>
+                      <div key={job.jobId} style={{ border: '1px solid var(--border)', borderRadius: '8px', padding: '12px', marginBottom: '10px' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                          <h3 style={{ margin: 0, fontSize: '15px', color: 'var(--primary)' }}>{job.title}</h3>
-                          <span className="badge badge-green">{job.salary}</span>
+                          <h3 style={{ margin: 0, fontSize: '13px', color: 'var(--primary-accent)' }}>{job.title}</h3>
+                          <span className="badge badge-green">{job.salary || '¥170,000'}</span>
                         </div>
-                        <div style={{ fontSize: '12px', fontWeight: '700', marginTop: '4px' }}>{job.company} - {job.location}</div>
-                        <div style={{ fontSize: '12px', color: 'var(--outline)', marginTop: '8px' }}>{job.requirements}</div>
+                        <div style={{ fontSize: '11px', fontWeight: '700', marginTop: '2px' }}>{job.company} - {job.location}</div>
+                        <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '6px' }}>{job.requirements}</div>
+                        <div style={{ fontSize: '10px', color: 'var(--text-light)', marginTop: '4px', textAlign: 'right' }}>Bidang: {job.program?.toUpperCase()}</div>
                       </div>
                     ))}
                   </div>
@@ -1055,7 +1324,7 @@ export default function LPKDashboard() {
             {/* SCREEN: REFERRAL */}
             {activeTab === 'referral' && (
               <div className="card">
-                <h2 style={{ fontSize: '18px', marginBottom: '16px' }}>💰 Klaim Komisi Sponsor / Referral Fee</h2>
+                <h2 style={{ fontSize: '16px', marginBottom: '16px' }}>💰 Klaim Komisi Sponsor / Referral Fee</h2>
                 
                 <table className="ledger-table">
                   <thead>
@@ -1092,8 +1361,8 @@ export default function LPKDashboard() {
         <div className="modal-backdrop" onClick={() => setShowVideoModal(false)}>
           <div className="modal-content" style={{ maxWidth: '640px' }} onClick={(e) => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h2 style={{ fontSize: '18px', margin: 0 }}>▶ Pemutar Video Jikoshoukai / Panduan</h2>
-              <button onClick={() => setShowVideoModal(false)} className="btn btn-outline" style={{ height: '32px', padding: '0 12px', borderRadius: '16px' }}>Tutup</button>
+              <h2 style={{ fontSize: '16px', margin: 0 }}>▶ Pemutar Video Jikoshoukai / Panduan</h2>
+              <button onClick={() => setShowVideoModal(false)} className="btn btn-outline" style={{ height: '30px', padding: '0 12px' }}>Tutup</button>
             </div>
             <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', borderRadius: '8px', backgroundColor: '#000' }}>
               <iframe 
@@ -1113,9 +1382,9 @@ export default function LPKDashboard() {
       {showBedModal && (
         <div className="modal-backdrop" onClick={() => setShowBedModal(false)}>
           <div className="modal-content" style={{ maxWidth: '400px' }} onClick={(e) => e.stopPropagation()}>
-            <h2 style={{ fontSize: '18px', marginBottom: '16px' }}>Check-in Kamar Asrama</h2>
+            <h2 style={{ fontSize: '16px', marginBottom: '16px' }}>Check-in Kamar Asrama</h2>
             <div style={{ marginBottom: '16px' }}>
-              <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--outline)' }}>Nama Siswa:</label>
+              <label style={{ fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)' }}>Nama Siswa:</label>
               <input 
                 type="text" 
                 placeholder="Masukkan nama lengkap siswa..." 
