@@ -833,29 +833,37 @@ export async function getAllStudentChecklists() {
   });
 }
 
-export async function seedDefaultChecklists() {
+export async function seedDefaultChecklists(force = false) {
   // Call new B2B seed functions first (self-guarding)
   try {
-    await seedDormRooms();
-    await seedFinancialLedgers();
-    await seedJobListings();
-    await seedRegistrations();
-    await seedReferralClaims();
-    await seedDynamicVocab();
+    await seedDormRooms(force);
+    await seedFinancialLedgers(force);
+    await seedJobListings(force);
+    await seedRegistrations(force);
+    await seedReferralClaims(force);
+    await seedDynamicVocab(force);
   } catch (err) {
     console.error("B2B Seeding failed: ", err);
   }
 
   const store = await getStore('student_checklists', 'readwrite');
   
-  // Check if already seeded
-  const checkReq = store.getAll();
-  const existing = await new Promise(resolve => {
-    checkReq.onsuccess = () => resolve(checkReq.result || []);
-    checkReq.onerror = () => resolve([]);
-  });
-  
-  if (existing.length > 0) return;
+  if (force) {
+    await new Promise((resolve) => {
+      const req = store.clear();
+      req.onsuccess = () => resolve();
+      req.onerror = () => resolve();
+    });
+  } else {
+    // Check if already seeded with at least the 17 default students
+    const checkReq = store.getAll();
+    const existing = await new Promise(resolve => {
+      checkReq.onsuccess = () => resolve(checkReq.result || []);
+      checkReq.onerror = () => resolve([]);
+    });
+    
+    if (existing.length >= 17) return;
+  }
 
   const defaultChecklists = [
     {
@@ -864,6 +872,15 @@ export async function seedDefaultChecklists() {
       statuses: {
         daftar_website: 'completed',
         daftar_wa: 'completed'
+      },
+      documents: {},
+      notes: {}
+    },
+    {
+      studentName: 'Hendra Wijaya',
+      lpkId: 'lpk_a',
+      statuses: {
+        daftar_website: 'completed'
       },
       documents: {},
       notes: {}
@@ -880,6 +897,21 @@ export async function seedDefaultChecklists() {
         daftar_booking: 'completed',
         seleksi_doc: 'completed',
         seleksi_cek_fisik: 'completed'
+      },
+      documents: {},
+      notes: {}
+    },
+    {
+      studentName: 'Yuki Pratama',
+      lpkId: 'lpk_a',
+      statuses: {
+        daftar_website: 'completed',
+        daftar_wa: 'completed',
+        daftar_google_form: 'completed',
+        daftar_ref: 'completed',
+        daftar_trial: 'completed',
+        daftar_booking: 'completed',
+        seleksi_doc: 'completed'
       },
       documents: {},
       notes: {}
@@ -907,8 +939,84 @@ export async function seedDefaultChecklists() {
       notes: {}
     },
     {
+      studentName: 'Rina Melati',
+      lpkId: 'lpk_b',
+      statuses: {
+        daftar_website: 'completed',
+        daftar_wa: 'completed',
+        daftar_google_form: 'completed',
+        daftar_ref: 'completed',
+        daftar_trial: 'completed',
+        daftar_booking: 'completed',
+        seleksi_doc: 'completed',
+        seleksi_cek_fisik: 'completed',
+        seleksi_interview: 'completed',
+        seleksi_job_desc: 'completed',
+        seleksi_room_check: 'completed',
+        seleksi_biaya: 'completed',
+        pelatihan_budaya: 'completed'
+      },
+      documents: {},
+      notes: {}
+    },
+    {
       studentName: 'Rudi Hermawan',
       lpkId: 'lpk_a',
+      statuses: {
+        daftar_website: 'completed',
+        daftar_wa: 'completed',
+        daftar_google_form: 'completed',
+        daftar_ref: 'completed',
+        daftar_trial: 'completed',
+        daftar_booking: 'completed',
+        seleksi_doc: 'completed',
+        seleksi_cek_fisik: 'completed',
+        seleksi_interview: 'completed',
+        seleksi_job_desc: 'completed',
+        seleksi_room_check: 'completed',
+        seleksi_biaya: 'completed',
+        pelatihan_budaya: 'completed',
+        pelatihan_bahasa: 'completed',
+        pelatihan_kurikulum: 'completed',
+        pelatihan_asrama: 'completed',
+        pelatihan_skill: 'completed',
+        pelatihan_penilaian: 'completed',
+        matching_job_offer: 'completed',
+        matching_video: 'completed'
+      },
+      documents: {},
+      notes: {}
+    },
+    {
+      studentName: 'Bayu Segara',
+      lpkId: 'lpk_a',
+      statuses: {
+        daftar_website: 'completed',
+        daftar_wa: 'completed',
+        daftar_google_form: 'completed',
+        daftar_ref: 'completed',
+        daftar_trial: 'completed',
+        daftar_booking: 'completed',
+        seleksi_doc: 'completed',
+        seleksi_cek_fisik: 'completed',
+        seleksi_interview: 'completed',
+        seleksi_job_desc: 'completed',
+        seleksi_room_check: 'completed',
+        seleksi_biaya: 'completed',
+        pelatihan_budaya: 'completed',
+        pelatihan_bahasa: 'completed',
+        pelatihan_kurikulum: 'completed',
+        pelatihan_asrama: 'completed',
+        pelatihan_skill: 'completed',
+        pelatihan_penilaian: 'completed',
+        matching_job_offer: 'completed'
+      },
+      documents: {},
+      notes: {}
+    },
+    {
+      studentName: 'Ahmad Fikri',
+      lpkId: 'lpk_b',
       statuses: {
         daftar_website: 'completed',
         daftar_wa: 'completed',
@@ -967,6 +1075,37 @@ export async function seedDefaultChecklists() {
       notes: {}
     },
     {
+      studentName: 'Sinta Bella',
+      lpkId: 'lpk_a',
+      statuses: {
+        daftar_website: 'completed',
+        daftar_wa: 'completed',
+        daftar_google_form: 'completed',
+        daftar_ref: 'completed',
+        daftar_trial: 'completed',
+        daftar_booking: 'completed',
+        seleksi_doc: 'completed',
+        seleksi_cek_fisik: 'completed',
+        seleksi_interview: 'completed',
+        seleksi_job_desc: 'completed',
+        seleksi_room_check: 'completed',
+        seleksi_biaya: 'completed',
+        pelatihan_budaya: 'completed',
+        pelatihan_bahasa: 'completed',
+        pelatihan_kurikulum: 'completed',
+        pelatihan_asrama: 'completed',
+        pelatihan_skill: 'completed',
+        pelatihan_penilaian: 'completed',
+        matching_job_offer: 'completed',
+        matching_video: 'completed',
+        matching_wawancara: 'completed',
+        matching_match: 'completed',
+        persiapan_dokumen: 'completed'
+      },
+      documents: {},
+      notes: {}
+    },
+    {
       studentName: 'Larasati',
       lpkId: 'lpk_a',
       statuses: {
@@ -1003,8 +1142,83 @@ export async function seedDefaultChecklists() {
       notes: {}
     },
     {
+      studentName: 'Bambang Pratama',
+      lpkId: 'lpk_b',
+      statuses: {
+        daftar_website: 'completed',
+        daftar_wa: 'completed',
+        daftar_google_form: 'completed',
+        daftar_ref: 'completed',
+        daftar_trial: 'completed',
+        daftar_booking: 'completed',
+        seleksi_doc: 'completed',
+        seleksi_cek_fisik: 'completed',
+        seleksi_interview: 'completed',
+        seleksi_job_desc: 'completed',
+        seleksi_room_check: 'completed',
+        seleksi_biaya: 'completed',
+        pelatihan_budaya: 'completed',
+        pelatihan_bahasa: 'completed',
+        pelatihan_kurikulum: 'completed',
+        pelatihan_asrama: 'completed',
+        pelatihan_skill: 'completed',
+        pelatihan_penilaian: 'completed',
+        matching_job_offer: 'completed',
+        matching_video: 'completed',
+        matching_wawancara: 'completed',
+        matching_match: 'completed',
+        persiapan_dokumen: 'completed',
+        persiapan_mental: 'completed',
+        persiapan_kesehatan: 'completed',
+        persiapan_checkout: 'completed',
+        persiapan_pelunasan: 'completed',
+        penempatan_kontrak: 'completed'
+      },
+      documents: {},
+      notes: {}
+    },
+    {
       studentName: 'Fahri Hamzah',
       lpkId: 'lpk_b',
+      statuses: {
+        daftar_website: 'completed',
+        daftar_wa: 'completed',
+        daftar_google_form: 'completed',
+        daftar_ref: 'completed',
+        daftar_trial: 'completed',
+        daftar_booking: 'completed',
+        seleksi_doc: 'completed',
+        seleksi_cek_fisik: 'completed',
+        seleksi_interview: 'completed',
+        seleksi_job_desc: 'completed',
+        seleksi_room_check: 'completed',
+        seleksi_biaya: 'completed',
+        pelatihan_budaya: 'completed',
+        pelatihan_bahasa: 'completed',
+        pelatihan_kurikulum: 'completed',
+        pelatihan_asrama: 'completed',
+        pelatihan_skill: 'completed',
+        pelatihan_penilaian: 'completed',
+        matching_job_offer: 'completed',
+        matching_video: 'completed',
+        matching_wawancara: 'completed',
+        matching_match: 'completed',
+        persiapan_dokumen: 'completed',
+        persiapan_mental: 'completed',
+        persiapan_kesehatan: 'completed',
+        persiapan_checkout: 'completed',
+        persiapan_pelunasan: 'completed',
+        penempatan_kontrak: 'completed',
+        penempatan_tiket: 'completed',
+        penempatan_penjemputan: 'completed',
+        alumni_komunitas: 'completed'
+      },
+      documents: {},
+      notes: {}
+    },
+    {
+      studentName: 'Andi Wijaya',
+      lpkId: 'lpk_a',
       statuses: {
         daftar_website: 'completed',
         daftar_wa: 'completed',
@@ -1081,6 +1295,47 @@ export async function seedDefaultChecklists() {
       },
       documents: {},
       notes: {}
+    },
+    {
+      studentName: 'Diana Puspita',
+      lpkId: 'lpk_b',
+      statuses: {
+        daftar_website: 'completed',
+        daftar_wa: 'completed',
+        daftar_google_form: 'completed',
+        daftar_ref: 'completed',
+        daftar_trial: 'completed',
+        daftar_booking: 'completed',
+        seleksi_doc: 'completed',
+        seleksi_cek_fisik: 'completed',
+        seleksi_interview: 'completed',
+        seleksi_job_desc: 'completed',
+        seleksi_room_check: 'completed',
+        seleksi_biaya: 'completed',
+        pelatihan_budaya: 'completed',
+        pelatihan_bahasa: 'completed',
+        pelatihan_kurikulum: 'completed',
+        pelatihan_asrama: 'completed',
+        pelatihan_skill: 'completed',
+        pelatihan_penilaian: 'completed',
+        matching_job_offer: 'completed',
+        matching_video: 'completed',
+        matching_wawancara: 'completed',
+        matching_match: 'completed',
+        persiapan_dokumen: 'completed',
+        persiapan_mental: 'completed',
+        persiapan_kesehatan: 'completed',
+        persiapan_checkout: 'completed',
+        persiapan_pelunasan: 'completed',
+        penempatan_kontrak: 'completed',
+        penempatan_tiket: 'completed',
+        penempatan_penjemputan: 'completed',
+        alumni_komunitas: 'completed',
+        alumni_referensi: 'completed',
+        evaluasi_budaya: 'completed'
+      },
+      documents: {},
+      notes: {}
     }
   ];
 
@@ -1111,24 +1366,34 @@ export async function saveDormRoom(room) {
   });
 }
 
-export async function seedDormRooms() {
-  const rooms = await getDormRooms();
-  if (rooms.length > 0) return;
+export async function seedDormRooms(force = false) {
+  const store = await getStore('dorm_rooms', 'readwrite');
+  if (force) {
+    await new Promise((resolve) => {
+      const req = store.clear();
+      req.onsuccess = () => resolve();
+      req.onerror = () => resolve();
+    });
+  } else {
+    const rooms = await getDormRooms();
+    if (rooms.length > 0) return;
+  }
 
   const defaultRooms = [
     { roomId: 'A1', name: 'Asrama Sakura - Kamar A1', beds: [
       { bedId: 'A1_1', status: 'occupied', studentName: 'Budi Utomo' },
-      { bedId: 'A1_2', status: 'available', studentName: '' },
+      { bedId: 'A1_2', status: 'occupied', studentName: 'Hendra Wijaya' },
       { bedId: 'A1_3', status: 'available', studentName: '' },
       { bedId: 'A1_4', status: 'available', studentName: '' }
     ]},
     { roomId: 'A2', name: 'Asrama Sakura - Kamar A2', beds: [
       { bedId: 'A2_1', status: 'occupied', studentName: 'Siti Rahma' },
-      { bedId: 'A2_2', status: 'available', studentName: '' }
+      { bedId: 'A2_2', status: 'occupied', studentName: 'Rina Melati' }
     ]},
     { roomId: 'B1', name: 'Asrama Prima - Kamar B1', beds: [
       { bedId: 'B1_1', status: 'occupied', studentName: 'Agus Wijaya' },
-      { bedId: 'B1_2', status: 'occupied', studentName: 'Dewi Lestari' }
+      { bedId: 'B1_2', status: 'occupied', studentName: 'Dewi Lestari' },
+      { bedId: 'B1_3', status: 'occupied', studentName: 'Yuki Pratama' }
     ]}
   ];
 
@@ -1163,9 +1428,18 @@ export async function updateFinancialLedger(ledger) {
   });
 }
 
-export async function seedFinancialLedgers() {
-  const ledgers = await getFinancialLedgers();
-  if (ledgers.length > 0) return;
+export async function seedFinancialLedgers(force = false) {
+  const store = await getStore('financial_ledgers', 'readwrite');
+  if (force) {
+    await new Promise((resolve) => {
+      const req = store.clear();
+      req.onsuccess = () => resolve();
+      req.onerror = () => resolve();
+    });
+  } else {
+    const ledgers = await getFinancialLedgers();
+    if (ledgers.length >= 17) return;
+  }
 
   const defaultLedgers = [
     {
@@ -1236,6 +1510,175 @@ export async function seedFinancialLedgers() {
       loanInstallments: [],
       agencyCommission: 4000000,
       commissionStatus: 'received'
+    },
+    {
+      studentName: 'Rudi Hermawan',
+      lpkId: 'lpk_a',
+      program: 'kaigo',
+      totalCost: 15000000,
+      paidAmount: 1500000,
+      remainingAmount: 13500000,
+      isBridgingLoan: true,
+      loanPaidToDate: 0,
+      loanInstallments: [],
+      agencyCommission: 5000000,
+      commissionStatus: 'pending'
+    },
+    {
+      studentName: 'Larasati',
+      lpkId: 'lpk_a',
+      program: 'kaigo',
+      totalCost: 15000000,
+      paidAmount: 10000000,
+      remainingAmount: 5000000,
+      isBridgingLoan: true,
+      loanPaidToDate: 0,
+      loanInstallments: [],
+      agencyCommission: 5000000,
+      commissionStatus: 'pending'
+    },
+    {
+      studentName: 'Fahri Hamzah',
+      lpkId: 'lpk_b',
+      program: 'kaigo',
+      totalCost: 15000000,
+      paidAmount: 15000000,
+      remainingAmount: 0,
+      isBridgingLoan: false,
+      loanPaidToDate: 0,
+      loanInstallments: [],
+      agencyCommission: 5000000,
+      commissionStatus: 'received'
+    },
+    {
+      studentName: 'Eka Putri',
+      lpkId: 'lpk_b',
+      program: 'kaigo',
+      totalCost: 15000000,
+      paidAmount: 12000000,
+      remainingAmount: 3000000,
+      isBridgingLoan: true,
+      loanPaidToDate: 0,
+      loanInstallments: [],
+      agencyCommission: 5000000,
+      commissionStatus: 'pending'
+    },
+    {
+      studentName: 'Hendra Wijaya',
+      lpkId: 'lpk_a',
+      program: 'kaigo',
+      totalCost: 15000000,
+      paidAmount: 0,
+      remainingAmount: 15000000,
+      isBridgingLoan: false,
+      loanPaidToDate: 0,
+      loanInstallments: [],
+      agencyCommission: 5000000,
+      commissionStatus: 'pending'
+    },
+    {
+      studentName: 'Yuki Pratama',
+      lpkId: 'lpk_a',
+      program: 'kaigo',
+      totalCost: 15000000,
+      paidAmount: 2200000,
+      remainingAmount: 12800000,
+      isBridgingLoan: true,
+      loanPaidToDate: 0,
+      loanInstallments: [],
+      agencyCommission: 5000000,
+      commissionStatus: 'pending'
+    },
+    {
+      studentName: 'Rina Melati',
+      lpkId: 'lpk_b',
+      program: 'kaigo',
+      totalCost: 15000000,
+      paidAmount: 5000000,
+      remainingAmount: 10000000,
+      isBridgingLoan: true,
+      loanPaidToDate: 0,
+      loanInstallments: [],
+      agencyCommission: 5000000,
+      commissionStatus: 'pending'
+    },
+    {
+      studentName: 'Bayu Segara',
+      lpkId: 'lpk_a',
+      program: 'kaigo',
+      totalCost: 15000000,
+      paidAmount: 1500000,
+      remainingAmount: 13500000,
+      isBridgingLoan: true,
+      loanPaidToDate: 0,
+      loanInstallments: [],
+      agencyCommission: 5000000,
+      commissionStatus: 'pending'
+    },
+    {
+      studentName: 'Ahmad Fikri',
+      lpkId: 'lpk_b',
+      program: 'kaigo',
+      totalCost: 15000000,
+      paidAmount: 15000000,
+      remainingAmount: 0,
+      isBridgingLoan: false,
+      loanPaidToDate: 0,
+      loanInstallments: [],
+      agencyCommission: 5000000,
+      commissionStatus: 'received'
+    },
+    {
+      studentName: 'Sinta Bella',
+      lpkId: 'lpk_a',
+      program: 'kaigo',
+      totalCost: 15000000,
+      paidAmount: 10000000,
+      remainingAmount: 5000000,
+      isBridgingLoan: true,
+      loanPaidToDate: 0,
+      loanInstallments: [],
+      agencyCommission: 5000000,
+      commissionStatus: 'pending'
+    },
+    {
+      studentName: 'Bambang Pratama',
+      lpkId: 'lpk_b',
+      program: 'kaigo',
+      totalCost: 15000000,
+      paidAmount: 20000000,
+      remainingAmount: 0,
+      isBridgingLoan: false,
+      loanPaidToDate: 0,
+      loanInstallments: [],
+      agencyCommission: 5000000,
+      commissionStatus: 'received'
+    },
+    {
+      studentName: 'Andi Wijaya',
+      lpkId: 'lpk_a',
+      program: 'kaigo',
+      totalCost: 15000000,
+      paidAmount: 15000000,
+      remainingAmount: 0,
+      isBridgingLoan: false,
+      loanPaidToDate: 0,
+      loanInstallments: [],
+      agencyCommission: 5000000,
+      commissionStatus: 'received'
+    },
+    {
+      studentName: 'Diana Puspita',
+      lpkId: 'lpk_b',
+      program: 'kaigo',
+      totalCost: 15000000,
+      paidAmount: 14000000,
+      remainingAmount: 1000000,
+      isBridgingLoan: true,
+      loanPaidToDate: 0,
+      loanInstallments: [],
+      agencyCommission: 5000000,
+      commissionStatus: 'pending'
     }
   ];
 

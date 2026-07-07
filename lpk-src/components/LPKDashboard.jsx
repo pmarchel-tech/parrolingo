@@ -79,8 +79,8 @@ const PROCESS_ITEMS = {
 };
 
 const STUDENTS_BY_LPK = {
-  lpk_a: ['Budi Utomo', 'Siti Rahma', 'Rudi Hermawan', 'Larasati'],
-  lpk_b: ['Agus Wijaya', 'Dewi Lestari', 'Fahri Hamzah', 'Eka Putri']
+  lpk_a: ['Budi Utomo', 'Siti Rahma', 'Rudi Hermawan', 'Larasati', 'Hendra Wijaya', 'Yuki Pratama', 'Bayu Segara', 'Sinta Bella', 'Andi Wijaya'],
+  lpk_b: ['Agus Wijaya', 'Dewi Lestari', 'Fahri Hamzah', 'Eka Putri', 'Rina Melati', 'Ahmad Fikri', 'Bambang Pratama', 'Diana Puspita']
 };
 
 const DETAIL_STUDENTS = [
@@ -133,6 +133,49 @@ const DETAIL_STUDENTS = [
     youtubeUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
   },
   {
+    id: 'hendra_wijaya',
+    photo: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Hendra',
+    name: 'Hendra Wijaya',
+    nik: '3404120805040009',
+    kk: '3404121204020099',
+    sim: 'SIM C - 8904129809',
+    dob: '05 Mei 2005',
+    religion: 'Islam',
+    maritalStatus: 'Lajang',
+    languages: ['Jepang'],
+    phone: '0812-1111-3333',
+    email: 'hendra.w@gmail.com',
+    address: 'Jl. Kaliurang Km 12, Sleman, D.I. Yogyakarta',
+    education: 'SMK Sleman',
+    parentName: 'Rudi Wijaya',
+    parentPhone: '0812-9900-5555',
+    guardianName: 'Rudi Wijaya (Ayah)',
+    guardianPhone: '0812-9900-5555',
+    siblings: [
+      { relation: 'Kakak Kandung', name: 'Dewi Wijaya', dob: '14 September 2001', age: 24 }
+    ],
+    reference: 'Budi Utomo (Alumni - 0812-3456-7890)',
+    dorm: 'Cabang Sleman - Kamar 101 - Ranjang B',
+    skills: ['Dasar Kaiwa'],
+    certifications: [],
+    finance: {
+      talangan: 'Rp 20.000.000',
+      paid: 'Rp 0',
+      outstanding: 'Rp 20.000.000',
+      installment: 'Rp 1.660.000 / Bulan (Tenor 12x)'
+    },
+    documents: [
+      { name: 'KTP Siswa', status: 'Submitted ✓' },
+      { name: 'Kartu Keluarga (KK)', status: 'Submitted ✓' },
+      { name: 'Akta Kelahiran', status: 'Pending ⏱' },
+      { name: 'Ijazah Terakhir', status: 'Pending ⏱' }
+    ],
+    phase: 'daftar',
+    phaseLabel: 'Pendaftaran',
+    permitStatus: 'Dalam Proses ⏱',
+    youtubeUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+  },
+  {
     id: 'agus_wijaya',
     photo: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Agus',
     name: 'Agus Wijaya',
@@ -171,6 +214,47 @@ const DETAIL_STUDENTS = [
       { name: 'Paspor RI', status: 'Submitted ✓' },
       { name: 'Sertifikat JFT/JLPT', status: 'Pending ⏱' },
       { name: 'Sertifikat Kaigo SSW', status: 'Pending ⏱' }
+    ],
+    phase: 'seleksi',
+    phaseLabel: 'Seleksi Awal',
+    permitStatus: 'Terverifikasi ✓',
+    youtubeUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+  },
+  {
+    id: 'yuki_pratama',
+    photo: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Yuki',
+    name: 'Yuki Pratama',
+    nik: '3402110508030099',
+    kk: '3402112411990099',
+    sim: 'SIM C - 9807123000',
+    dob: '12 November 2004',
+    religion: 'Islam',
+    maritalStatus: 'Lajang',
+    languages: ['Jepang', 'English'],
+    phone: '0813-9876-0000',
+    email: 'yuki.pratama@gmail.com',
+    address: 'Jl. Parangtritis Km 8, Sewon, Bantul, D.I. Yogyakarta',
+    education: 'SMK Bantul',
+    parentName: 'Joko Pratama',
+    parentPhone: '0813-9900-3333',
+    guardianName: 'Joko Pratama (Ayah)',
+    guardianPhone: '0813-9900-3333',
+    siblings: [],
+    reference: 'Rudi Hermawan (Alumni - 0821-5555-1234)',
+    dorm: 'Cabang Bantul - Kamar 102 - Ranjang C',
+    skills: ['Komunikasi Lansia', 'Pencegahan Infeksi'],
+    certifications: [],
+    finance: {
+      talangan: 'Rp 22.000.000',
+      paid: 'Rp 2.200.000',
+      outstanding: 'Rp 19.800.000',
+      installment: 'Rp 1.650.000 / Bulan (Tenor 12x)'
+    },
+    documents: [
+      { name: 'KTP Siswa', status: 'Submitted ✓' },
+      { name: 'Kartu Keluarga (KK)', status: 'Submitted ✓' },
+      { name: 'Akta Kelahiran', status: 'Submitted ✓' },
+      { name: 'Ijazah Terakhir', status: 'Submitted ✓' }
     ],
     phase: 'seleksi',
     phaseLabel: 'Seleksi Awal',
@@ -218,6 +302,50 @@ const DETAIL_STUDENTS = [
       { name: 'Paspor RI', status: 'Submitted ✓' },
       { name: 'Sertifikat JFT/JLPT', status: 'Submitted ✓' },
       { name: 'Sertifikat Kaigo SSW', status: 'Submitted ✓' }
+    ],
+    phase: 'pelatihan',
+    phaseLabel: 'Pelatihan & Asrama',
+    permitStatus: 'Terverifikasi ✓',
+    youtubeUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+  },
+  {
+    id: 'rina_melati',
+    photo: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Rina',
+    name: 'Rina Melati',
+    nik: '3372012211020099',
+    kk: '3372011003980099',
+    sim: 'Belum Memiliki',
+    dob: '05 September 2003',
+    religion: 'Islam',
+    maritalStatus: 'Lajang',
+    languages: ['Jepang'],
+    phone: '0857-4321-0000',
+    email: 'rina.melati@yahoo.com',
+    address: 'Jl. Slamet Riyadi No. 150, Surakarta, Jawa Tengah',
+    education: 'SMA Negeri Surakarta',
+    parentName: 'Bambang Melati',
+    parentPhone: '0857-1111-4444',
+    guardianName: 'Bambang Melati (Ayah)',
+    guardianPhone: '0857-1111-4444',
+    siblings: [
+      { relation: 'Adik Kandung', name: 'Dewi Melati', dob: '05 Desember 2009', age: 16 }
+    ],
+    reference: 'Siti Rahma (Alumni - 0857-4321-8765)',
+    dorm: 'Cabang Sleman - Kamar 103 - Ranjang D',
+    skills: ['Nihongo N5', 'Membantu Makan Lansia'],
+    certifications: [],
+    finance: {
+      talangan: 'Rp 20.000.000',
+      paid: 'Rp 5.000.000',
+      outstanding: 'Rp 15.000.000',
+      installment: 'Rp 1.250.000 / Bulan (Tenor 12x)'
+    },
+    documents: [
+      { name: 'KTP Siswa', status: 'Submitted ✓' },
+      { name: 'Kartu Keluarga (KK)', status: 'Submitted ✓' },
+      { name: 'Akta Kelahiran', status: 'Submitted ✓' },
+      { name: 'Ijazah Terakhir', status: 'Submitted ✓' },
+      { name: 'Surat Izin Orang Tua', status: 'Submitted ✓' }
     ],
     phase: 'pelatihan',
     phaseLabel: 'Pelatihan & Asrama',
@@ -274,6 +402,97 @@ const DETAIL_STUDENTS = [
     youtubeUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
   },
   {
+    id: 'bayu_segara',
+    photo: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Bayu',
+    name: 'Bayu Segara',
+    nik: '3401081809030099',
+    kk: '3401080405000099',
+    sim: 'SIM C - 8704123000',
+    dob: '20 Agustus 2004',
+    religion: 'Islam',
+    maritalStatus: 'Lajang',
+    languages: ['Jepang', 'English'],
+    phone: '0821-5555-0000',
+    email: 'bayu.segara@gmail.com',
+    address: 'Jl. Wates Km 10, Kulon Progo, D.I. Yogyakarta',
+    education: 'SMA Kulon Progo',
+    parentName: 'Herman Segara',
+    parentPhone: '0821-9988-0000',
+    guardianName: 'Herman Segara (Ayah)',
+    guardianPhone: '0821-9988-0000',
+    siblings: [
+      { relation: 'Kakak Kandung', name: 'Rian Segara', dob: '12 Januari 1996', age: 30 }
+    ],
+    reference: 'Rudi Hermawan (Alumni - 0821-5555-1234)',
+    dorm: 'Cabang Sleman - Kamar 104 - Ranjang B',
+    skills: ['Nihongo N4', 'Elderly Transfer'],
+    certifications: ['Sertifikat JFT-Basic N4'],
+    finance: {
+      talangan: 'Rp 20.000.000',
+      paid: 'Rp 1.500.000',
+      outstanding: 'Rp 18.500.000',
+      installment: 'Rp 1.540.000 / Bulan (Tenor 12x)'
+    },
+    documents: [
+      { name: 'KTP Siswa', status: 'Submitted ✓' },
+      { name: 'Kartu Keluarga (KK)', status: 'Submitted ✓' },
+      { name: 'Akta Kelahiran', status: 'Submitted ✓' },
+      { name: 'Ijazah Terakhir', status: 'Submitted ✓' },
+      { name: 'Surat Izin Orang Tua', status: 'Submitted ✓' },
+      { name: 'Paspor RI', status: 'Submitted ✓' },
+      { name: 'Sertifikat JFT/JLPT', status: 'Submitted ✓' }
+    ],
+    phase: 'matching',
+    phaseLabel: 'Job Matching',
+    permitStatus: 'Dalam Proses ⏱',
+    youtubeUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+  },
+  {
+    id: 'ahmad_fikri',
+    photo: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Ahmad',
+    name: 'Ahmad Fikri',
+    nik: '3310140204020099',
+    kk: '3310141512990099',
+    sim: 'SIM C - 8904123009',
+    dob: '15 April 2003',
+    religion: 'Islam',
+    maritalStatus: 'Lajang',
+    languages: ['Jepang', 'Arab'],
+    phone: '0812-7777-0000',
+    email: 'ahmad.fikri@gmail.com',
+    address: 'Klaten, Jawa Tengah',
+    education: 'SMK Keperawatan Klaten',
+    parentName: 'Hasan Fikri',
+    parentPhone: '0812-5566-0000',
+    guardianName: 'Hasan Fikri (Ayah)',
+    guardianPhone: '0812-5566-0000',
+    siblings: [],
+    reference: 'Dewi Lestari (Alumni - 0812-7777-8888)',
+    dorm: 'Cabang Sleman - Kamar 201 - Ranjang C',
+    skills: ['Kaiwa Intermediate', 'Clinical Nursing Care'],
+    certifications: ['Sertifikat JFT N4 Passed', 'Sertifikat SSW Kaigo'],
+    finance: {
+      talangan: 'Rp 25.000.000',
+      paid: 'Rp 15.000.000',
+      outstanding: 'Rp 10.000.000',
+      installment: 'Rp 2.500.000 / Bulan (Tenor 4x sisa)'
+    },
+    documents: [
+      { name: 'KTP Siswa', status: 'Submitted ✓' },
+      { name: 'Kartu Keluarga (KK)', status: 'Submitted ✓' },
+      { name: 'Akta Kelahiran', status: 'Submitted ✓' },
+      { name: 'Ijazah Terakhir', status: 'Submitted ✓' },
+      { name: 'Surat Izin Orang Tua', status: 'Submitted ✓' },
+      { name: 'Paspor RI', status: 'Submitted ✓' },
+      { name: 'Sertifikat JFT/JLPT', status: 'Submitted ✓' },
+      { name: 'Sertifikat Kaigo SSW', status: 'Submitted ✓' }
+    ],
+    phase: 'matching',
+    phaseLabel: 'Job Matching',
+    permitStatus: 'Terverifikasi ✓',
+    youtubeUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+  },
+  {
     id: 'dewi_lestari',
     photo: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Dewi',
     name: 'Dewi Lestari',
@@ -321,6 +540,53 @@ const DETAIL_STUDENTS = [
     youtubeUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
   },
   {
+    id: 'sinta_bella',
+    photo: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Sinta',
+    name: 'Sinta Bella',
+    nik: '3306121402010099',
+    kk: '3306120202980099',
+    sim: 'SIM C - 8704123006',
+    dob: '05 Desember 2002',
+    religion: 'Islam',
+    maritalStatus: 'Lajang',
+    languages: ['Jepang'],
+    phone: '0813-1111-0000',
+    email: 'sinta.bella@gmail.com',
+    address: 'Purworejo, Jawa Tengah',
+    education: 'SMA Purworejo',
+    parentName: 'Supardi',
+    parentPhone: '0813-4455-0000',
+    guardianName: 'Supardi (Ayah)',
+    guardianPhone: '0813-4455-0000',
+    siblings: [
+      { relation: 'Kakak Kandung', name: 'Joko Pardi', dob: '08 Maret 1997', age: 29 }
+    ],
+    reference: 'Larasati (Alumni - 0813-1111-2222)',
+    dorm: 'Cabang Sleman - Kamar 202 - Ranjang D',
+    skills: ['Patient Transfer', 'Wheelchair Assistance'],
+    certifications: ['Sertifikat JLPT N4', 'Sertifikat SSW Kaigo'],
+    finance: {
+      talangan: 'Rp 20.000.000',
+      paid: 'Rp 10.000.000',
+      outstanding: 'Rp 10.000.000',
+      installment: 'Rp 1.660.000 / Bulan (Tenor 6x sisa)'
+    },
+    documents: [
+      { name: 'KTP Siswa', status: 'Submitted ✓' },
+      { name: 'Kartu Keluarga (KK)', status: 'Submitted ✓' },
+      { name: 'Akta Kelahiran', status: 'Submitted ✓' },
+      { name: 'Ijazah Terakhir', status: 'Submitted ✓' },
+      { name: 'Surat Izin Orang Tua', status: 'Submitted ✓' },
+      { name: 'Paspor RI', status: 'Submitted ✓' },
+      { name: 'Sertifikat JFT/JLPT', status: 'Submitted ✓' },
+      { name: 'Sertifikat Kaigo SSW', status: 'Submitted ✓' }
+    ],
+    phase: 'persiapan',
+    phaseLabel: 'Persiapan Terbang (COE)',
+    permitStatus: 'Terverifikasi ✓',
+    youtubeUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+  },
+  {
     id: 'larasati',
     photo: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Laras',
     name: 'Larasati',
@@ -351,6 +617,53 @@ const DETAIL_STUDENTS = [
       paid: 'Rp 10.000.000',
       outstanding: 'Rp 10.000.000',
       installment: 'Rp 1.660.000 / Bulan (Tenor 6x sisa)'
+    },
+    documents: [
+      { name: 'KTP Siswa', status: 'Submitted ✓' },
+      { name: 'Kartu Keluarga (KK)', status: 'Submitted ✓' },
+      { name: 'Akta Kelahiran', status: 'Submitted ✓' },
+      { name: 'Ijazah Terakhir', status: 'Submitted ✓' },
+      { name: 'Surat Izin Orang Tua', status: 'Submitted ✓' },
+      { name: 'Paspor RI', status: 'Submitted ✓' },
+      { name: 'Sertifikat JFT/JLPT', status: 'Submitted ✓' },
+      { name: 'Sertifikat Kaigo SSW', status: 'Submitted ✓' }
+    ],
+    phase: 'penempatan',
+    phaseLabel: 'Penempatan & Kerja',
+    permitStatus: 'Terverifikasi ✓',
+    youtubeUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+  },
+  {
+    id: 'bambang_pratama',
+    photo: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Bambang',
+    name: 'Bambang Pratama',
+    nik: '3403013010000099',
+    kk: '3403011409980099',
+    sim: 'SIM C - 8904123089',
+    dob: '12 November 2001',
+    religion: 'Islam',
+    maritalStatus: 'Lajang',
+    languages: ['Jepang', 'English'],
+    phone: '0852-3333-0000',
+    email: 'bambang.pratama@gmail.com',
+    address: 'Gunungkidul, D.I. Yogyakarta',
+    education: 'SMK Gunungkidul',
+    parentName: 'Sutrisno',
+    parentPhone: '0852-9900-3333',
+    guardianName: 'Sutrisno (Ayah)',
+    guardianPhone: '0852-9900-3333',
+    siblings: [
+      { relation: 'Adik Kandung', name: 'Zainal Sutrisno', dob: '14 April 2011', age: 15 }
+    ],
+    reference: 'Fahri Hamzah (Alumni - 0852-3333-4444)',
+    dorm: 'Cabang Sleman - Kamar 104 - Ranjang C',
+    skills: ['SSW Caregiver', 'Technical Maintenance'],
+    certifications: ['Sertifikat JLPT N4', 'Sertifikat Tokutei Ginou Kaigo'],
+    finance: {
+      talangan: 'Rp 20.000.000',
+      paid: 'Rp 20.000.000',
+      outstanding: 'Rp 0',
+      installment: 'Lunas Lunas ✓'
     },
     documents: [
       { name: 'KTP Siswa', status: 'Submitted ✓' },
@@ -416,6 +729,51 @@ const DETAIL_STUDENTS = [
     youtubeUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
   },
   {
+    id: 'andi_wijaya',
+    photo: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Andi',
+    name: 'Andi Wijaya',
+    nik: '3308141112010099',
+    kk: '3308140410970099',
+    sim: 'SIM C - 8904123012',
+    dob: '05 Agustus 2001',
+    religion: 'Islam',
+    maritalStatus: 'Lajang',
+    languages: ['Jepang'],
+    phone: '0812-9999-3333',
+    email: 'andi.wijaya@outlook.com',
+    address: 'Magelang, Jawa Tengah',
+    education: 'SMA Magelang',
+    parentName: 'Joko Wijaya',
+    parentPhone: '0812-7777-3333',
+    guardianName: 'Joko Wijaya (Ayah)',
+    guardianPhone: '0812-7777-3333',
+    siblings: [],
+    reference: 'Eka Putri (Alumni - 0812-9999-0000)',
+    dorm: 'Alumni (Penempatan Tokyo - Shinjuku)',
+    skills: ['SSW Caregiver Expert', 'First Aid'],
+    certifications: ['Sertifikat JFT N4 Passed', 'Sertifikat Tokutei Ginou Kaigo'],
+    finance: {
+      talangan: 'Rp 20.000.000',
+      paid: 'Rp 20.000.000',
+      outstanding: 'Rp 0',
+      installment: 'Lunas Lunas ✓'
+    },
+    documents: [
+      { name: 'KTP Siswa', status: 'Submitted ✓' },
+      { name: 'Kartu Keluarga (KK)', status: 'Submitted ✓' },
+      { name: 'Akta Kelahiran', status: 'Submitted ✓' },
+      { name: 'Ijazah Terakhir', status: 'Submitted ✓' },
+      { name: 'Surat Izin Orang Tua', status: 'Submitted ✓' },
+      { name: 'Paspor RI', status: 'Submitted ✓' },
+      { name: 'Sertifikat JFT/JLPT', status: 'Submitted ✓' },
+      { name: 'Sertifikat Kaigo SSW', status: 'Submitted ✓' }
+    ],
+    phase: 'alumni',
+    phaseLabel: 'Komunitas Alumni',
+    permitStatus: 'Terverifikasi ✓',
+    youtubeUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+  },
+  {
     id: 'eka_putri',
     photo: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Eka',
     name: 'Eka Putri',
@@ -446,6 +804,51 @@ const DETAIL_STUDENTS = [
       paid: 'Rp 12.000.000',
       outstanding: 'Rp 8.000.000',
       installment: 'Rp 2.000.000 / Bulan (Tenor 4x sisa)'
+    },
+    documents: [
+      { name: 'KTP Siswa', status: 'Submitted ✓' },
+      { name: 'Kartu Keluarga (KK)', status: 'Submitted ✓' },
+      { name: 'Akta Kelahiran', status: 'Submitted ✓' },
+      { name: 'Ijazah Terakhir', status: 'Submitted ✓' },
+      { name: 'Surat Izin Orang Tua', status: 'Submitted ✓' },
+      { name: 'Paspor RI', status: 'Submitted ✓' },
+      { name: 'Sertifikat JFT/JLPT', status: 'Submitted ✓' },
+      { name: 'Sertifikat Kaigo SSW', status: 'Submitted ✓' }
+    ],
+    phase: 'evaluasi',
+    phaseLabel: 'Evaluasi & Cicilan',
+    permitStatus: 'Terverifikasi ✓',
+    youtubeUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+  },
+  {
+    id: 'diana_puspita',
+    photo: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Diana',
+    name: 'Diana Puspita',
+    nik: '3308141112010088',
+    kk: '3308140410970088',
+    sim: 'SIM C - 8904123088',
+    dob: '22 April 2002',
+    religion: 'Kristen',
+    maritalStatus: 'Lajang',
+    languages: ['Jepang', 'Korea'],
+    phone: '0812-9999-8888',
+    email: 'diana.puspita@outlook.com',
+    address: 'Klaten, Jawa Tengah',
+    education: 'D3 Keperawatan',
+    parentName: 'Hendra Puspita',
+    parentPhone: '0812-7777-8888',
+    guardianName: 'Hendra Puspita (Ayah)',
+    guardianPhone: '0812-7777-8888',
+    siblings: [],
+    reference: 'Eka Putri (Alumni - 0812-9999-0000)',
+    dorm: 'Alumni (Penempatan Nagoya)',
+    skills: ['SSW Caregiver Expert', 'First Aid'],
+    certifications: ['Sertifikat JFT N4 Passed', 'Sertifikat Tokutei Ginou Kaigo'],
+    finance: {
+      talangan: 'Rp 20.000.000',
+      paid: 'Rp 14.000.000',
+      outstanding: 'Rp 6.000.000',
+      installment: 'Rp 2.000.000 / Bulan (Tenor 3x sisa)'
     },
     documents: [
       { name: 'KTP Siswa', status: 'Submitted ✓' },
@@ -1130,6 +1533,36 @@ export default function LPKDashboard() {
                   )}
                 </div>
 
+                <button
+                  onClick={async () => {
+                    if (confirm("Reset seluruh database IndexedDB ke data demo bawaan (17 siswa)?")) {
+                      try {
+                        await seedDefaultChecklists(true);
+                        await refreshData();
+                        alert("Database berhasil di-reset dengan 17 siswa demo!");
+                      } catch (err) {
+                        alert("Reset gagal: " + err.message);
+                      }
+                    }
+                  }}
+                  className="btn"
+                  style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '6px', 
+                    padding: '8px 12px', 
+                    fontSize: '12px', 
+                    border: '1px solid var(--border)', 
+                    cursor: 'pointer', 
+                    borderRadius: '6px', 
+                    backgroundColor: 'var(--primary-light)', 
+                    color: 'var(--primary-accent)',
+                    fontWeight: '700'
+                  }}
+                >
+                  <RefreshCw size={14} color="var(--primary-accent)" /> Reset Demo Data
+                </button>
+
                 <select value={selectedLpk} onChange={(e) => setSelectedLpk(e.target.value)} className="input-field" style={{ width: '180px', margin: 0 }}>
                   <option value="lpk_a">LPK Sakura (A)</option>
                   <option value="lpk_b">LPK Kaigo Sejahtera (B)</option>
@@ -1137,7 +1570,6 @@ export default function LPKDashboard() {
               </div>
             </header>
 
-            {/* SCREEN: OVERVIEW (Interactive Dashboard with SVG Graphs) */}
             {activeTab === 'overview' && (
               <div>
                 {/* Clickable Kpi Summary Cards */}
