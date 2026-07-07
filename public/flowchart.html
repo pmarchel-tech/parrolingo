@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KaigoLingo & Hikari LPK Center - Interactive Flowchart</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --primary: #2563eb;
+      --primary-hover: #3b82f6;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #334155;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+    }
+
+    /* Sidebar controls */
+    .sidebar {
+      width: 340px;
+      background-color: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 24px;
+      gap: 16px;
+      flex-shrink: 0;
+      z-index: 10;
+      box-shadow: 10px 0 30px rgba(0, 0, 0, 0.25);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--primary), #3b82f6);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 20px;
+      color: white;
+    }
+
+    .brand-title {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+    }
+
+    .divider {
+      height: 1px;
+      background-color: var(--border);
+      width: 100%;
+    }
+
+    .instruction-card {
+      background-color: rgba(15, 23, 42, 0.4);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+    }
+
+    .instruction-title {
+      font-weight: 700;
+      font-size: 13px;
+      margin-bottom: 6px;
+      color: var(--primary-hover);
+    }
+
+    .instruction-text {
+      font-size: 11px;
+      line-height: 1.5;
+      color: var(--text-muted);
+    }
+
+    .instruction-list {
+      margin-top: 8px;
+      padding-left: 14px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .instruction-list li {
+      margin-bottom: 4px;
+    }
+
+    /* Controls Panel */
+    .controls-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: auto;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-hover);
+    }
+
+    /* Main Viewport */
+    .viewport-container {
+      flex: 1;
+      height: 100%;
+      position: relative;
+      background-color: #0b0f19;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      cursor: grab;
+    }
+
+    .viewport-container:active {
+      cursor: grabbing;
+    }
+
+    #mermaid-chart {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Floating control buttons inside viewport */
+    .floating-controls {
+      position: absolute;
+      bottom: 24px;
+      right: 24px;
+      background-color: rgba(30, 41, 59, 0.8);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 8px;
+      display: flex;
+      gap: 6px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .control-icon-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background-color: transparent;
+      border: none;
+      color: var(--text);
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .control-icon-btn:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: var(--primary-hover);
+    }
+
+    /* Loading Overlay */
+    .loading-overlay {
+      position: absolute;
+      inset: 0;
+      background-color: #0f172a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      z-index: 100;
+      transition: opacity 0.5s ease;
+    }
+
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid var(--border);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Style override for Mermaid SVG nodes */
+    .node rect, .node circle, .node polygon {
+      fill: #1e293b !important;
+      stroke: #3b82f6 !important;
+      stroke-width: 1.5px !important;
+    }
+    .node .label {
+      color: #f8fafc !important;
+    }
+    .edgePath .path {
+      stroke: #64748b !important;
+      stroke-width: 1.5px !important;
+    }
+    .edgeLabel rect {
+      fill: #0b0f19 !important;
+    }
+    .edgeLabel span {
+      color: #94a3b8 !important;
+      font-size: 10px !important;
+    }
+  </style>
+
+  <!-- Load Mermaid and Svg-pan-zoom -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
+</head>
+<body>
+
+  <div class="loading-overlay" id="loading-overlay">
+    <div class="spinner"></div>
+    <p>Membuat Flowchart Ekosistem Lengkap...</p>
+  </div>
+
+  <div class="sidebar">
+    <div class="brand">
+      <div class="brand-logo">KL</div>
+      <div class="brand-title">KaigoLingo & LPK<br>Unified Flowchart</div>
+    </div>
+    
+    <div class="divider"></div>
+
+    <div class="instruction-card">
+      <div class="instruction-title">Cara Navigasi Diagram</div>
+      <div class="instruction-text">
+        Peta interaktif ini menggabungkan alur siswa dan LPK:
+      </div>
+      <ul class="instruction-list">
+        <li><strong>Geser (Pan):</strong> Klik kiri layar lalu seret (drag).</li>
+        <li><strong>Perbesar (Zoom):</strong> Gunakan tombol <kbd>+</kbd> / <kbd>-</kbd> di kanan bawah, atau putar roda mouse.</li>
+        <li><strong>Reset:</strong> Klik tombol tengah untuk memposisikan ulang peta di tengah layar.</li>
+      </ul>
+    </div>
+
+    <div class="instruction-card" style="margin-top: 0;">
+      <div class="instruction-title">Sinergi Integrasi Data</div>
+      <div class="instruction-text" style="font-size: 11px;">
+        • <strong>Aktivasi Token:</strong> Admin LPK meloloskan pre-screening lalu memberikan token akses belajar untuk siswa.<br>
+        • <strong>Pemantauan Belajar:</strong> Hasil ujian siswa tersimpan di IndexedDB dan tersinkronisasi ke dashboard Talent Pool Mitra Jepang & Admin LPK.<br>
+        • <strong>Cicilan Dana Talangan:</strong> Admin LPK menyetujui potong gaji berdasarkan status pembayaran siswa pasca-terbang.
+      </div>
+    </div>
+
+    <div class="controls-panel">
+      <button class="btn btn-primary" onclick="resetZoom()">Tampilkan Penuh</button>
+    </div>
+  </div>
+
+  <div class="viewport-container" id="viewport">
+    <div id="mermaid-chart" class="mermaid">
+graph TB
+    %% -------------------------------------------------------------
+    %% SUBGRAPH: CALON SISWA / PEKERJA (PWA APP)
+    %% -------------------------------------------------------------
+    subgraph Calon_Siswa ["Siswa / Pekerja (PWA App)"]
+        S_Register[Calon Siswa Daftar Online] --> S_Prescreen[Lakukan Pre-Screening BMI & Buta Warna]
+        S_TokenInput[Masukkan Token Aktivasi 'HK-XXXXXX'] --> S_SelectLang[Pilih Target Negara & Bahasa]
+        
+        S_SelectLang --> S_Map[Buka Peta Belajar / MapScreen]
+        S_Map --> S_Curve[Visualisasi Kurva Jalur Bezier Dinamis]
+        
+        S_Curve --> S_DailyPractice[Latihan Harian]
+        S_DailyPractice --> S_CheckLock{Latihan Harian >= 3x?}
+        
+        S_CheckLock --> |Belum| S_DailyPractice
+        S_CheckLock --> |Sudah| S_WeeklyExam[Ujian Gerbang Mingguan]
+        
+        S_WeeklyExam --> S_StartSession[Mulai Kuis / LearnScreen]
+        S_DailyPractice --> S_StartSession
+        
+        S_StartSession --> S_GradualQs[Pemuatan Soal Gradual N5 -> N4 -> N3]
+        
+        S_GradualQs --> S_RenderQ[Tampilkan Soal: A, B, C, D, E, F]
+        S_RenderQ --> S_Answer[Jawab & Normalisasi Aksen/Spasi]
+        S_Answer --> S_SessionCheck{Apakah Sesi Selesai?}
+        
+        S_SessionCheck --> |Belum| S_RenderQ
+        S_SessionCheck --> |Ya| S_Summary[Halaman Hasil & Review Salah]
+        
+        S_Summary --> S_CheckExamType{Apakah ini Ujian Gerbang?}
+        S_CheckExamType --> |Bukan| S_AddDaily[Tambah Hitungan Latihan]
+        S_AddDaily --> S_Map
+        
+        S_CheckExamType --> |Ya| S_PassCheck{Skor >= 80%?}
+        S_PassCheck --> |Tidak| S_ExamFail[Ulangi Ujian Gerbang]
+        S_PassCheck --> |Ya| S_ExamPass[Buka Kunci Minggu Berikutnya]
+        
+        S_ExamPass --> S_Map
+        S_ExamFail --> S_Map
+        
+        S_Graduation[Selesai Seluruh Minggu & Lulus Ujian]
+    end
+
+    %% -------------------------------------------------------------
+    %% SUBGRAPH: LPK ADMIN & OWNER (DASHBOARD)
+    %% -------------------------------------------------------------
+    subgraph LPK_Admin ["LPK Admin & Owner (Dashboard)"]
+        A_ReviewReg[Tinjau Pendaftaran Siswa]
+        A_ApproveReg[Setujui Pendaftaran] --> A_GenToken[Hasilkan Token Aktivasi Belajar]
+        A_TrackProgress[Pantau Alur Kerja Proses & Capaian Belajar Siswa]
+        A_Dorm[Kelola Alokasi Ranjang Asrama Siswa]
+        A_DormCheckIn[Check-In Ranjang Siswa Baru]
+        A_DormCheckOut[Check-Out Ranjang Pasca-Lulus]
+        A_Financial[Kelola Kas & Dana Talangan Siswa]
+        A_VerifyLedger[Verifikasi Sanggahan Potong Gaji Siswa]
+        A_Departure[Checklist Keberangkatan: COE, Paspor, Visa, BP2MI]
+    end
+
+    %% -------------------------------------------------------------
+    %% SUBGRAPH: PENYALUR / AGENCY (DASHBOARD)
+    %% -------------------------------------------------------------
+    subgraph Penyalur_Agency ["Penyalur / Sending Agency (Dashboard)"]
+        P_CreateJob[Kelola Lowongan Kerja Mitra Luar Negeri]
+        P_ImportCSV[Impor Data Lowongan via CSV Template]
+        P_MatchAlumni[Pasangkan Alumni Lulus dengan Lowongan]
+        P_Referral[Ledger Payout Komisi Sponsor Pendaftaran]
+    end
+
+    %% -------------------------------------------------------------
+    %% SUBGRAPH: MITRA JEPANG / USER (DASHBOARD)
+    %% -------------------------------------------------------------
+    subgraph Mitra_Jepang ["Mitra User / Jepang (Dashboard)"]
+        J_Dashboard[Pantau Kebutuhan Tenaga Kerja]
+        J_TalentPool[Cari Bakat / Filter Siswa berdasarkan JFT/SSW/JLPT]
+        J_Interview[Jadwalkan Wawancara Kerja / Mensetsu]
+        J_Contract[Tanda Tangan Kontrak Kerja]
+        J_Evaluation[Kirim Evaluasi Kinerja Alumni di Tempat Kerja]
+    end
+
+    %% -------------------------------------------------------------
+    %% INTEGRATION LINKS (Sinergi Lintas Sistem)
+    %% -------------------------------------------------------------
+    
+    %% Alur Pendaftaran & Aktivasi
+    S_Register --> A_ReviewReg
+    A_ReviewReg --> |Lulus Syarat Fisik| A_ApproveReg
+    A_GenToken --> |Kirim Token WA/SMS| S_TokenInput
+    
+    %% Alur Belajar & Pemantauan
+    S_StartSession -.-> A_TrackProgress
+    S_Graduation --> J_TalentPool
+    
+    %% Alur Kerja & Lowongan
+    P_CreateJob --> J_Dashboard
+    P_ImportCSV --> P_CreateJob
+    J_TalentPool --> J_Interview
+    J_Interview --> |Mensetsu Lulus| J_Contract
+    J_Contract --> A_Departure
+    
+    %% Alur Keberangkatan & Asrama
+    A_DormCheckIn -.-> S_SelectLang
+    A_Departure --> A_DormCheckOut
+    A_DormCheckOut --> S_Fly[Siswa Terbang ke Negara Tujuan]
+    
+    %% Alur Penempatan & Finansial
+    S_Fly --> J_Work[Siswa Mulai Bekerja di Luar Negeri]
+    J_Work --> A_Financial
+    J_Work --> J_Evaluation
+    J_Evaluation -.-> A_VerifyLedger
+    A_VerifyLedger --> A_Financial
+    
+    %% Style overrides
+    style Start fill:#1e293b,stroke:#2563eb,stroke-width:2px,color:#fff
+    style S_Graduation fill:#1e293b,stroke:#10b981,stroke-width:2px,color:#fff
+    style J_Work fill:#1e293b,stroke:#f59e0b,stroke-width:2px,color:#fff
+    style S_Fly fill:#1e293b,stroke:#8b5cf6,stroke-width:2px,color:#fff
+    </div>
+
+    <!-- Floating controls panel -->
+    <div class="floating-controls">
+      <button class="control-icon-btn" onclick="zoomIn()">+</button>
+      <button class="control-icon-btn" onclick="zoomOut()">-</button>
+      <button class="control-icon-btn" onclick="resetZoom()">⟲</button>
+    </div>
+  </div>
+
+  <script>
+    let panZoomInstance = null;
+
+    // Initialize Mermaid with custom dark theme configurations
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'dark',
+      securityLevel: 'loose',
+      flowchart: {
+        useMaxWidth: false,
+        htmlLabels: true
+      }
+    });
+
+    // Once Mermaid compiles the SVG, initialize the pan & zoom controls
+    document.addEventListener("DOMContentLoaded", () => {
+      const checkSvgInterval = setInterval(() => {
+        const svgElement = document.querySelector("#mermaid-chart svg");
+        if (svgElement) {
+          clearInterval(checkSvgInterval);
+          
+          svgElement.setAttribute("width", "100%");
+          svgElement.setAttribute("height", "100%");
+          svgElement.style.overflow = "visible";
+
+          panZoomInstance = svgPanZoom(svgElement, {
+            zoomEnabled: true,
+            controlIconsEnabled: false,
+            fit: true,
+            center: true,
+            minZoom: 0.05,
+            maxZoom: 10,
+            zoomScaleSensitivity: 0.2
+          });
+
+          document.getElementById("loading-overlay").style.opacity = 0;
+          setTimeout(() => {
+            document.getElementById("loading-overlay").style.display = "none";
+          }, 500);
+        }
+      }, 200);
+    });
+
+    function zoomIn() {
+      if (panZoomInstance) panZoomInstance.zoomIn();
+    }
+
+    function zoomOut() {
+      if (panZoomInstance) panZoomInstance.zoomOut();
+    }
+
+    function resetZoom() {
+      if (panZoomInstance) {
+        panZoomInstance.resetZoom();
+        panZoomInstance.center();
+      }
+    }
+  </script>
+</body>
+</html>

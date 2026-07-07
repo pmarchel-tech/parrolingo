@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "vite",
+    "start": "python generate_db.py",
     "build": "vite build",
     "preview": "vite preview",
     "copy-mascot": "node copy_mascot.js",
@@ -12,7 +13,8 @@
     "gen-template": "node gen.js",
     "export-questions": "node export_questions.js",
     "git-sync": "node git_sync_now.js",
-    "gen-icons": "node generate_icons.js"
+    "gen-icons": "node generate_icons.js",
+    "gen-db": "node generate_multilingual_xlsx.js"
   },
   "dependencies": {
     "react": "^18.3.1",

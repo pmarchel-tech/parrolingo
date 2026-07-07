@@ -1,7 +1,7 @@
 // IndexedDB local storage utility for KaigoLingo
 
 const DB_NAME = 'kaigolingo_db';
-const DB_VERSION = 6;
+const DB_VERSION = 12;
 
 let dbInstance = null;
 let dbPromise = null;
@@ -39,7 +39,13 @@ export function initDB() {
       };
 
       dbPromise = null;
-      resolve(dbInstance);
+      
+      checkAndSeedDatabase().then(() => {
+        resolve(dbInstance);
+      }).catch((err) => {
+        console.error('Database seed error:', err);
+        resolve(dbInstance);
+      });
     };
 
     request.onupgradeneeded = (event) => {
@@ -216,11 +222,12 @@ export async function saveVoiceSignature(signature) {
 // --- USER PROGRESS API ---
 const DEFAULT_PROGRESS = {
   id: 'user_stats',
-  streak: 12,
-  xp: 450,
-  coins: 75,
-  completedWeeks: [1, 2, 3, 4], // defaults for showcase
-  studyTime: [20, 30, 15, 35, 25, 45, 0], // Monday to Sunday minutes
+  streak: 0,
+  xp: 0,
+  coins: 10,
+  completedWeeks: [1], // Only week 1 unlocked by default
+  dailyPracticeCounts: {}, // tracks practice counts per week
+  studyTime: [0, 0, 0, 0, 0, 0, 0], // Monday to Sunday minutes
   lastStudyDate: new Date().toISOString().split('T')[0],
   lpkId: 'lpk_a'
 };
@@ -429,6 +436,356 @@ export async function importQuestionsAndVocab(data) {
   const questions = data.questions || {};
   const vocabulary = data.vocabulary || {};
   await seedQuestionsAndVocab(questions, vocabulary);
+}
+
+// --- DYNAMIC CLIENT-SIDE DATABASE SEEDER ---
+async function checkAndSeedDatabase() {
+  const qStore = await getStore('questions');
+  const count = await new Promise((resolve) => {
+    const req = qStore.count();
+    req.onsuccess = () => resolve(req.result);
+  });
+  
+  if (count === 0) {
+    console.log("IndexedDB questions store is empty. Generating 25-week caregiver database...");
+    const { questions, vocabulary } = generateDynamicCaregiverData();
+    await seedQuestionsAndVocab(questions, vocabulary);
+    console.log("Successfully seeded 25-week caregiver database in IndexedDB!");
+  }
+}
+
+function generateDynamicCaregiverData() {
+  const languages = [
+    { code: "ja", name: "Jepang" },
+    { code: "en", name: "Inggris" },
+    { code: "ar", name: "Arab" },
+    { code: "zh", name: "Mandarin" },
+    { code: "ko", name: "Korea" }
+  ];
+
+  const rawNouns = [
+    ["Tangan", "手", "te", "手", "shǒu", "يد", "yad", "Hand", "hand", "손", "son"],
+    ["Kaki", "足", "ashi", "脚", "jiǎo", "قدم", "qadam", "Foot", "foot", "발", "bal"],
+    ["Pinggang", "腰", "koshi", "腰", "yāo", "خصر", "khasr", "Waist", "waist", "허리", "heori"],
+    ["Kepala", "頭", "atama", "头", "tóu", "رأس", "ra's", "Head", "head", "머리", "meori"],
+    ["Punggung", "背中", "senaka", "背", "bèi", "ظهر", "zahr", "Back", "back", "등", "deung"],
+    ["Mata", "目", "me", "眼睛", "yǎnjing", "عين", "ayn", "Eye", "eye", "눈", "nun"],
+    ["Perut", "お腹", "onaka", "肚子", "dùzi", "بطن", "batn", "Stomach", "stomach", "배", "bae"],
+    ["Dada", "胸", "mune", "胸", "xiōng", "صدر", "sadr", "Chest", "chest", "가슴", "gaseum"],
+    ["Leher", "首", "kubi", "脖子", "bózi", "رقبة", "raqabah", "Neck", "neck", "목", "mok"],
+    ["Toilet", "トイレ", "toire", "洗手间", "xǐshǒujiān", "مرحاض", "mirhad", "Toilet", "toilet", "화장실", "hwajangsil"],
+    ["Kamar", "部屋", "heya", "房间", "fángjiān", "غرفة", "ghurfah", "Room", "room", "방", "bang"],
+    ["Kantin", "食堂", "shokudou", "食堂", "shítáng", "مطعم", "mat'am", "Dining Room", "dining room", "식당", "sikdang"],
+    ["Dapur", "台所", "daidokoro", "厨房", "chúfáng", "مطبخ", "matbakh", "Kitchen", "kitchen", "주방", "jubang"],
+    ["Kursi Roda", "車椅子", "kurumaisu", "轮椅", "lúnyǐ", "كرسي متحرك", "kursi mutaharrik", "Wheelchair", "wheelchair", "휠체어", "hwilcheo"],
+    ["Tongkat", "杖", "tsue", "拐杖", "guǎizhàng", "عصا", "asa", "Cane", "cane", "지팡이", "jipangi"],
+    ["Ranjang", "ベッド", "beddo", "床", "chuáng", "سرير", "sarir", "Bed", "bed", "침대", "chimdae"],
+    ["Obat", "薬", "kusuri", "药", "yào", "دواء", "dawa'", "Medicine", "medicine", "약", "yak"],
+    ["Selimut", "毛布", "moufu", "毯子", "tǎnzi", "بطانية", "bataniyah", "Blanket", "blanket", "담요", "damyo"],
+    ["Popok", "おむつ", "omutsu", "尿布", "niàobù", "حفاضات", "hifadat", "Diaper", "diaper", "기저귀", "gijeogi"],
+    ["Sendok", "スプーン", "supuun", "勺子", "sháozi", "ملعقة", "mil'aqah", "Spoon", "spoon", "숟가락", "sutgarak"],
+    ["Gelas", "コップ", "koppu", "杯子", "bēizi", "كوب", "kub", "Glass", "glass", "컵", "keop"],
+    ["Pakaian", "衣服", "ifuku", "衣服", "yīfu", "ملابس", "malabis", "Clothes", "clothes", "옷", "ot"]
+  ];
+
+  const rawVerbs = [
+    ["Sakit", "痛い", "itai", "疼", "téng", "مؤلم", "mu'lim", "Painful", "painful", "아프다", "apeuda"],
+    ["Bengkak", "腫れている", "harete iru", "肿了", "zhõng le", "متورم", "mutawarrim", "Swollen", "swollen", "부었다", "bueotda"],
+    ["Memar", "青あざがある", "aoaza ga aru", "淤青", "yūqīng", "كدمة", "kadmah", "Bruised", "bruised", "멍들었다", "meongdeureotda"],
+    ["Lemas", "だるい", "darui", "无力", "wúlì", "ضعيف", "da'if", "Weak", "weak", "나른하다", "nareunhada"],
+    ["Gatal", "痒い", "kayui", "痒", "yǎng", "حكة", "hakkah", "Itchy", "itchy", "가렵다", "garyeopda"],
+    ["Luka", "怪我をしている", "kega o shite iru", "受伤", "shòushāng", "مجروح", "majruh", "Injured", "injured", "다치다", "dachida"],
+    ["Bersih", "きれい", "kirei", "干净", "gānjìng", "نظيف", "nazif", "Clean", "clean", "깨끗하다", "kkaekkeuthada"],
+    ["Kanan", "右", "migi", "右边", "yòubiān", "يمين", "yamin", "Right", "right", "오른쪽", "oreunjjok"],
+    ["Kiri", "左", "hidari", "左边", "zuǒbiān", "يسار", "yasar", "Left", "left", "왼쪽", "oenjjok"]
+  ];
+
+  const rawSubjects = [
+    ["Saya", "私", "watashi", "我", "wǒ", "أنا", "ana", "I", "i", "저", "jeo"],
+    ["Anda", "あなた", "anata", "您", "nín", "أنت", "anta", "You", "you", "당신", "dangsin"],
+    ["Pasien", "利用者様", "riyousha-sama", "患者", "huànzhě", "المريض", "al-marid", "Patient", "patient", "환자", "hwanja"],
+    ["Perawat", "介護士", "kaigoshi", "护工", "hùgōng", "الممرض", "al-mumarrid", "Caregiver", "caregiver", "요양보호사", "yoyang-bohosa"],
+    ["Bapak Tanaka", "田中さん", "tanaka-san", "田中先生", "tiánzhōng xiānshēng", "السيد تاناكا", "al-sayyid tanaka", "Mr. Tanaka", "Mr. Tanaka", "다나카 씨", "tanaka ssi"],
+    ["Ibu Sato", "佐藤さん", "satou-san", "佐藤女士", "zuǒténg nǚshì", "السيدة ساتو", "al-sayyidah satou", "Ms. Sato", "Ms. Sato", "사토 씨", "satou ssi"]
+  ];
+
+  const rawActions = [
+    ["membantu", "手伝います", "tetsudaimasu", "帮助", "bāngzhù", "يساعد", "yusa'id", "help", "help", "돕습니다", "dopseumnida"],
+    ["membersihkan", "掃除します", "souji shimasu", "清洁", "qīngjié", "ينظف", "yunazzif", "clean", "clean", "청소합니다", "cheongsohamnida"],
+    ["memeriksa", "確認します", "kakunin shimasu", "检查", "jiǎnchá", "يفحص", "yafhas", "check", "check", "확인합니다", "hwaginhamnida"],
+    ["menyiapkan", "準備します", "junbi shimasu", "准备", "zhǔnbèi", "يجهز", "yujahhiz", "prepare", "prepare", "준비합니다", "junbihamnida"],
+    ["membawa", "持ちます", "mochimasu", "拿", "ná", "يحمل", "yahmil", "carry", "carry", "들고 있습니다", "deulgo itseumnida"],
+    ["mengganti", "交換します", "koukan shimasu", "更换", "gēnghuàn", "يستبدل", "yastabdil", "change", "change", "교체합니다", "gyochehamnida"]
+  ];
+
+  const mapRaw = (arr) => arr.map(x => ({
+    id: x[0], ja: x[1], ja_r: x[2], zh: x[3], zh_r: x[4], ar: x[5], ar_r: x[6], en: x[7], en_r: x[8], ko: x[9], ko_r: x[10]
+  }));
+
+  const nouns = mapRaw(rawNouns);
+  const verbs = mapRaw(rawVerbs);
+  const subjects = mapRaw(rawSubjects);
+  const actions = mapRaw(rawActions);
+
+  const numbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "15", "20", "30", "50"];
+  const units = [
+    { id: "Gelas", ja: "杯", ja_r: "hai", zh: "杯", zh_r: "bēi", ar: "كوب", ar_r: "kub", en: "glass", en_r: "glass", ko: "잔", ko_r: "jan" },
+    { id: "Jam", ja: "時間", ja_r: "jikan", zh: "小时", zh_r: "xiǎoshí", ar: "ساعة", ar_r: "sa'ah", en: "hour", en_r: "hour", ko: "시간", ko_r: "sigan" },
+    { id: "Menit", ja: "分", ja_r: "fun", zh: "分钟", zh_r: "fēnzhōng", ar: "دقيقة", ar_r: "daqiqah", en: "minute", en_r: "minute", ko: "분", ko_r: "bun" },
+    { id: "Obat", ja: "錠", ja_r: "jou", zh: "片药", zh_r: "piàn yào", ar: "حبة دواء", ar_r: "habbat dawa'", en: "pill", en_r: "pill", ko: "알약", ko_r: "alyak" }
+  ];
+
+  const coreGreetings = [
+    { id: "Selamat Pagi", ja: "おはようございます", ja_r: "ohayou gozaimasu", zh: "早上好", zh_r: "zǎoshang hǎo", ar: "صباح الخير", ar_r: "sabah al-khayr", en: "Good morning", en_r: "good morning", ko: "좋은 아침이에요", ko_r: "joeun achimieyo" },
+    { id: "Selamat Siang", ja: "こんにちは", ja_r: "konnichiwa", zh: "下午好", zh_r: "xiàwǔ hǎo", ar: "طاب يومك", ar_r: "tab yawmuk", en: "Good afternoon", en_r: "good afternoon", ko: "안녕하세요", ko_r: "annyeonghaseyo" },
+    { id: "Selamat Malam", ja: "こんばんは", ja_r: "konbanwa", zh: "晚上好", zh_r: "wǎnshàng hǎo", ar: "مساء الخير", ar_r: "masa' al-khayr", en: "Good evening", en_r: "good evening", ko: "안녕하세요", ko_r: "annyeonghaseyo" },
+    { id: "Selamat Tidur", ja: "おやすみなさい", ja_r: "oyasuminasai", zh: "晚安", zh_r: "wǎn'ān", ar: "تصبح على خير", ar_r: "tusbih ala khayr", en: "Good night", en_r: "good night", ko: "안녕히 주무세요", ko_r: "annyeonghi jumuseyo" },
+    { id: "Tunggu Sebentar", ja: "少々お待ちください", ja_r: "shoushou omachi kudasai", zh: "请稍等", zh_r: "qǐng shāo děng", ar: "انتظر لحظة من فضلك", ar_r: "intazir lahzah min fadlak", en: "Please wait a moment", en_r: "please wait a moment", ko: "잠깐만 기다려 주세요", ko_r: "jamkkanman gidaryeo juseyo" },
+    { id: "Terima Kasih Kerja Kerasnya", ja: "お疲れ様です", ja_r: "otsukaresama desu", zh: "辛苦了", zh_r: "xīnkǔle", ar: "شكرا لجهودكم", ar_r: "shukran lijuhudikum", en: "Thank you for your hard work", en_r: "thank you for your hard work", ko: "수고하셨습니다", ko_r: "sugohashyeotseumnida" },
+    { id: "Permisi Masuk", ja: "お邪魔します", ja_r: "ojama shimasu", zh: "打扰一下", zh_r: "dǎrǎo yīxià", ar: "تفضل بالدخول", ar_r: "tafaddal bil-dukhul", en: "Excuse me for entering", en_r: "excuse me for entering", ko: "실례하겠습니다", ko_r: "sillyehagesseumnida" },
+    { id: "Dimengerti / Baik", ja: "かしこまりました", ja_r: "kashikomarimashita", zh: "知道了", zh_r: "zhīdàole", ar: "مفهوم", ar_r: "mafhum", en: "Understood / Yes, sir", en_r: "understood", ko: "알겠습니다", ko_r: "algetseumnida" },
+    { id: "Permisi Mengganggu", ja: "失礼します", ja_r: "shitsurei shimasu", zh: "打扰了", zh_r: "dǎrǎole", ar: "عذراً", ar_r: "udhran", en: "Excuse me", en_r: "excuse me", ko: "실례합니다", ko_r: "sillyehamnida" },
+    { id: "Maaf", ja: "すみません", ja_r: "sumimasen", zh: "抱歉", zh_r: "bàoqiàn", ar: "آسف", ar_r: "asif", en: "Sorry", en_r: "sorry", ko: "죄송합니다", ko_r: "joesonghamnida" },
+    { id: "Tolong", ja: "お願いします", ja_r: "onegai shimasu", zh: "拜托了", zh_r: "bàituō le", ar: "من فضلك", ar_r: "min fadlak", en: "Please", en_r: "please", ko: "부탁합니다", ko_r: "butakhamnida" },
+    { id: "Silakan", ja: "どうぞ", ja_r: "douzo", zh: "请", zh_r: "qǐng", ar: "تفضل", ar_r: "tafaddal", en: "Here you go / Please", en_r: "please go ahead", ko: "어서 오세요", ko_r: "eoseo oseyo" },
+    { id: "Sama-sama", ja: "どういたしまして", ja_r: "douitashimashite", zh: "不客气", zh_r: "bù kèqi", ar: "على الرحب والسعة", ar_r: "ala al-rahb wa al-si'ah", en: "You are welcome", en_r: "you are welcome", ko: "천만에요", ko_r: "cheonmaneyo" },
+    { id: "Hati-hati", ja: "気をつけてください", ja_r: "ki o tsukete kudasai", zh: "请小心", zh_r: "qǐng xiǎoxīn", ar: "انتبه", ar_r: "intabih", en: "Please take care", en_r: "please take care", ko: "조심하세요", ko_r: "josimhaseyo" }
+  ];
+
+  const level1 = [];
+  coreGreetings.forEach(g => level1.push(g));
+  nouns.forEach(n => level1.push(n));
+  verbs.forEach(v => level1.push(v));
+  subjects.forEach(s => level1.push(s));
+
+  const level2 = [];
+  nouns.forEach(n => {
+    verbs.forEach(v => {
+      let ja_combo = `${n.ja}が${v.ja}`;
+      let ja_romaji = `${n.ja_r} ga ${v.ja_r}`;
+      if (v.id === "Kanan" || v.id === "Kiri") {
+        ja_combo = `${n.ja}は${v.ja}です`;
+        ja_romaji = `${n.ja_r} wa ${v.ja_r} desu`;
+      }
+      let zh_combo = `${n.zh}${v.zh}`;
+      let zh_romaji = `${n.zh_r} ${v.zh_r}`;
+      let ar_combo = `ألم في الـ${n.ar}`;
+      let ar_romaji = `alam fi al-${n.ar_r}`;
+      let en_combo = `${n.en} pain`;
+      let en_romaji = `${n.en_r} pain`;
+      let ko_combo = `${n.ko} ${v.ko}`;
+      let ko_romaji = `${n.ko_r} ${v.ko_r}`;
+      level2.push({
+        id: `${n.id} ${v.id}`, ja: ja_combo, ja_r: ja_romaji, zh: zh_combo, zh_r: zh_romaji,
+        ar: ar_combo, ar_r: ar_romaji, en: en_combo, en_r: en_romaji, ko: ko_combo, ko_r: ko_romaji
+      });
+    });
+  });
+
+  const level3 = [];
+  subjects.forEach(s => {
+    actions.forEach(act => {
+      nouns.forEach(n => {
+        level3.push({
+          id: `${s.id} ${act.id} ${n.id}`,
+          ja: `${s.ja}は${n.ja}を${act.ja}`,
+          ja_r: `${s.ja_r} wa ${n.ja_r} o ${act.ja_r}`,
+          zh: `${s.zh}${act.zh}${n.zh}`,
+          zh_r: `${s.zh_r} ${act.zh_r} ${n.zh_r}`,
+          ar: `${s.ar} ${act.ar} الـ${n.ar}`,
+          ar_r: `${s.ar_r} ${act.ar_r} al-${n.ar_r}`,
+          en: `${s.en} ${act.en} ${n.en}`,
+          en_r: `${s.en_r} ${act.en_r} ${n.en_r}`,
+          ko: `${s.ko}가 ${n.ko}을/를 ${act.ko}`,
+          ko_r: `${s.ko_r}ga ${n.ko_r}eul ${act.ko_r}`
+        });
+      });
+    });
+  });
+
+  const level4 = [];
+  numbers.forEach(num => {
+    units.forEach(u => {
+      level4.push({
+        id: `${num} ${u.id}`, ja: `${num}${u.ja}`, ja_r: `${num} ${u.ja_r}`, zh: `${num}${u.zh}`, zh_r: `${num} ${u.zh_r}`,
+        ar: `${num} ${u.ar}`, ar_r: `${num} ${u.ar_r}`, en: `${num} ${u.en}`, en_r: `${num} ${u.en_r}`, ko: `${num} ${u.ko}`, ko_r: `${num} ${u.ko_r}`
+      });
+    });
+  });
+
+  const level5 = [];
+  nouns.forEach(n => {
+    verbs.forEach(v => {
+      ["Kanan", "Kiri"].forEach(dir => {
+        let dirJa = dir === "Kanan" ? "右" : "左";
+        let dirRomaji = dir === "Kanan" ? "migi" : "hidari";
+        let dirZh = dir === "Kanan" ? "右" : "左";
+        let dirAr = dir === "Kanan" ? "الأيمن" : "الأيسر";
+        let dirEn = dir === "Kanan" ? "right" : "left";
+        let dirKo = dir === "Kanan" ? "오른쪽" : "왼쪽";
+        level5.push({
+          id: `${n.id} ${dir} ${v.id}`,
+          ja: `${dirJa}の${n.ja}が${v.ja}`,
+          ja_r: `${dirRomaji} no ${n.ja_r} ga ${v.ja_r}`,
+          zh: `${dirZh}边${n.zh}${v.zh}`,
+          zh_r: `${dirRomaji} bian ${n.zh_r} ${v.zh_r}`,
+          ar: `ألم di الـ${n.ar} ${dirAr}`,
+          ar_r: `alam fi al-${n.ar_r} ${dirRomaji}`,
+          en: `${dirEn} ${n.en} is ${v.en}`,
+          en_r: `${dirEn} ${n.en_r} is ${v.en_r}`,
+          ko: `${dirKo} ${n.ko}이/가 ${v.ko}`,
+          ko_r: `${dirKo} ${n.ko_r}i/ga ${v.ko_r}`
+        });
+      });
+    });
+  });
+
+  const level6 = [];
+  for (let i = 1; i <= 1500; i++) {
+    const n = nouns[i % nouns.length];
+    const s = subjects[Math.floor(i / nouns.length) % subjects.length];
+    level6.push({
+      id: `${s.id} memeriksa ${n.id} ke-${i}`,
+      ja: `${s.ja}は${n.ja}を確認します-${i}`,
+      ja_r: `${s.ja_r} wa ${n.ja_r} o kakunin shimasu ${i}`,
+      zh: `${s.zh}检查${n.zh}-${i}`,
+      zh_r: `${s.zh_r} jiǎnchá ${n.zh_r} ${i}`,
+      ar: `${s.ar} ي체크 الـ${n.ar}-${i}`,
+      ar_r: `${s.ar_r} yafhas al-${n.ar_r} ${i}`,
+      en: `${s.en} checks ${n.en} no.${i}`,
+      en_r: `${s.en_r} checks ${n.en_r} ${i}`,
+      ko: `${s.ko}가 ${n.ko}을 확인합니다-${i}`,
+      ko_r: `${s.ko_r}ga ${n.ko_r}eul hwaginhapnida ${i}`
+    });
+  }
+
+  const vocabByWeek = {};
+  const questionsByWeek = {};
+  for (let w = 1; w <= 25; w++) {
+    vocabByWeek[w.toString()] = [];
+    questionsByWeek[w.toString()] = [];
+  }
+
+  const distributeToWeeks = (items, startWeek, endWeek, targetPerWeek) => {
+    let itemIdx = 0;
+    for (let w = startWeek; w <= endWeek; w++) {
+      const weekStr = w.toString();
+      for (let count = 0; count < targetPerWeek; count++) {
+        const v = items[itemIdx % items.length];
+        const translations = {
+          zh: { target: v.zh, phonetic: v.zh_r },
+          ko: { target: v.ko, phonetic: v.ko_r },
+          ar: { target: v.ar, phonetic: v.ar_r },
+          en: { target: v.en, phonetic: v.en_r }
+        };
+        vocabByWeek[weekStr].push({
+          ja: v.ja,
+          romaji: v.ja_r,
+          id: v.id,
+          context: `Latihan bahasa perawat (Kaigo) bagian ke-${itemIdx + 1}.`,
+          tip: "Gunakan kalimat ini dalam operasional panti lansia.",
+          example: `${v.ja} desu.`,
+          translations: translations
+        });
+        itemIdx++;
+      }
+    }
+  };
+
+  distributeToWeeks(level1, 1, 4, 40);
+  distributeToWeeks(level2, 5, 8, 80);
+  distributeToWeeks(level3, 9, 12, 120);
+  distributeToWeeks(level4, 13, 16, 150);
+  distributeToWeeks(level5, 17, 20, 180);
+  distributeToWeeks(level6, 21, 25, 240);
+
+  const skillsList = ["Listening", "Speaking", "Reading", "Writing"];
+  for (let w = 1; w <= 25; w++) {
+    const weekVocab = vocabByWeek[w.toString()] || [];
+    if (weekVocab.length === 0) continue;
+
+    let allowedTypes = ["B", "A", "E", "F", "D"];
+    if (w >= 9) { allowedTypes = ["B", "A", "E", "F", "D", "C"]; }
+
+    for (let qIdx = 0; qIdx < 10; qIdx++) {
+      const mainVocab = weekVocab[qIdx % weekVocab.length];
+      const typeCode = allowedTypes[qIdx % allowedTypes.length];
+      const skill = skillsList[qIdx % skillsList.length];
+      const qId = `Q_WEEK_${w}_${qIdx + 1}`;
+      const wrong1 = weekVocab[(qIdx + 1) % weekVocab.length];
+      const wrong2 = weekVocab[(qIdx + 2) % weekVocab.length];
+      const mcCorrect = `${mainVocab.ja}: ${mainVocab.romaji} (${mainVocab.id})`;
+
+      let promptText = "";
+      if (typeCode === "B") { promptText = `Pilih istilah bahasa Jepang yang tepat untuk arti: "${mainVocab.id}"`; } 
+      else if (typeCode === "A") { promptText = "Pasangkan kosakata bahasa Jepang perawat berikut dengan artinya yang sesuai:"; } 
+      else if (typeCode === "D") { promptText = `Ucapkan kata berikut dengan lafal yang benar: "${mainVocab.ja}" (${mainVocab.id})`; } 
+      else if (typeCode === "C") { promptText = `Ketik ejaan Romaji yang tepat untuk kata: "${mainVocab.ja}" (${mainVocab.id})`; }
+      else if (typeCode === "E") { promptText = "Dengarkan audio berikut dan pilih arti bahasa Indonesia yang tepat:"; }
+      else if (typeCode === "F") { promptText = "Dengarkan audio berikut dan ketik ejaan Romaji/lafal yang tepat:"; }
+
+      const qObj = {
+        id: qId, jobCategory: "Healthcare", level: w <= 8 ? "N5" : w <= 16 ? "N4" : "N3",
+        type: typeCode, prompt: promptText, meaning: mainVocab.id, explanation_id: "Dapatkan ejaan lafal asli dan pilih arti kata yang tepat.",
+        audioText: mainVocab.ja, targetJa: mainVocab.ja, romaji: mainVocab.romaji,
+        targetRomaji: (typeCode === "C" || typeCode === "F") ? mainVocab.romaji.toLowerCase().replace(/[\s\-]/g, '') : "",
+        options: typeCode === "B" 
+          ? [mcCorrect, `${wrong1.ja}: ${wrong1.romaji} (${wrong1.id})`, `${wrong2.ja}: ${wrong2.romaji} (${wrong2.id})`] 
+          : typeCode === "E"
+            ? [mainVocab.id, wrong1.id, wrong2.id]
+            : [],
+        pairs: typeCode === "A" ? [
+          { ja: mainVocab.ja, id: mainVocab.id, romaji: mainVocab.romaji }, 
+          { ja: wrong1.ja, id: wrong1.id, romaji: wrong1.romaji }, 
+          { ja: wrong2.ja, id: wrong2.id, romaji: wrong2.romaji }
+        ] : [],
+        answer: 0, skill: skill, week: w.toString(),
+        translations: { 
+          ja: { 
+            targetText: mainVocab.ja, 
+            phonetic: mainVocab.romaji, 
+            options: typeCode === "B" 
+              ? [mcCorrect, `${wrong1.ja}: ${wrong1.romaji} (${wrong1.id})`, `${wrong2.ja}: ${wrong2.romaji} (${wrong2.id})`] 
+              : typeCode === "E"
+                ? [mainVocab.id, wrong1.id, wrong2.id]
+                : [], 
+            correctAnswer: typeCode === "E" ? mainVocab.id : mcCorrect, 
+            pairs: typeCode === "A" ? [{ ja: mainVocab.ja, id: mainVocab.id, romaji: mainVocab.romaji }, { ja: wrong1.ja, id: wrong1.id, romaji: wrong1.romaji }, { ja: wrong2.ja, id: wrong2.id, romaji: wrong2.romaji }] : [] 
+          } 
+        }
+      };
+
+      languages.filter(l => l.code !== 'ja').forEach(l => {
+        const t = mainVocab.translations[l.code] || { target: mainVocab.ja, phonetic: mainVocab.romaji };
+        const tw1 = wrong1.translations[l.code] || { target: wrong1.ja, phonetic: wrong1.romaji };
+        const tw2 = wrong2.translations[l.code] || { target: wrong2.ja, phonetic: wrong2.romaji };
+
+        const lCorrect = `${t.target}: ${t.phonetic} (${mainVocab.id})`;
+        const lWrong1 = `${tw1.target}: ${tw1.phonetic} (${wrong1.id})`;
+        const lWrong2 = `${tw2.target}: ${tw2.phonetic} (${wrong2.id})`;
+
+        qObj.translations[l.code] = {
+          targetText: t.target,
+          phonetic: t.phonetic,
+          options: typeCode === "B" 
+            ? [lCorrect, lWrong1, lWrong2] 
+            : typeCode === "E"
+              ? [mainVocab.id, wrong1.id, wrong2.id]
+              : [],
+          correctAnswer: typeCode === "E" ? mainVocab.id : lCorrect,
+          pairs: typeCode === "A" ? [
+            { ja: t.target, id: mainVocab.id, romaji: t.phonetic },
+            { ja: tw1.target, id: wrong1.id, romaji: tw1.phonetic },
+            { ja: tw2.target, id: wrong2.id, romaji: tw2.phonetic }
+          ] : []
+        };
+      });
+
+      questionsByWeek[w.toString()].push(qObj);
+    }
+  }
+
+  return { questions: questionsByWeek, vocabulary: vocabByWeek };
 }
 
 export async function resetDB() {

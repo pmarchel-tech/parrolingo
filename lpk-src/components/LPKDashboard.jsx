@@ -24,27 +24,56 @@ import {
 } from 'lucide-react';
 
 const PROCESS_ITEMS = {
-  departure: [
-    { id: 'briefing', label: '1.1 Edukasi & Briefing Karir' },
-    { id: 'doc_admin', label: '1.2 Cek Dokumen (e-KTP, KK, Ijazah)' },
-    { id: 'physical_check', label: '1.3 Cek Fisik & Pengukuran BMI' },
-    { id: 'physical_test', label: '1.4 Tes Fisik Dasar & Akademik' },
-    { id: 'mcu_1', label: '1.5 Medical Check-Up (MCU) Tahap 1' },
-    { id: 'dormitory', label: '2.1 Masuk Asrama & Karakter' },
-    { id: 'kaiwa_n4', label: '2.2 Kelas Bahasa Jepang (N4/JFT)' },
-    { id: 'jlpt_prep', label: '2.3 Kelas Ujian JLPT Prep' },
-    { id: 'ssw_prep', label: '2.4 Pelatihan Keterampilan Caregiver' },
-    { id: 'cultural_orientation', label: '2.5 Orientasi Budaya Jepang' },
-    { id: 'kaiwa_mensetsu', label: '3.1 Wawancara Kerja (Mensetsu)' },
-    { id: 'job_interview', label: '3.2 Wawancara dengan User Jepang' },
-    { id: 'contract_signing', label: '3.3 Tanda Tangan Kontrak' },
-    { id: 'mcu_final', label: '4.1 MCU Tahap Akhir' },
-    { id: 'passport', label: '4.2 Pembuatan Paspor & Rekomendasi' },
-    { id: 'coe_issuance', label: '4.3 Penerbitan CoE (Kelayakan)' },
-    { id: 'visa_application', label: '4.4 Pengajuan Visa Kerja' },
-    { id: 'final_prep', label: '5.1 Pembekalan Mental & Bahasa' },
-    { id: 'opp_bp2mi', label: '5.2 Orientasi Pra-Pemberangkatan' },
-    { id: 'flight_departure', label: '5.3 Tiket Penerbangan & Terbang' }
+  daftar: [
+    { id: 'daftar_website', label: '1.1 Website LPK' },
+    { id: 'daftar_wa', label: '1.2 Chat Hubungan WhatsApp' },
+    { id: 'daftar_google_form', label: '1.3 Isi Form Google/Formulir' },
+    { id: 'daftar_ref', label: '1.4 Referensi Sponsor' },
+    { id: 'daftar_trial', label: '1.5 Kelas Uji Coba (Trial Class)' },
+    { id: 'daftar_booking', label: '1.6 Booking Seat Pembayaran' }
+  ],
+  seleksi: [
+    { id: 'seleksi_doc', label: '2.1 Pemeriksaan Dokumen' },
+    { id: 'seleksi_cek_fisik', label: '2.2 Cek Tinggi, Berat & Tato' },
+    { id: 'seleksi_interview', label: '2.3 Wawancara Awal' },
+    { id: 'seleksi_job_desc', label: '2.4 Penjelasan Kriteria Pekerjaan' },
+    { id: 'seleksi_room_check', label: '2.5 Cek Kapasitas Kamar/Asrama' },
+    { id: 'seleksi_biaya', label: '2.6 Skema Pembiayaan & Dana Talangan' }
+  ],
+  pelatihan: [
+    { id: 'pelatihan_budaya', label: '3.1 Budaya Jepang & Asing' },
+    { id: 'pelatihan_bahasa', label: '3.2 Pengenalan Huruf & Istilah' },
+    { id: 'pelatihan_kurikulum', label: '3.3 Kurikulum Pendidikan' },
+    { id: 'pelatihan_asrama', label: '3.4 Tata Tertib Masuk Asrama' },
+    { id: 'pelatihan_skill', label: '3.5 Pelatihan Teknis Caregiver (Kaigo)' },
+    { id: 'pelatihan_penilaian', label: '3.6 Penilaian Bulanan Siswa' }
+  ],
+  matching: [
+    { id: 'matching_job_offer', label: '4.1 Tinjauan Informasi Job Offer' },
+    { id: 'matching_video', label: '4.2 Unggah Video Keterampilan / Perkenalan' },
+    { id: 'matching_wawancara', label: '4.3 Wawancara dengan Pengguna Asing' },
+    { id: 'matching_match', label: '4.4 Hasil Match / Diterima User' }
+  ],
+  persiapan: [
+    { id: 'persiapan_dokumen', label: '5.1 Dokumen COE & Kontrak Kerja' },
+    { id: 'persiapan_mental', label: '5.2 Kesiapan Mental & Wawancara' },
+    { id: 'persiapan_kesehatan', label: '5.3 MCU Tahap Akhir' },
+    { id: 'persiapan_checkout', label: '5.4 Check Out Asrama LPK' },
+    { id: 'persiapan_pelunasan', label: '5.5 Pembayaran / Cicilan Awal' }
+  ],
+  penempatan: [
+    { id: 'penempatan_kontrak', label: '6.1 Tanda Tangan Kontrak Kerja' },
+    { id: 'penempatan_tiket', label: '6.2 Tiket Pesawat & Rencana Keberangkatan' },
+    { id: 'penempatan_penjemputan', label: '6.3 Penjemputan Bandara di Jepang/Korea' }
+  ],
+  alumni: [
+    { id: 'alumni_komunitas', label: '7.1 Pembuatan Komunitas Alumni' },
+    { id: 'alumni_referensi', label: '7.2 Referensi Rekomendasi Siswa Baru' }
+  ],
+  evaluasi: [
+    { id: 'evaluasi_budaya', label: '8.1 Evaluasi Adaptasi Budaya Kerja' },
+    { id: 'evaluasi_cicilan', label: '8.2 Pelunasan Dana Talangan Potong Gaji' },
+    { id: 'evaluasi_berkala', label: '8.3 Evaluasi Kinerja Kerja Berkala (1, 3, 6 Bulan)' }
   ]
 };
 
@@ -853,30 +882,57 @@ export default function LPKDashboard() {
                       <span className="badge badge-blue">Program: {checklist.program === 'kaigo' ? 'Kaigo' : 'Pabrik'}</span>
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '4px' }}>
-                      {PROCESS_ITEMS.departure.map(item => {
-                        const status = checklist.statuses[item.id] || 'pending';
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                      {Object.keys(PROCESS_ITEMS).map(categoryKey => {
+                        const categoryLabel = {
+                          daftar: '📋 1. Alur Pendaftaran (Daftar)',
+                          seleksi: '🔍 2. Tahap Seleksi & Administrasi',
+                          pelatihan: '🏫 3. Masa Pelatihan & Asrama',
+                          matching: '🤝 4. Job Matching & Wawancara',
+                          persiapan: '✈️ 5. Persiapan Terbang (COE & Dokumen)',
+                          penempatan: '💼 6. Penempatan & Kerja',
+                          alumni: '👥 7. Komunitas Alumni',
+                          evaluasi: '📈 8. Evaluasi & Dana Talangan'
+                        }[categoryKey];
+                        
                         return (
-                          <div 
-                            key={item.id} 
-                            style={{ 
-                              display: 'flex', 
-                              alignItems: 'center', 
-                              justifyContent: 'space-between', 
-                              padding: '10px 12px', 
-                              borderBottom: '1px solid var(--border)',
-                              backgroundColor: status === 'completed' ? '#f0fdf4' : 'transparent'
-                            }}
-                          >
-                            <span style={{ fontSize: '13px', color: status === 'completed' ? 'var(--secondary)' : 'var(--text-main)' }}>
-                              {item.label}
-                            </span>
-                            <button 
-                              onClick={() => handleToggleChecklist(item.id, status)}
-                              style={{ background: 'none', border: 'none', cursor: 'pointer', color: status === 'completed' ? 'var(--secondary)' : 'var(--text-light)' }}
-                            >
-                              {status === 'completed' ? <CheckSquare size={20} /> : <Square size={20} />}
-                            </button>
+                          <div key={categoryKey} style={{ border: '1px solid var(--border)', borderRadius: '12px', padding: '16px', backgroundColor: 'rgba(255,255,255,0.01)', boxShadow: '0 4px 6px rgba(0,0,0,0.05)' }}>
+                            <h3 style={{ fontSize: '14px', fontWeight: '800', color: 'var(--primary-accent)', marginBottom: '12px', borderBottom: '1px solid var(--border)', paddingBottom: '6px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                              <span>{categoryLabel}</span>
+                              <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                                {Object.values(PROCESS_ITEMS[categoryKey]).filter(x => (checklist.statuses[x.id] || 'pending') === 'completed').length} / {PROCESS_ITEMS[categoryKey].length} Selesai
+                              </span>
+                            </h3>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '4px' }}>
+                              {PROCESS_ITEMS[categoryKey].map(item => {
+                                const status = checklist.statuses[item.id] || 'pending';
+                                return (
+                                  <div 
+                                    key={item.id} 
+                                    style={{ 
+                                      display: 'flex', 
+                                      alignItems: 'center', 
+                                      justifyContent: 'space-between', 
+                                      padding: '8px 10px', 
+                                      borderBottom: '1px solid rgba(255,255,255,0.03)',
+                                      backgroundColor: status === 'completed' ? '#f0fdf4' : 'transparent',
+                                      borderRadius: '6px',
+                                      transition: 'all 0.15s ease'
+                                    }}
+                                  >
+                                    <span style={{ fontSize: '12.5px', color: status === 'completed' ? 'var(--secondary)' : 'var(--text-main)', fontWeight: status === 'completed' ? '600' : '400' }}>
+                                      {item.label}
+                                    </span>
+                                    <button 
+                                      onClick={() => handleToggleChecklist(item.id, status)}
+                                      style={{ background: 'none', border: 'none', cursor: 'pointer', color: status === 'completed' ? 'var(--secondary)' : 'var(--text-light)', transition: 'transform 0.1s ease' }}
+                                    >
+                                      {status === 'completed' ? <CheckSquare size={19} /> : <Square size={19} />}
+                                    </button>
+                                  </div>
+                                );
+                              })}
+                            </div>
                           </div>
                         );
                       })}

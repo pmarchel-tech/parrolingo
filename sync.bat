@@ -1,13 +1,4 @@
 @echo off
-echo === GitHub Sync Starting ===
-cd /d "%~dp0"
-echo [1/4] Staging changes...
-git add -A
-echo [2/4] Committing changes...
-git commit -m "feat: fix vercel build script and clean config"
-echo [3/4] Pulling remote updates...
-git pull origin main --no-rebase
-echo [4/4] Pushing to GitHub...
-git push origin main
-echo === GitHub Sync Finished ===
-pause
+git add .
+git commit -m "feat: update LPK dashboard checklist categories to match sticky notes"
+git push

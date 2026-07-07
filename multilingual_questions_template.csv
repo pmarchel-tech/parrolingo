@@ -1,0 +1,25 @@
+﻿ID,Learner Language,Level,Job Group,Skill,Question Type,Grammar Point,Scenario Context,Prompt Instruction,Learning Content (Japanese),Options / Pairs / Blocks,Correct Answer,Translation,Explanation,Vocabulary List
+Q_HEALTH_001,Indonesian,N3,Healthcare,Speaking,Speech Repetition,〜ところです,Membantu lansia (user) berpindah dari tempat tidur ke kursi roda.,Dengarkan kalimat bergaris bawah lalu ucapkan ulang dengan lafal yang benar.,山田さん、今車椅子を準備する【ところです】ので、お待ちください。,,今車椅子を準備するところですので、お待ちください。,Tuan Yamada, sekarang saya baru akan menyiapkan kursi rodanya, mohon tunggu.,Tata bahasa '〜ところです' menunjukkan suatu tindakan baru akan dimulai.,"車椅子 (kurumaisu) = kursi roda | 準備 (junbi) = persiapan"
+Q_HOSP_002,Arabic,N2,Hospitality & Food,Reading,Multiple Choice,〜に際して,كتيب إجراءات استقبال كبار الشخصيات (VIP) في الفندق.,اقرأ النص التالي واختر الإجابة الصحيحة للسؤال.,"VIP客のチェックインに際しては、事前に専用デスクをフロント横に設置し、スムーズに対応すること。
+
+質問：VIP客が来るときに何を準備しますか？",A. 通常フロントで対応する | B. フロントの横に専用デスクを設置する | C. ロビーでお迎えする,B,عند تسجيل وصول كبار الشخصيات، يجب إعداد مكتب مخصص بجوار مكتب الاستقبال مسبقًا لضمان التعامل السلس.,تستخدم القاعدة '〜に際して' للتعبير عن الاستعدادات عند البدء بحدث رسمي هام.,"専用デスク (sen'you desuku) = مكتب مخصص | 設置 (secchi) = تركيب/إعداد"
+Q_MANUF_003,Mandarin,N3,Manufacturing,Listening,True/False,〜ておく,在夜班开始前，领班用日语说明对机器的检查准备。,听录音，判断以下陈述是否正确（正确填 T，错误填 F）。,「夜間作業を始める前に、必ず機械Aの動きを確認しておいてください。」
+
+陈述：作业开始前必须检查机器A的动作确认。,T | F,T,「在开始夜间作业之前，请务必提前确认机器A的运转情况。」
+
+陈述：开始作业前必须确认机器A的运转。,检测 “〜ておく” 表示提前做好某种准备工作。,"夜間作業 (yakan sagyou) = 夜班工作 | 動作確認 (dousha kakunin) = 动作/运转确认"
+Q_CONST_004,Korean,N3,Construction & Engineering,Writing,Matching,〜ようにする,공사 현장에서의 안전 관리 및 비계 작업 수칙.,일본어 안전 표지와 한국어 뜻을 바르게 연결하십시오.,Matching 안전 표지,足場注意 (ashiba chuui) = 비계 주의 | 頭上注意 (zujou chuui) = 머리 위 주의 | 安全第一 (anzen daiichi) = 안전 제일,足場注意=비계 주의 | 頭上注意=머리 위 주의 | 安全第一=안전 제일,비계 주의, 머리 위 주의, 안전 제일 수칙 매칭.,건설 현장의 한자 표지판과 안전 관련 어휘 매칭 훈련.,"足場 (ashiba) = 비계/발판 | 頭上 (zujou) = 머리 위 | 注意 (chuui) = 주의"
+Q_AGRI_005,English,N3,Agriculture,Writing,Short Answer,〜ながら,Harvesting apples in an orchard while checking for spots or damage.,Fill in the blank with the correct form of the verb to say 'while checking'.,"りんごは、傷がないか【確認し】ながら、収穫してください。",Input: [確認し],確認し,Please harvest the apples while checking if there are any damages.,The grammar '~nagara' attaches to the verb Stem (Masu-form minus masu). For 'kakunin suru', the stem is 'kakunishi'.,"収穫 (shuukaku) = harvest | 傷 (kizu) = damage/scratch"
+Q_ADMIN_006,Indonesian,N2,Administration & Office,Reading,Matching,〜について,Membaca email undangan rapat koordinasi departemen.,Jodohkan istilah bisnis Jepang berikut dengan artinya dalam Bahasa Indonesia.,E-mail Rapat Bisnis,日程調整 (nittei chousei) = Penyesuaian jadwal | 議題 (gidai) = Agenda rapat | 共有 (kyouyuu) = Berbagi informasi,日程調整=Penyesuaian jadwal | 議題=Agenda rapat | 共有=Berbagi informasi,Pencocokan istilah bisnis penting dalam email rapat kantor.,Menguji pemahaman istilah kantor level N2 yang sering muncul dalam email bisnis.,"日程調整 (nittei chousei) = penyesuaian jadwal | 議題 (gidai) = agenda rapat"
+Q_CLEAN_007,Arabic,N3,Cleaning & Maintenance,Listening,Multiple Choice,〜なければならない,تعليمات لخلط المحاليل الكيميائية للتنظيف.,استمع إلى المقطع الصوتي واختر الخيار الصحيح للسلامة.,"「洗剤を混ぜる時は、必ず換気扇を回さなければなりません。」
+
+質問：洗剤を混ぜる時に何をしなければなりませんか？",A. マスクを外す | B. 換気扇を回す | C. 窓を閉める,B,「عند خلط المنظفات، يجب عليك دائمًا تشغيل مروحة التهوية (الشفاط).」
+
+السؤال: ماذا يجب أن تفعل عند خلط المنظفات؟,تفيد القاعدة '〜なければならない' بوجوب أو إلزامية القيام بالفعل.,"換気扇 (kankisen) = مروحة تهوية/شفاط | 混ぜる (mazeru) = يخلط/يمزج"
+Q_SALES_008,Mandarin,N2,Sales & Retail,Speaking,Speech Repetition,〜せていただく,店员向顾客解释需要确认小票才能退货。,请在听完录音后，用正确的敬语发音朗读下划线部分。,恐れ入りますが、商品の返品はレシートを確認【させていただきます】。,,させていただきます,非常抱歉，商品的退货需要由我方确认收据，敬请谅解。,检测 “〜せていただく” 的谦让语用法，表示允许我方做某事，在服务业接待顾客时极为常用。,"返品 (henpin) = 退货 | レシート (reshiito) = 收据/小票"
+Q_TRANS_009,Korean,N2,Transportation,Reading,True/False,〜おそれがある,폭설로 인한 버스 운전사 안전 경고 고지.,글을 읽고 다음 진술의 진위(T/F)를 판단하십시오.,"「路面が凍結しているため、スリップするおそれがあります。スピードを落として運転してください。」
+
+陈述：路面이 얼어서 미끄러질 위험이 있다.",T | F,T,「노면이 얼어붙어 미끄러질 우려가 있습니다. 속도를 줄여 운전해 주십시오.」
+
+진술: 노면이 얼어 미끄러질 위험이 있다.,“〜오소레가아루”는 '(부정적인 일이) 일어날 우려가 있다/위험이 있다'라는 뜻으로 안전 지침에 자주 사용됩니다.,"凍結 (touketsu) = 동결/얼어붙음 | 스립 (surippu) = 미끄러짐 | おそれがある (osore ga aru) = 우려가 있다"
+Q_OTHER_010,English,N3,Other,Writing,Short Answer,〜までに,Logging the temperature of the fish freezer before leaving the facility.,Fill in the blank with the correct particle meaning 'by/no later than'.,冷凍庫の温度確認は、退勤する時間【までに】行ってください。,Input: [までに],までに,Please perform the freezer temperature check by the time you leave work.,The particle 'made ni' means 'by/no later than a specific limit', distinct from 'made' (until).,"冷凍庫 (reitouko) = freezer | 退勤 (taikin) = leaving work"

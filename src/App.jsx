@@ -118,7 +118,15 @@ export default function App() {
     setProgress(userProgress);
     // When session ends, ensure navigation is visible again
     setShowNav(true);
-    if (nextWeekNum && nextWeekNum <= 12) {
+
+    const selectedLanguage = localStorage.getItem('kaigolingo_selected_language') || 'ja';
+    let maxWeeks = 12;
+    if (selectedLanguage === 'ja') maxWeeks = 25;
+    else if (selectedLanguage === 'ko') maxWeeks = 20;
+    else if (selectedLanguage === 'zh') maxWeeks = 15;
+    else if (selectedLanguage === 'ar' || selectedLanguage === 'en') maxWeeks = 10;
+
+    if (nextWeekNum && nextWeekNum <= maxWeeks) {
       setSessionWeek(nextWeekNum);
       setSessionType('practice'); // Default to practice for next week
       setShowNav(false);

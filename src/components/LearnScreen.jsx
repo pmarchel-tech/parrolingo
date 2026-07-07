@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Volume2, Mic, CheckCircle, XCircle, ArrowRight, X, Play, RefreshCw, Lock, Award, ShieldAlert } from 'lucide-react';
-import { saveProgress, addLog, getVoiceSignature, getQuestionsByWeek, getVocabByWeek, seedQuestionsAndVocab } from '../utils/db';
+import { initDB, saveProgress, addLog, getVoiceSignature, getQuestionsByWeek, getVocabByWeek, seedQuestionsAndVocab } from '../utils/db';
 
 // React Error Boundary to catch any rendering crashes on the results screen
 class SafeErrorBoundary extends React.Component {
@@ -472,7 +472,23 @@ export default function LearnScreen({ weekNumber, sessionType, progress, onEndSe
     const localizedVs = localizeVocab(vs, lang);
 
     // 3. Localize questions based on selected target practice language
+    const langNames = {
+      'ja': 'Jepang',
+      'ko': 'Korea',
+      'zh': 'Mandarin',
+      'ar': 'Arab',
+      'en': 'Inggris'
+    };
+    const langName = langNames[lang] || 'Jepang';
+
     const localizedQs = filteredQs.map(q => {
+      let translatedPrompt = q.prompt || "";
+      translatedPrompt = translatedPrompt
+        .replace(/bahasa Jepang/g, `bahasa ${langName}`)
+        .replace(/bahasa jepang/g, `bahasa ${langName}`)
+        .replace(/Jepang/g, langName)
+        .replace(/jepang/g, langName);
+
       if (q.translations && q.translations[lang]) {
         const t = q.translations[lang];
         
@@ -487,26 +503,29 @@ export default function LearnScreen({ weekNumber, sessionType, progress, onEndSe
 
         return {
           ...q,
-          prompt: q.prompt,
+          prompt: translatedPrompt,
           meaning: q.meaning,
           explanation: {
             word: t.targetText || q.audioText,
             romaji: t.phonetic || q.romaji,
             translation: q.meaning,
-            context: q.prompt,
+            context: translatedPrompt,
             tip: q.explanation_id,
             vocabList: t.pairs || q.pairs || []
           },
           audioText: t.targetText || q.audioText,
           targetJa: t.targetText || q.targetJa,
           romaji: t.phonetic || q.romaji,
-          targetRomaji: q.type === "C" ? ((t.correctAnswer || t.Correct_Answer || "").toLowerCase()) : "",
+          targetRomaji: (q.type === "C" || q.type === "F") ? (t.phonetic || "").toLowerCase().replace(/[\s\-]/g, '') : "",
           options: (t.options && t.options.length > 0) ? t.options : q.options,
           pairs: (t.pairs && t.pairs.length > 0) ? t.pairs : q.pairs,
           answer: answerIndex
         };
       }
-      return q;
+      return {
+        ...q,
+        prompt: translatedPrompt
+      };
     });
 
     return { localizedQs, localizedVs };
@@ -618,24 +637,9 @@ export default function LearnScreen({ weekNumber, sessionType, progress, onEndSe
   useEffect(() => {
     const loadSessionData = async () => {
       try {
+        await initDB();
         let qs = await getQuestionsByWeek(weekNumber);
         let vs = await getVocabByWeek(weekNumber);
-        
-        // Auto re-seed if we find the old format questions (no translations)
-        const isOldFormat = qs.length > 0 && !qs[0].translations;
-
-        if (qs.length === 0 || vs.length === 0 || isOldFormat) {
-          console.log('Seeding database from local JSON files (multilingual)...');
-          const qRes = await fetch('/questions.json');
-          const vRes = await fetch('/vocabulary.json');
-          if (qRes.ok && vRes.ok) {
-            const qData = await qRes.json();
-            const vData = await vRes.json();
-            await seedQuestionsAndVocab(qData, vData);
-            qs = await getQuestionsByWeek(weekNumber);
-            vs = await getVocabByWeek(weekNumber);
-          }
-        }
 
         // Apply program and language filters
         const lang = localStorage.getItem('kaigolingo_selected_language') || 'ja';
@@ -798,7 +802,7 @@ export default function LearnScreen({ weekNumber, sessionType, progress, onEndSe
   useEffect(() => {
     if (currentQuestion && currentQuestion.type === 'A') {
       const pairs = currentQuestion.pairs || [];
-      const left = pairs.map((p, idx) => ({ id: idx, text: p.ja })).sort(() => Math.random() - 0.5);
+      const left = pairs.map((p, idx) => ({ id: idx, text: p.ja, romaji: p.romaji })).sort(() => Math.random() - 0.5);
       const right = pairs.map((p, idx) => ({ id: idx, text: p.id })).sort(() => Math.random() - 0.5);
       setMatchLeft(left);
       setMatchRight(right);
@@ -1414,14 +1418,21 @@ const KANJI_TO_HIRAGANA_TTS = {
 
   // Check Answer for Multiple Choice, Typing, & Shadowing
   const checkAnswer = () => {
-    if (currentQuestion.type === 'B') {
+    if (currentQuestion.type === 'B' || currentQuestion.type === 'E') {
       const correct = selectedOption === currentQuestion.answer;
       setIsCorrect(correct);
       setIsAnswerChecked(true);
       if (correct) speakText(currentQuestion.audioText, 1.0, currentQuestion.romaji);
-    } else if (currentQuestion.type === 'C') {
-      const cleanInput = typedInput.trim().toLowerCase().replace(/[\s\-]/g, '');
-      const cleanTarget = currentQuestion.targetRomaji.toLowerCase().replace(/[\s\-]/g, '');
+    } else if (currentQuestion.type === 'C' || currentQuestion.type === 'F') {
+      const normalizeRomaji = (str) => {
+        return (str || "")
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "") // remove tone marks / diacritics
+          .replace(/[^a-z0-9]/g, "");     // remove punctuation, spaces, apostrophes
+      };
+      const cleanInput = normalizeRomaji(typedInput);
+      const cleanTarget = normalizeRomaji(currentQuestion.targetRomaji);
       
       const similarity = getSimilarity(cleanInput, cleanTarget);
       const correct = similarity >= 0.8;
@@ -1449,9 +1460,9 @@ const currentFails = currentQuestion.failCount || 0;
       setQuestionPoints(updatedPoints);
     } else {
       // Record the wrong answer for the summary screen
-      const incorrectAnswer = currentQuestion.type === 'B'
+      const incorrectAnswer = (currentQuestion.type === 'B' || currentQuestion.type === 'E')
         ? currentQuestion.options[selectedOption]
-        : currentQuestion.type === 'C'
+        : (currentQuestion.type === 'C' || currentQuestion.type === 'F')
           ? typedInput
           : shadowingResult || '(Tidak terdengar)';
 
@@ -1506,35 +1517,40 @@ const currentFails = currentQuestion.failCount || 0;
       setXpEarned(gainedXp);
       setCoinsEarned(gainedCoins);
 
-      // Update user progress safely using deep copy
       if (progress) {
         const updatedProgress = { 
           ...progress,
           xp: (progress.xp || 0) + gainedXp,
           coins: (progress.coins || 0) + gainedCoins,
-          completedWeeks: progress.completedWeeks ? [...progress.completedWeeks] : [],
+          completedWeeks: progress.completedWeeks ? [...progress.completedWeeks] : [1],
+          dailyPracticeCounts: progress.dailyPracticeCounts ? { ...progress.dailyPracticeCounts } : {},
           studyTime: progress.studyTime ? [...progress.studyTime] : [0, 0, 0, 0, 0, 0, 0]
         };
         
-        if (finalScorePercent >= 80) {
-          if (!updatedProgress.completedWeeks.includes(weekNumber)) {
-            updatedProgress.completedWeeks.push(weekNumber);
+        if (sessionType === 'practice') {
+          const currentCount = updatedProgress.dailyPracticeCounts[weekNumber] || 0;
+          updatedProgress.dailyPracticeCounts[weekNumber] = currentCount + 1;
+        } else if (sessionType === 'exam') {
+          if (finalScorePercent >= 80) {
+            if (!updatedProgress.completedWeeks.includes(weekNumber)) {
+              updatedProgress.completedWeeks.push(weekNumber);
+            }
           }
         }
 
-        // Add today's study minutes to chart safely
-        const todayIndex = new Date().getDay(); // 0 = Sun, 1 = Mon ...
-        const adjustedIdx = todayIndex === 0 ? 6 : todayIndex - 1; // Map Sun to index 6
+        const todayIndex = new Date().getDay();
+        const adjustedIdx = todayIndex === 0 ? 6 : todayIndex - 1;
         if (updatedProgress.studyTime && updatedProgress.studyTime[adjustedIdx] !== undefined) {
           updatedProgress.studyTime[adjustedIdx] += durationMin;
         }
 
         await saveProgress(updatedProgress);
 
-        // Write B2B Audit Log safely
         await addLog({
           duration: durationMin,
-          activity: sessionType === 'exam' ? `Ujian Mingguan (Week ${weekNumber}): Skor ${finalScorePercent}%` : `Latihan Mandiri (Week ${weekNumber})`,
+          activity: sessionType === 'exam' 
+            ? `Ujian Mingguan (Week ${weekNumber}): Skor ${finalScorePercent}% - ${finalScorePercent >= 80 ? 'LULUS' : 'REMEDIAL'}` 
+            : `Latihan Mandiri (Week ${weekNumber})`,
           lpkId: progress.lpkId || 'lpk_a',
           isAlumni: false
         });
@@ -1542,7 +1558,6 @@ const currentFails = currentQuestion.failCount || 0;
     } catch (err) {
       console.error('Error saving session stats to local DB:', err);
     } finally {
-      // ALWAYS set the step to result so the user never gets a blank screen!
       setStep('result');
     }
   };
@@ -1717,7 +1732,7 @@ const currentFails = currentQuestion.failCount || 0;
                         No. {displayIndex}: {q.prompt || 'Pertanyaan'}
                       </p>
                       
-                      {q.type === 'B' && q.options && (
+                      {(q.type === 'B' || q.type === 'E') && q.options && (
                         <div style={{ marginTop: '6px', fontSize: '13px' }}>
                           <p style={{ color: 'var(--tertiary)', margin: 0 }}>Pilihan Anda: <strong style={{ textDecoration: 'line-through' }}>{item.userAnswer}</strong></p>
                           <p style={{ color: 'var(--secondary)', margin: '2px 0 0 0', fontWeight: '600' }}>
@@ -1726,7 +1741,7 @@ const currentFails = currentQuestion.failCount || 0;
                         </div>
                       )}
                       
-                      {q.type === 'C' && (
+                      {(q.type === 'C' || q.type === 'F') && (
                         <div style={{ marginTop: '6px', fontSize: '13px' }}>
                           <p style={{ color: 'var(--tertiary)', margin: 0 }}>Ketikan Anda: <strong style={{ textDecoration: 'line-through' }}>{item.userAnswer || '(Kosong)'}</strong></p>
                           <p style={{ color: 'var(--secondary)', margin: '2px 0 0 0', fontWeight: '600' }}>
@@ -1750,19 +1765,29 @@ const currentFails = currentQuestion.failCount || 0;
             </div>
           )}
 
-
-
           {/* Action Buttons */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%', marginTop: '4px', flexShrink: 0 }}>
-            {weekNumber < 12 && passed && (
-              <button 
-                className="btn btn-primary" 
-                onClick={() => onEndSession(weekNumber + 1)}
-                style={{ width: '100%', padding: '10px' }}
-              >
-                Lanjut ke Hari {weekNumber + 1} ➔
-              </button>
-            )}
+            {(() => {
+              const selectedLanguage = localStorage.getItem('kaigolingo_selected_language') || 'ja';
+              let maxWeeks = 12;
+              if (selectedLanguage === 'ja') maxWeeks = 25;
+              else if (selectedLanguage === 'ko') maxWeeks = 20;
+              else if (selectedLanguage === 'zh') maxWeeks = 15;
+              else if (selectedLanguage === 'ar' || selectedLanguage === 'en') maxWeeks = 10;
+
+              if (weekNumber < maxWeeks && passed && sessionType === 'exam') {
+                return (
+                  <button 
+                    className="btn btn-primary" 
+                    onClick={() => onEndSession(weekNumber + 1)}
+                    style={{ width: '100%', padding: '10px', marginBottom: '4px' }}
+                  >
+                    Lanjut ke Minggu {weekNumber + 1} ➔
+                  </button>
+                );
+              }
+              return null;
+            })()}
             <div style={{ display: 'flex', gap: '8px', width: '100%' }}>
               <button 
                 className="btn btn-outline" 
@@ -1827,6 +1852,8 @@ const currentFails = currentQuestion.failCount || 0;
               {currentQuestion.type === 'B' && 'Dengar & Pilih'}
               {currentQuestion.type === 'C' && 'Ketik Konversi'}
               {currentQuestion.type === 'D' && 'Shadowing Suara'}
+              {currentQuestion.type === 'E' && 'Dengar & Terjemahkan'}
+              {currentQuestion.type === 'F' && 'Dengar & Tulis Romaji'}
             </span>
             <h2 style={{ fontSize: '20px', fontWeight: '600' }}>{currentQuestion.prompt}</h2>
           </div>
@@ -1858,11 +1885,17 @@ const currentFails = currentQuestion.failCount || 0;
                           justifyContent: 'center', 
                           opacity: isLeftMatched ? 0.3 : 1, 
                           pointerEvents: isLeftMatched ? 'none' : 'auto',
-                          textAlign: 'center'
+                          textAlign: 'center',
+                          padding: '12px 8px'
                         }}
                         onClick={() => handleMatchSelect('left', leftItem)}
                       >
-                        {leftItem.text}
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', width: '100%' }}>
+                          <span style={{ fontSize: '16px', fontWeight: '700', color: 'var(--on-surface)' }}>{leftItem.text}</span>
+                          {leftItem.romaji && (
+                            <span style={{ fontSize: '11px', color: 'var(--outline)', fontWeight: '500' }}>{leftItem.romaji}</span>
+                          )}
+                        </div>
                       </button>
                     ) : <div />}
 
@@ -1891,8 +1924,8 @@ const currentFails = currentQuestion.failCount || 0;
             </div>
           )}
 
-          {/* Tipe B: Listening */}
-          {currentQuestion.type === 'B' && (
+          {/* Tipe B & E: Listening Multiple Choice */}
+          {(currentQuestion.type === 'B' || currentQuestion.type === 'E') && (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', width: '100%' }}>
               <button
                 onClick={playQuestionAudio}
@@ -1944,6 +1977,9 @@ const currentFails = currentQuestion.failCount || 0;
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' }}>
               <div className="card no-press" style={{ textAlign: 'center', backgroundColor: 'var(--surface-container-low)', padding: '16px' }}>
                 <h2 style={{ color: 'var(--primary)' }}>{currentQuestion.targetJa}</h2>
+                {currentQuestion.romaji && (
+                  <p className="body-lg" style={{ color: 'var(--outline)', fontWeight: '600', marginTop: '2px' }}>{currentQuestion.romaji}</p>
+                )}
                 <p className="body-md" style={{ marginTop: '4px' }}>Arti: {currentQuestion.meaning}</p>
               </div>
 
@@ -1955,6 +1991,48 @@ const currentFails = currentQuestion.failCount || 0;
                 onChange={(e) => setTypedInput(e.target.value)}
                 disabled={isAnswerChecked}
               />
+            </div>
+          )}
+
+          {/* Tipe F: Dengar & Tulis Romaji */}
+          {currentQuestion.type === 'F' && (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', width: '100%' }}>
+              <button
+                onClick={playQuestionAudio}
+                style={{
+                  width: '76px',
+                  height: '76px',
+                  borderRadius: '50%',
+                  backgroundColor: 'var(--primary-container)',
+                  border: 'none',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 8px 16px rgba(37, 99, 235, 0.2)',
+                  color: 'white'
+                }}
+              >
+                <Volume2 size={32} />
+              </button>
+
+              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <input
+                  type="text"
+                  className="input-field"
+                  placeholder="Ketik ejaan Romaji yang Anda dengar..."
+                  value={typedInput}
+                  onChange={(e) => setTypedInput(e.target.value)}
+                  disabled={isAnswerChecked}
+                />
+                
+                {isAnswerChecked && (
+                  <div className="card no-press" style={{ textAlign: 'center', backgroundColor: 'var(--surface-container-low)', padding: '12px', marginTop: '4px' }}>
+                    <h3 style={{ color: 'var(--primary)', fontSize: '18px' }}>{currentQuestion.targetJa}</h3>
+                    <p className="body-md" style={{ color: 'var(--outline)', margin: '4px 0 0 0' }}>Arti: {currentQuestion.meaning}</p>
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
@@ -2054,7 +2132,7 @@ const currentFails = currentQuestion.failCount || 0;
           <button
             className="btn btn-primary"
             style={{ marginTop: '24px' }}
-            disabled={currentQuestion.type === 'B' ? selectedOption === null : typedInput.trim() === ''}
+            disabled={(currentQuestion.type === 'B' || currentQuestion.type === 'E') ? selectedOption === null : typedInput.trim() === ''}
             onClick={checkAnswer}
           >
             Periksa Jawaban
@@ -2189,17 +2267,17 @@ const currentFails = currentQuestion.failCount || 0;
               <h3 style={{ color: isCorrect ? 'var(--secondary)' : 'var(--tertiary)', margin: 0, fontSize: '15px' }}>
                 {isCorrect ? 'Jawaban Benar!' : 'Jawaban Salah!'}
               </h3>
-              {isCorrect && currentQuestion.type === 'C' && typedInput.trim().toLowerCase() !== currentQuestion.targetRomaji.toLowerCase() && (
+              {isCorrect && (currentQuestion.type === 'C' || currentQuestion.type === 'F') && typedInput.trim().toLowerCase() !== currentQuestion.targetRomaji.toLowerCase() && (
                 <p className="body-md" style={{ color: '#065f46', margin: '2px 0 0 0', fontWeight: '600', fontSize: '12px' }}>
                   Ada sedikit salah ketik. Ejaan resmi: <strong style={{ textDecoration: 'underline' }}>{currentQuestion.targetRomaji}</strong> ({currentQuestion.targetJa})
                 </p>
               )}
-              {!isCorrect && currentQuestion.type === 'B' && (
+              {!isCorrect && (currentQuestion.type === 'B' || currentQuestion.type === 'E') && (
                 <p className="body-md" style={{ color: 'var(--tertiary)', margin: '1px 0 0 0', fontSize: '12px' }}>
                   Jawaban benar: {currentQuestion.options[currentQuestion.answer]}
                 </p>
               )}
-              {!isCorrect && currentQuestion.type === 'C' && (
+              {!isCorrect && (currentQuestion.type === 'C' || currentQuestion.type === 'F') && (
                 <p className="body-md" style={{ color: 'var(--tertiary)', margin: '1px 0 0 0', fontSize: '12px' }}>
                   Jawaban benar: {currentQuestion.targetRomaji} ({currentQuestion.targetJa})
                 </p>
