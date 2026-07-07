@@ -21,7 +21,7 @@ import {
   ShieldCheck, Calendar, Clock, User, Award, CheckSquare, Square, Plane, 
   HeartHandshake, FileCheck, Ban, Edit3, BedDouble, Wallet, Users, Briefcase, 
   PlayCircle, RefreshCw, Send, CheckCircle2, AlertCircle, FileSignature, 
-  LogOut, PlusCircle, Check, Search, Sparkles, Building, Video, Download, Upload, FileText
+  LogOut, PlusCircle, Check, Search, Sparkles, Building, Video, Download, Upload, FileText, Bell
 } from 'lucide-react';
 
 const PROCESS_ITEMS = {
@@ -79,17 +79,24 @@ const PROCESS_ITEMS = {
 };
 
 const STUDENTS_BY_LPK = {
-  lpk_a: ['Budi Utomo', 'Siti Rahma'],
-  lpk_b: ['Agus Wijaya', 'Dewi Lestari']
+  lpk_a: ['Budi Utomo', 'Siti Rahma', 'Rudi Hermawan', 'Larasati'],
+  lpk_b: ['Agus Wijaya', 'Dewi Lestari', 'Fahri Hamzah', 'Eka Putri']
 };
 
 export default function LPKDashboard() {
-  const [activeRole, setActiveRole] = useState('lpk_admin'); // lpk_admin, perusahaan_jepang, penyalur_agency
+  const [activeRole, setActiveRole] = useState('owner'); // owner, rekrutmen, pelatihan, asrama, dokumentasi, IT, agen, mitra
   const [selectedLpk, setSelectedLpk] = useState('lpk_a');
   
   // Navigation Screens per Role
   const [activeTab, setActiveTab] = useState('overview'); 
   const [selectedReportType, setSelectedReportType] = useState('akademik');
+  const [showNotifications, setShowNotifications] = useState(false);
+  const sampleNotifications = [
+    { id: 1, title: '📢 Pendaftaran Baru', text: 'Rudi Hermawan mengisi google form (Buta Warna: Tidak, BMI: Ideal).', time: '10 menit lalu', tag: 'rekrutmen' },
+    { id: 2, title: '🏫 Kelulusan Ujian', text: 'Siti Rahma menyelesaikan Ujian Gerbang Mingguan level 4 dengan skor 92%.', time: '1 jam lalu', tag: 'pelatihan' },
+    { id: 3, title: '💰 Buku Keuangan', text: 'Kas masuk Rp 1.500.000 dari Dewi Lestari (Pelunasan cicilan bulan pertama).', time: '2 jam lalu', tag: 'owner' },
+    { id: 4, title: '🏢 Lowongan Baru', text: 'Sakura Care Corp (Jepang) memposting lowongan Kerja Caregiver Lansia (SSW).', time: '1 hari lalu', tag: 'agen' }
+  ];
   
   // Database States
   const [checklist, setChecklist] = useState(null);
@@ -502,21 +509,98 @@ export default function LPKDashboard() {
 
         {/* Global Role Switcher */}
         <div style={{ marginBottom: '24px' }}>
-          <label style={{ fontSize: '11px', textTransform: 'uppercase', color: 'var(--text-muted)', fontWeight: '700' }}>Simulasi Peran</label>
+          <label style={{ fontSize: '11px', textTransform: 'uppercase', color: 'var(--text-muted)', fontWeight: '700' }}>Simulasi Departemen</label>
           <select 
             value={activeRole} 
-            onChange={(e) => setActiveRole(e.target.value)}
+            onChange={(e) => {
+              const role = e.target.value;
+              setActiveRole(role);
+              const defaultTab = {
+                rekrutmen: 'overview',
+                pelatihan: 'overview',
+                asrama: 'asrama',
+                dokumentasi: 'siswa_proses',
+                it: 'overview',
+                agen: 'overview',
+                mitra: 'overview',
+                owner: 'overview'
+              }[role] || 'overview';
+              setActiveTab(defaultTab);
+            }}
             className="input-field"
             style={{ marginTop: '4px', border: '1px solid var(--primary-accent)', fontWeight: '700', color: 'var(--primary-accent)', backgroundColor: 'var(--primary-light)' }}
           >
-            <option value="lpk_admin">🏫 LPK Admin & Owner</option>
-            <option value="perusahaan_jepang">🏢 Mitra User (Jepang)</option>
-            <option value="penyalur_agency">🤝 Penyalur / Agency</option>
+            <option value="rekrutmen">📢 1. Rekrutmen</option>
+            <option value="pelatihan">🏫 2. Pelatihan & Bahasa</option>
+            <option value="asrama">🛏️ 3. Pengelola Asrama</option>
+            <option value="dokumentasi">📄 4. Dokumentasi & COE</option>
+            <option value="it">💻 5. IT Support</option>
+            <option value="agen">🤝 6. Agen Penyalur</option>
+            <option value="mitra">🏢 7. Mitra Jepang (User)</option>
+            <option value="owner">👑 8. Owner / Pemilik LPK</option>
           </select>
         </div>
 
         <nav className="sidebar-nav">
-          {activeRole === 'lpk_admin' && (
+          {/* 1. REKRUTMEN */}
+          {activeRole === 'rekrutmen' && (
+            <>
+              <button className={`sidebar-link ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setActiveTab('overview')}>Ringkasan LPK</button>
+              <button className={`sidebar-link ${activeTab === 'prescreening' ? 'active' : ''}`} onClick={() => setActiveTab('prescreening')}>Pendaftaran Baru</button>
+            </>
+          )}
+
+          {/* 2. PELATIHAN */}
+          {activeRole === 'pelatihan' && (
+            <>
+              <button className={`sidebar-link ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setActiveTab('overview')}>Ringkasan LPK</button>
+              <button className={`sidebar-link ${activeTab === 'siswa_proses' ? 'active' : ''}`} onClick={() => setActiveTab('siswa_proses')}>Alur Kerja Siswa</button>
+              <button className={`sidebar-link ${activeTab === 'laporan_analisa' ? 'active' : ''}`} onClick={() => setActiveTab('laporan_analisa')}>Laporan Akademik</button>
+            </>
+          )}
+
+          {/* 3. ASRAMA */}
+          {activeRole === 'asrama' && (
+            <>
+              <button className={`sidebar-link ${activeTab === 'asrama' ? 'active' : ''}`} onClick={() => setActiveTab('asrama')}>Peta Ranjang Asrama</button>
+            </>
+          )}
+
+          {/* 4. DOKUMENTASI */}
+          {activeRole === 'dokumentasi' && (
+            <>
+              <button className={`sidebar-link ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setActiveTab('overview')}>Ringkasan LPK</button>
+              <button className={`sidebar-link ${activeTab === 'siswa_proses' ? 'active' : ''}`} onClick={() => setActiveTab('siswa_proses')}>Alur Kerja (COE)</button>
+            </>
+          )}
+
+          {/* 5. IT SUPPORT */}
+          {activeRole === 'it' && (
+            <>
+              <button className={`sidebar-link ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setActiveTab('overview')}>Ringkasan LPK</button>
+            </>
+          )}
+
+          {/* 6. AGEN PENYALUR */}
+          {activeRole === 'agen' && (
+            <>
+              <button className={`sidebar-link ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setActiveTab('overview')}>Dashboard Penyalur</button>
+              <button className={`sidebar-link ${activeTab === 'lowongan' ? 'active' : ''}`} onClick={() => setActiveTab('lowongan')}>Kelola Lowongan</button>
+              <button className={`sidebar-link ${activeTab === 'referral' ? 'active' : ''}`} onClick={() => setActiveTab('referral')}>Ledger Sponsor</button>
+            </>
+          )}
+
+          {/* 7. MITRA JEPANG */}
+          {activeRole === 'mitra' && (
+            <>
+              <button className={`sidebar-link ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setActiveTab('overview')}>Dashboard Kerja</button>
+              <button className={`sidebar-link ${activeTab === 'talent_pool' ? 'active' : ''}`} onClick={() => setActiveTab('talent_pool')}>Cari Bakat (Talent)</button>
+              <button className={`sidebar-link ${activeTab === 'evaluasi' ? 'active' : ''}`} onClick={() => setActiveTab('evaluasi')}>Evaluasi Alumni</button>
+            </>
+          )}
+
+          {/* 8. OWNER (FULL ACCESS) */}
+          {activeRole === 'owner' && (
             <>
               <button className={`sidebar-link ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setActiveTab('overview')}>Ringkasan LPK</button>
               <button className={`sidebar-link ${activeTab === 'asrama' ? 'active' : ''}`} onClick={() => setActiveTab('asrama')}>Peta Ranjang Asrama</button>
@@ -526,32 +610,34 @@ export default function LPKDashboard() {
               <button className={`sidebar-link ${activeTab === 'laporan_analisa' ? 'active' : ''}`} onClick={() => setActiveTab('laporan_analisa')}>📊 Laporan & Analisa</button>
             </>
           )}
-
-          {activeRole === 'perusahaan_jepang' && (
-            <>
-              <button className={`sidebar-link ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setActiveTab('overview')}>Dashboard Kerja</button>
-              <button className={`sidebar-link ${activeTab === 'talent_pool' ? 'active' : ''}`} onClick={() => setActiveTab('talent_pool')}>Cari Bakat (Talent)</button>
-              <button className={`sidebar-link ${activeTab === 'evaluasi' ? 'active' : ''}`} onClick={() => setActiveTab('evaluasi')}>Evaluasi Alumni</button>
-            </>
-          )}
-
-          {activeRole === 'penyalur_agency' && (
-            <>
-              <button className={`sidebar-link ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setActiveTab('overview')}>Dashboard Penyalur</button>
-              <button className={`sidebar-link ${activeTab === 'lowongan' ? 'active' : ''}`} onClick={() => setActiveTab('lowongan')}>Kelola Lowongan</button>
-              <button className={`sidebar-link ${activeTab === 'referral' ? 'active' : ''}`} onClick={() => setActiveTab('referral')}>Ledger Sponsor</button>
-            </>
-          )}
         </nav>
 
         <div style={{ borderTop: '1px solid var(--border)', paddingTop: '16px', marginTop: 'auto' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: 'var(--primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: '700' }}>
-              {activeRole === 'lpk_admin' ? 'AD' : activeRole === 'perusahaan_jepang' ? 'JP' : 'AG'}
+            <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: 'var(--primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: '800' }}>
+              {{
+                rekrutmen: 'REC',
+                pelatihan: 'EDU',
+                asrama: 'ASM',
+                dokumentasi: 'DOC',
+                it: 'IT',
+                agen: 'AGN',
+                mitra: 'MTR',
+                owner: 'OWN'
+              }[activeRole] || 'LPK'}
             </div>
             <div>
               <div style={{ fontSize: '12px', fontWeight: '700' }}>
-                {activeRole === 'lpk_admin' ? 'Staff Admin LPK' : activeRole === 'perusahaan_jepang' ? 'Sakura Care Corp' : 'Penyalur Sakura'}
+                {{
+                  rekrutmen: 'Staf Rekrutmen',
+                  pelatihan: 'Staf Pelatihan/Bahasa',
+                  asrama: 'Staf Pengelola Asrama',
+                  dokumentasi: 'Staf Dokumentasi/COE',
+                  it: 'IT Support System',
+                  agen: 'Agen Penyalur',
+                  mitra: 'Mitra Jepang',
+                  owner: 'Pemilik LPK (Owner)'
+                }[activeRole] || 'Staf LPK'}
               </div>
               <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Simulasi Sesi</div>
             </div>
@@ -563,15 +649,82 @@ export default function LPKDashboard() {
       <main className="lpk-main-content">
         
         {/* LPK ADMIN VIEW */}
-        {activeRole === 'lpk_admin' && (
+        {['rekrutmen', 'pelatihan', 'asrama', 'dokumentasi', 'it', 'owner'].includes(activeRole) && (
           <div>
             <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
               <div>
-                <h1 style={{ margin: 0, fontSize: '22px' }}>🏫 Panel LPK Admin Overview</h1>
+                <h1 style={{ margin: 0, fontSize: '22px' }}>🏫 Panel LPK Overview ({(activeRole === 'it' ? 'IT Support' : activeRole.charAt(0).toUpperCase() + activeRole.slice(1))})</h1>
                 <p style={{ color: 'var(--text-muted)', margin: '4px 0 0 0', fontSize: '12px' }}>Kelola kapasitas fisik asrama, kas cicilan dana talangan, dan kualifikasi calon siswa.</p>
               </div>
-              <div>
-                <select value={selectedLpk} onChange={(e) => setSelectedLpk(e.target.value)} className="input-field" style={{ width: '180px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                {/* Notification Bell */}
+                <div style={{ position: 'relative' }}>
+                  <button 
+                    onClick={() => setShowNotifications(!showNotifications)}
+                    style={{ 
+                      background: 'none', 
+                      border: 'none', 
+                      cursor: 'pointer', 
+                      position: 'relative',
+                      color: 'var(--text-main)',
+                      padding: '8px',
+                      borderRadius: '50%',
+                      backgroundColor: 'var(--primary-light)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                  >
+                    <Bell size={20} color="var(--primary-accent)" />
+                    <span style={{ 
+                      position: 'absolute', 
+                      top: '-2px', 
+                      right: '-2px', 
+                      backgroundColor: 'var(--danger)', 
+                      color: 'white', 
+                      fontSize: '9px', 
+                      fontWeight: '800', 
+                      padding: '2px 5px', 
+                      borderRadius: '50%',
+                      lineHeight: '1'
+                    }}>
+                      {sampleNotifications.length}
+                    </span>
+                  </button>
+
+                  {showNotifications && (
+                    <div style={{ 
+                      position: 'absolute', 
+                      top: '40px', 
+                      right: '0', 
+                      width: '320px', 
+                      backgroundColor: 'var(--surface)', 
+                      border: '1px solid var(--border)', 
+                      borderRadius: '12px', 
+                      boxShadow: '0 10px 25px rgba(0,0,0,0.15)', 
+                      zIndex: '999',
+                      padding: '12px'
+                    }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '8px', marginBottom: '8px' }}>
+                        <span style={{ fontSize: '12.5px', fontWeight: '800', color: 'var(--text-main)' }}>🔔 Notifikasi Sistem</span>
+                        <button onClick={() => setShowNotifications(false)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '11px', cursor: 'pointer' }}>Tutup</button>
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '250px', overflowY: 'auto' }}>
+                        {sampleNotifications.map(n => (
+                          <div key={n.id} style={{ padding: '8px', borderBottom: '1px solid rgba(255,255,255,0.03)', fontSize: '11px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: '700', color: 'var(--primary-accent)' }}>
+                              <span>{n.title}</span>
+                              <span style={{ fontSize: '9px', color: 'var(--text-muted)' }}>{n.time}</span>
+                            </div>
+                            <span style={{ color: 'var(--text-main)', lineHeight: '1.3' }}>{n.text}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <select value={selectedLpk} onChange={(e) => setSelectedLpk(e.target.value)} className="input-field" style={{ width: '180px', margin: 0 }}>
                   <option value="lpk_a">LPK Sakura (A)</option>
                   <option value="lpk_b">LPK Kaigo Sejahtera (B)</option>
                 </select>
@@ -1365,7 +1518,7 @@ export default function LPKDashboard() {
         )}
 
         {/* MITRA JEPANG VIEW */}
-        {activeRole === 'perusahaan_jepang' && (
+        {activeRole === 'mitra' && (
           <div>
             <header style={{ marginBottom: '24px' }}>
               <h1 style={{ margin: 0, fontSize: '22px' }}>🏢 Portal Mitra Kerja (Panti Lansia Jepang)</h1>
@@ -1550,7 +1703,7 @@ export default function LPKDashboard() {
         )}
 
         {/* PENYALUR VIEW */}
-        {activeRole === 'penyalur_agency' && (
+        {activeRole === 'agen' && (
           <div>
             <header style={{ marginBottom: '24px' }}>
               <h1 style={{ margin: 0, fontSize: '22px' }}>🤝 Portal Penyalur (Sending Agency Indonesia)</h1>
