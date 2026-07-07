@@ -1638,7 +1638,19 @@ export default function LPKDashboard() {
                         evaluasi: 'Adaptasi budaya kerja di lapangan, pelunasan potong gaji, evaluasi kinerja 1, 3, 6 bulan oleh mitra.'
                       }[categoryKey];
                       
-                      const studentsInPhase = allChecklists.filter(c => getStudentCurrentPhase(c) === categoryKey).map(c => c.studentName);
+                      // Hybrid calculation: check database first, fallback to static DETAIL_STUDENTS phase
+                      const studentsInPhase = DETAIL_STUDENTS.filter(std => {
+                        const dbChecklist = allChecklists.find(c => c.studentName === std.name);
+                        if (dbChecklist) {
+                          // Check if student has any completed statuses in database
+                          const hasDbStatuses = dbChecklist.statuses && Object.keys(dbChecklist.statuses).length > 0;
+                          if (hasDbStatuses) {
+                            return getStudentCurrentPhase(dbChecklist) === categoryKey;
+                          }
+                        }
+                        // Fallback to static phase defined in DETAIL_STUDENTS
+                        return std.phase === categoryKey;
+                      }).map(std => std.name);
                       const count = studentsInPhase.length;
                       const isActive = count > 0;
                       
