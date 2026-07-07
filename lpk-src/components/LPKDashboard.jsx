@@ -545,7 +545,7 @@ export default function LPKDashboard() {
           {/* 1. REKRUTMEN */}
           {activeRole === 'rekrutmen' && (
             <>
-              <button className={`sidebar-link ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setActiveTab('overview')}>Ringkasan LPK</button>
+              <button className={`sidebar-link ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setActiveTab('overview')}>Dashboard</button>
               <button className={`sidebar-link ${activeTab === 'prescreening' ? 'active' : ''}`} onClick={() => setActiveTab('prescreening')}>Pendaftaran Baru</button>
             </>
           )}
@@ -553,7 +553,7 @@ export default function LPKDashboard() {
           {/* 2. PELATIHAN */}
           {activeRole === 'pelatihan' && (
             <>
-              <button className={`sidebar-link ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setActiveTab('overview')}>Ringkasan LPK</button>
+              <button className={`sidebar-link ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setActiveTab('overview')}>Dashboard</button>
               <button className={`sidebar-link ${activeTab === 'siswa_proses' ? 'active' : ''}`} onClick={() => setActiveTab('siswa_proses')}>Alur Kerja Siswa</button>
               <button className={`sidebar-link ${activeTab === 'laporan_analisa' ? 'active' : ''}`} onClick={() => setActiveTab('laporan_analisa')}>Laporan Akademik</button>
             </>
@@ -569,7 +569,7 @@ export default function LPKDashboard() {
           {/* 4. DOKUMENTASI */}
           {activeRole === 'dokumentasi' && (
             <>
-              <button className={`sidebar-link ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setActiveTab('overview')}>Ringkasan LPK</button>
+              <button className={`sidebar-link ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setActiveTab('overview')}>Dashboard</button>
               <button className={`sidebar-link ${activeTab === 'siswa_proses' ? 'active' : ''}`} onClick={() => setActiveTab('siswa_proses')}>Alur Kerja (COE)</button>
             </>
           )}
@@ -577,14 +577,14 @@ export default function LPKDashboard() {
           {/* 5. IT SUPPORT */}
           {activeRole === 'it' && (
             <>
-              <button className={`sidebar-link ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setActiveTab('overview')}>Ringkasan LPK</button>
+              <button className={`sidebar-link ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setActiveTab('overview')}>Dashboard</button>
             </>
           )}
 
           {/* 6. AGEN PENYALUR */}
           {activeRole === 'agen' && (
             <>
-              <button className={`sidebar-link ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setActiveTab('overview')}>Dashboard Penyalur</button>
+              <button className={`sidebar-link ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setActiveTab('overview')}>Dashboard</button>
               <button className={`sidebar-link ${activeTab === 'lowongan' ? 'active' : ''}`} onClick={() => setActiveTab('lowongan')}>Kelola Lowongan</button>
               <button className={`sidebar-link ${activeTab === 'referral' ? 'active' : ''}`} onClick={() => setActiveTab('referral')}>Ledger Sponsor</button>
             </>
@@ -593,16 +593,17 @@ export default function LPKDashboard() {
           {/* 7. MITRA JEPANG */}
           {activeRole === 'mitra' && (
             <>
-              <button className={`sidebar-link ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setActiveTab('overview')}>Dashboard Kerja</button>
+              <button className={`sidebar-link ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setActiveTab('overview')}>Dashboard</button>
               <button className={`sidebar-link ${activeTab === 'talent_pool' ? 'active' : ''}`} onClick={() => setActiveTab('talent_pool')}>Cari Bakat (Talent)</button>
               <button className={`sidebar-link ${activeTab === 'evaluasi' ? 'active' : ''}`} onClick={() => setActiveTab('evaluasi')}>Evaluasi Alumni</button>
             </>
           )}
 
-          {/* 8. OWNER (FULL ACCESS - ALPHABETICALLY SORTED) */}
+          {/* 8. OWNER (FULL ACCESS - DASHBOARD TOP, REST ALPHABETICAL) */}
           {activeRole === 'owner' && (
             <>
               {[
+                { id: 'overview', label: '🏢 Dashboard' },
                 { id: 'absensi', label: '📅 Absensi' },
                 { id: 'alumni', label: '👥 Alumni' },
                 { id: 'keuangan', label: '💰 Buku Kas & Cicilan' },
@@ -617,7 +618,6 @@ export default function LPKDashboard() {
                 { id: 'prescreening', label: '📝 Pendaftaran Baru' },
                 { id: 'asrama', label: '🛏️ Peta Ranjang Asrama' },
                 { id: 'siswa_proses', label: '📋 Progres Kerja Siswa' },
-                { id: 'overview', label: '🏢 Ringkasan LPK (Overview)' },
                 { id: 'skill_sertifikasi', label: '🏆 Skill vs Sertifikasi' },
                 { id: 'teachers', label: '🎓 Teachers' },
                 { id: 'ujian', label: '📝 Ujian' }
