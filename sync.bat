@@ -1,4 +1,4 @@
 @echo off
 git add .
-git commit -m "feat: implement step-by-step pipeline layout for student stages in LPK dashboard overview"
+git commit -m "feat: implement Reports & Analysis dashboard section with 4 high-context LPK reports"
 git push

@@ -89,6 +89,7 @@ export default function LPKDashboard() {
   
   // Navigation Screens per Role
   const [activeTab, setActiveTab] = useState('overview'); 
+  const [selectedReportType, setSelectedReportType] = useState('akademik');
   
   // Database States
   const [checklist, setChecklist] = useState(null);
@@ -522,6 +523,7 @@ export default function LPKDashboard() {
               <button className={`sidebar-link ${activeTab === 'keuangan' ? 'active' : ''}`} onClick={() => setActiveTab('keuangan')}>Buku Kas & Cicilan</button>
               <button className={`sidebar-link ${activeTab === 'siswa_proses' ? 'active' : ''}`} onClick={() => setActiveTab('siswa_proses')}>Alur Kerja Siswa</button>
               <button className={`sidebar-link ${activeTab === 'prescreening' ? 'active' : ''}`} onClick={() => setActiveTab('prescreening')}>Pendaftaran Baru</button>
+              <button className={`sidebar-link ${activeTab === 'laporan_analisa' ? 'active' : ''}`} onClick={() => setActiveTab('laporan_analisa')}>📊 Laporan & Analisa</button>
             </>
           )}
 
@@ -1095,6 +1097,268 @@ export default function LPKDashboard() {
                     ))}
                   </tbody>
                 </table>
+              </div>
+            )}
+
+            {/* SCREEN: LAPORAN & ANALISA */}
+            {activeTab === 'laporan_analisa' && (
+              <div className="card">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '1px solid var(--border)', paddingBottom: '12px' }}>
+                  <div>
+                    <h2 style={{ fontSize: '16px', margin: 0 }}>📊 Laporan & Analisa Operasional LPK</h2>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '11px', margin: '2px 0 0 0' }}>Dashboard analitik untuk memantau performa bahasa, arus kas talangan, efisiensi terbang, dan tingkat kelulusan seleksi.</p>
+                  </div>
+                  <button 
+                    onClick={() => alert(`Laporan (${selectedReportType.toUpperCase()}) berhasil diekspor sebagai file XLSX/PDF!`)} 
+                    className="btn btn-outline" 
+                    style={{ fontSize: '11px', height: '32px', display: 'flex', alignItems: 'center', gap: '6px' }}
+                  >
+                    <Download size={14} /> Ekspor Data
+                  </button>
+                </div>
+
+                {/* Sub Tab selector */}
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', flexWrap: 'wrap' }}>
+                  {[
+                    { id: 'akademik', label: '📖 Kelulusan & Kesiapan Akademik', desc: 'Nilai kelulusan, skor latihan, & status kelayakan SSW.' },
+                    { id: 'keuangan', label: '💰 Keuangan & Aging Talangan', desc: 'Distribusi piutang dana talangan alumni di Jepang/Korea.' },
+                    { id: 'keberangkatan', label: '✈️ Keberangkatan & Pipeline', desc: 'Rata-rata durasi tunggu wawancara (Mensetsu) & COE.' },
+                    { id: 'screening', label: '🔍 Pre-Screening & Rekrutmen', desc: 'Statistik drop-out calon siswa & kegagalan uji fisik.' }
+                  ].map(tab => (
+                    <button 
+                      key={tab.id}
+                      onClick={() => setSelectedReportType(tab.id)}
+                      className={`btn ${selectedReportType === tab.id ? 'btn-primary' : 'btn-outline'}`}
+                      style={{ fontSize: '11.5px', height: '34px', fontWeight: '700', padding: '0 12px' }}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* REPORT SECTION content */}
+                {selectedReportType === 'akademik' && (
+                  <div>
+                    <div className="finance-grid" style={{ marginBottom: '20px' }}>
+                      <div className="finance-card">
+                        <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: '700' }}>RATA-RATA NILAI KUIS</div>
+                        <div className="finance-val" style={{ color: 'var(--secondary)' }}>88.4%</div>
+                        <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginTop: '4px' }}>Target LPK: 80.0%</div>
+                      </div>
+                      <div className="finance-card">
+                        <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: '700' }}>SSW & JFT READY</div>
+                        <div className="finance-val">3 Siswa</div>
+                        <div style={{ fontSize: '10px', color: 'var(--secondary)', marginTop: '4px' }}>Kelayakan terbang tinggi</div>
+                      </div>
+                      <div className="finance-card">
+                        <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: '700' }}>TOTAL SESI LATIHAN</div>
+                        <div className="finance-val">142 Kali</div>
+                        <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginTop: '4px' }}>Diperbarui real-time dari PWA</div>
+                      </div>
+                    </div>
+
+                    <h3 style={{ fontSize: '13px', marginBottom: '8px' }}>Daftar Kesiapan Ujian & Bahasa Mandiri</h3>
+                    <table className="ledger-table">
+                      <thead>
+                        <tr>
+                          <th>Nama Siswa</th>
+                          <th>Bahasa Jepang (N4/JFT)</th>
+                          <th>Skill Kaigo (SSW)</th>
+                          <th>Rata-rata Skor</th>
+                          <th>Status Belajar</th>
+                          <th>Nilai Huruf</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {[
+                          { name: 'Budi Utomo', lang: 'Lulus (JFT-Basic)', skill: 'Siap Ujian', score: '92%', status: 'Aktif Belajar', grade: 'A' },
+                          { name: 'Siti Rahma', lang: 'Lulus (JFT-Basic)', skill: 'Siap Ujian', score: '89%', status: 'Wawancara Selesai', grade: 'B' },
+                          { name: 'Dewi Lestari', lang: 'Lulus (N4 Prep)', skill: 'Siap Ujian', score: '91%', status: 'Proses Visa', grade: 'A' },
+                          { name: 'Agus Wijaya', lang: 'Belum Ujian', skill: 'Belum Siap', score: '45%', status: 'Perlu Bimbingan', grade: 'D' }
+                        ].map((item, idx) => (
+                          <tr key={idx}>
+                            <td><b style={{ color: 'var(--text-main)' }}>{item.name}</b></td>
+                            <td>
+                              <span className={`badge ${item.lang.includes('Lulus') ? 'badge-blue' : 'badge-danger'}`} style={{ fontSize: '11px' }}>
+                                {item.lang}
+                              </span>
+                            </td>
+                            <td>
+                              <span className={`badge ${item.skill.includes('Siap') ? 'badge-blue' : 'badge-danger'}`} style={{ fontSize: '11px' }}>
+                                {item.skill}
+                              </span>
+                            </td>
+                            <td><b>{item.score}</b></td>
+                            <td><span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{item.status}</span></td>
+                            <td>
+                              <span style={{ 
+                                fontWeight: '900', 
+                                color: item.grade === 'A' ? 'var(--secondary)' : item.grade === 'B' ? 'var(--primary-accent)' : 'var(--danger)',
+                                fontSize: '12px'
+                              }}>
+                                {item.grade}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+
+                {selectedReportType === 'keuangan' && (
+                  <div>
+                    <div className="finance-grid" style={{ marginBottom: '20px' }}>
+                      <div className="finance-card">
+                        <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: '700' }}>TOTAL PENYALURAN TALANGAN</div>
+                        <div className="finance-val">Rp 60.000.000</div>
+                        <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginTop: '4px' }}>Untuk 4 siswa LPK</div>
+                      </div>
+                      <div className="finance-card">
+                        <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: '700' }}>SUDAH DIKEMBALIKAN</div>
+                        <div className="finance-val" style={{ color: 'var(--secondary)' }}>Rp 15.000.000</div>
+                        <div style={{ fontSize: '10px', color: 'var(--secondary)', marginTop: '4px' }}>Rasio Pengembalian: 25.0%</div>
+                      </div>
+                      <div className="finance-card">
+                        <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: '700' }}>SISA PIUTANG AKTIF (OUTSTANDING)</div>
+                        <div className="finance-val" style={{ color: 'var(--danger)' }}>Rp 45.000.000</div>
+                        <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginTop: '4px' }}>Sedang berjalan potong gaji</div>
+                      </div>
+                    </div>
+
+                    <h3 style={{ fontSize: '13px', marginBottom: '8px' }}>Laporan Kualifikasi & Umur Piutang Alumni (Aging Analysis)</h3>
+                    <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '12px' }}>Daftar status pembayaran dana talangan LPK setelah alumni ditempatkan di panti lansia/pabrik mitra Jepang.</p>
+                    <table className="ledger-table">
+                      <thead>
+                        <tr>
+                          <th>Klasifikasi Umur Piutang</th>
+                          <th>Jumlah Alumni</th>
+                          <th>Total Nominal</th>
+                          <th>Status Risiko</th>
+                          <th>Aksi Rekomendasi</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {[
+                          { aging: 'Lancar (Lunas tepat waktu, 0-30 Hari)', count: '3 Alumni', amount: 'Rp 12.500.000', risk: 'Sangat Rendah', color: 'var(--secondary)', action: 'Terbitkan Kuitansi & Slip Gaji' },
+                          { aging: 'Dalam Perhatian (Terlambat 31-90 Hari)', count: '1 Alumni', amount: 'Rp 2.500.000', risk: 'Sedang', color: 'var(--warning)', action: 'Kirim Pengingat WA Otomatis' },
+                          { aging: 'Macet (Menunggak >90 Hari)', count: '0 Alumni', amount: 'Rp 0', risk: 'Tinggi', color: 'var(--danger)', action: 'Hubungi Agency / Penyalur' }
+                        ].map((item, idx) => (
+                          <tr key={idx}>
+                            <td><b>{item.aging}</b></td>
+                            <td>{item.count}</td>
+                            <td><b>{item.amount}</b></td>
+                            <td>
+                              <span style={{ fontWeight: '700', color: item.color, fontSize: '11.5px' }}>
+                                {item.risk}
+                              </span>
+                            </td>
+                            <td>
+                              <button 
+                                onClick={() => alert(`Menjalankan aksi: "${item.action}"`)} 
+                                className="btn btn-outline" 
+                                style={{ height: '24px', padding: '0 8px', fontSize: '10px' }}
+                              >
+                                {item.action}
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+
+                {selectedReportType === 'keberangkatan' && (
+                  <div>
+                    <div className="finance-grid" style={{ marginBottom: '20px' }}>
+                      <div className="finance-card">
+                        <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: '700' }}>RATA-RATA WAKTU TUNGGU MENSETSU</div>
+                        <div className="finance-val">18 Hari</div>
+                        <div style={{ fontSize: '10px', color: 'var(--secondary)', marginTop: '4px' }}>Siswa Lulus -> Sukses Match</div>
+                      </div>
+                      <div className="finance-card">
+                        <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: '700' }}>RATA-RATA PROSES COE & VISA</div>
+                        <div className="finance-val">42 Hari</div>
+                        <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginTop: '4px' }}>Target Keimigrasian Jepang</div>
+                      </div>
+                      <div className="finance-card">
+                        <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: '700' }}>TINGKAT KELULUSAN VISA</div>
+                        <div className="finance-val" style={{ color: 'var(--secondary)' }}>100%</div>
+                        <div style={{ fontSize: '10px', color: 'var(--secondary)', marginTop: '4px' }}>Nol penolakan visa imigrasi</div>
+                      </div>
+                    </div>
+
+                    <h3 style={{ fontSize: '13px', marginBottom: '8px' }}>Corong Efisiensi Operasional (Funnel Keberangkatan)</h3>
+                    <div style={{ padding: '16px', backgroundColor: 'var(--background)', borderRadius: '8px', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      {[
+                        { step: 'Daftar -> Lulus Seleksi Fisik LPK', pct: 85, detail: '12 Pendaftar -> 10 Lulus (BMI/Tinggi)' },
+                        { step: 'Pelatihan Kelas -> Lulus Ujian JFT & SSW', pct: 80, detail: '10 Siswa -> 8 Lulus Sertifikasi Mandiri' },
+                        { step: 'Siswa JFT Lulus -> Sukses Wawancara (Match)', pct: 75, detail: '8 Siswa -> 6 Diterima User Jepang' },
+                        { step: 'Proses COE -> Terbang & Penempatan Kerja', pct: 66, detail: '6 Siswa -> 4 Terbang (2 Dalam Proses COE)' }
+                      ].map((funnel, idx) => (
+                        <div key={idx}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: '600', marginBottom: '4px' }}>
+                            <span>{funnel.step}</span>
+                            <span style={{ color: 'var(--primary-accent)' }}>{funnel.pct}% Konversi ({funnel.detail})</span>
+                          </div>
+                          <div style={{ width: '100%', height: '14px', backgroundColor: 'var(--primary-light)', borderRadius: '6px', overflow: 'hidden' }}>
+                            <div style={{ width: `${funnel.pct}%`, height: '100%', backgroundColor: 'var(--primary-accent)' }}></div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {selectedReportType === 'screening' && (
+                  <div>
+                    <div className="finance-grid" style={{ marginBottom: '20px' }}>
+                      <div className="finance-card">
+                        <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: '700' }}>TOTAL PENDAFTAR BARU</div>
+                        <div className="finance-val">12 Calon</div>
+                        <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginTop: '4px' }}>Periode: Bulan Ini</div>
+                      </div>
+                      <div className="finance-card">
+                        <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: '700' }}>TINGKAT KELULUSAN FISIK</div>
+                        <div className="finance-val" style={{ color: 'var(--secondary)' }}>75.0%</div>
+                        <div style={{ fontSize: '10px', color: 'var(--secondary)', marginTop: '4px' }}>Memenuhi kriteria buta warna & BMI</div>
+                      </div>
+                      <div className="finance-card">
+                        <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: '700' }}>PENYEBAB UTAMA GUGUR SELEKSI</div>
+                        <div className="finance-val" style={{ color: 'var(--danger)' }}>Buta Warna</div>
+                        <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginTop: '4px' }}>Kriteria mutlak panti lansia Jepang</div>
+                      </div>
+                    </div>
+
+                    <h3 style={{ fontSize: '13px', marginBottom: '8px' }}>Rincian Alasan Gugur Calon Siswa (Pre-Screening Audit)</h3>
+                    <table className="ledger-table">
+                      <thead>
+                        <tr>
+                          <th>Alasan Kegagalan Fisik/Administrasi</th>
+                          <th>Persentase</th>
+                          <th>Jumlah Pendaftar</th>
+                          <th>Keterangan Medis & Kriteria LPK</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {[
+                          { reason: 'Buta Warna Parsial / Total', pct: '60%', count: '3 Pelamar', desc: 'Mitra panti lansia Jepang melarang keras buta warna karena risiko keselamatan pemberian obat.' },
+                          { reason: 'BMI Obesitas / Terlalu Kurus', pct: '20%', count: '1 Pelamar', desc: 'Pekerjaan caregiver membutuhkan ketahanan fisik prima untuk membantu mobilitas lansia.' },
+                          { reason: 'Tinggi Badan di Bawah Batas Minimum (150cm)', pct: '20%', count: '1 Pelamar', desc: 'Persyaratan ergonomis transfer pasien lansia menggunakan alat bantu transfer Jepang.' },
+                          { reason: 'Tato Terbuka / Riwayat Operasi Berat', pct: '0%', count: '0 Pelamar', desc: 'Aturan etika berpakaian di panti lansia Jepang.' }
+                        ].map((item, idx) => (
+                          <tr key={idx}>
+                            <td><b style={{ color: 'var(--text-main)' }}>{item.reason}</b></td>
+                            <td><span className="badge badge-blue" style={{ fontSize: '10.5px' }}>{item.pct}</span></td>
+                            <td><b>{item.count}</b></td>
+                            <td><span style={{ fontSize: '11px', color: 'var(--text-muted)', lineHeight: '1.4' }}>{item.desc}</span></td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </div>
             )}
           </div>
