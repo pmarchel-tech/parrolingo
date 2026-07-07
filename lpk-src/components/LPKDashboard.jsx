@@ -83,12 +83,153 @@ const STUDENTS_BY_LPK = {
   lpk_b: ['Agus Wijaya', 'Dewi Lestari', 'Fahri Hamzah', 'Eka Putri']
 };
 
+const DETAIL_STUDENTS = [
+  {
+    id: 'budi_utomo',
+    name: 'Budi Utomo',
+    phase: 'daftar',
+    phaseLabel: 'Pendaftaran',
+    dob: '12 Mei 2004',
+    address: 'Sleman, D.I. Yogyakarta',
+    education: 'SMA Negeri 1 Sleman (Jurusan IPA)',
+    avgScore: '82.5%',
+    dorm: 'Asrama Sakura (Room 101)',
+    skills: ['Dasar Kaiwa', 'Kebersihan Diri', 'Etika Kerja Jepang'],
+    parent: 'Slamet Utomo',
+    parentPhone: '0812-3456-7890',
+    permitStatus: 'Terverifikasi ✓',
+    emergency: 'Ibu Utomo (Ibu)',
+    youtubeUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+  },
+  {
+    id: 'agus_wijaya',
+    name: 'Agus Wijaya',
+    phase: 'seleksi',
+    phaseLabel: 'Seleksi Awal',
+    dob: '05 Agustus 2003',
+    address: 'Bantul, D.I. Yogyakarta',
+    education: 'SMK Kesehatan Bantul (Keperawatan)',
+    avgScore: '78.0%',
+    dorm: 'Asrama Sakura (Room 102)',
+    skills: ['Pencegahan Infeksi', 'Komunikasi Lansia'],
+    parent: 'Hendro Wijaya',
+    parentPhone: '0813-9876-5432',
+    permitStatus: 'Terverifikasi ✓',
+    emergency: 'Hendro Wijaya (Ayah)',
+    youtubeUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+  },
+  {
+    id: 'siti_rahma',
+    name: 'Siti Rahma',
+    phase: 'pelatihan',
+    phaseLabel: 'Pelatihan & Asrama',
+    dob: '22 November 2002',
+    address: 'Solo, Jawa Tengah',
+    education: 'SMA Negeri 3 Surakarta',
+    avgScore: '92.5%',
+    dorm: 'Asrama Sakura (Room 103)',
+    skills: ['Nihongo N4', 'JFT Passed', 'SSW Kaigo Ready', 'First Aid'],
+    parent: 'Ahmad Dahlan',
+    parentPhone: '0857-4321-8765',
+    permitStatus: 'Terverifikasi ✓',
+    emergency: 'Ahmad Dahlan (Ayah)',
+    youtubeUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+  },
+  {
+    id: 'rudi_hermawan',
+    name: 'Rudi Hermawan',
+    phase: 'matching',
+    phaseLabel: 'Job Matching',
+    dob: '18 September 2003',
+    address: 'Kulon Progo, DIY',
+    education: 'SMK Otomotif Kulon Progo',
+    avgScore: '85.0%',
+    dorm: 'Asrama Sakura (Room 104)',
+    skills: ['Nihongo N4', 'SSW Kaigo Ready', 'Dementia Care Basic'],
+    parent: 'Subagio Hermawan',
+    parentPhone: '0821-5555-1234',
+    permitStatus: 'Dalam Proses ⏱',
+    emergency: 'Ibu Hermawan (Ibu)',
+    youtubeUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+  },
+  {
+    id: 'dewi_lestari',
+    name: 'Dewi Lestari',
+    phase: 'persiapan',
+    phaseLabel: 'Persiapan Terbang (COE)',
+    dob: '02 April 2002',
+    address: 'Klaten, Jawa Tengah',
+    education: 'D3 Keperawatan STIKES Klaten',
+    avgScore: '90.0%',
+    dorm: 'Asrama Sakura (Room 201)',
+    skills: ['JFT Passed', 'SSW Kaigo Certified', 'Kaiwa Intermediate', 'First Aid'],
+    parent: 'Suwardi Lestari',
+    parentPhone: '0812-7777-8888',
+    permitStatus: 'Terverifikasi ✓',
+    emergency: 'Suwardi Lestari (Ayah)',
+    youtubeUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+  },
+  {
+    id: 'larasati',
+    name: 'Larasati',
+    phase: 'penempatan',
+    phaseLabel: 'Penempatan & Kerja',
+    dob: '14 Februari 2001',
+    address: 'Purworejo, Jawa Tengah',
+    education: 'SMK Keperawatan Purworejo',
+    avgScore: '88.5%',
+    dorm: 'Asrama Sakura (Room 202)',
+    skills: ['JLPT N4 Passed', 'SSW Kaigo Certified', 'Patient Transfer'],
+    parent: 'Mulyono',
+    parentPhone: '0813-1111-2222',
+    permitStatus: 'Terverifikasi ✓',
+    emergency: 'Mulyono (Ayah)',
+    youtubeUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+  },
+  {
+    id: 'fahri_hamzah',
+    name: 'Fahri Hamzah',
+    phase: 'alumni',
+    phaseLabel: 'Komunitas Alumni',
+    dob: '30 Oktober 2000',
+    address: 'Wonosari, Gunungkidul',
+    education: 'SMA Negeri 1 Wonosari',
+    avgScore: '86.5%',
+    dorm: 'Alumni (Penempatan Tokyo)',
+    skills: ['JLPT N3 Prep', 'SSW Caregiver Expert', 'Elderly Cooking'],
+    parent: 'Hamzah',
+    parentPhone: '0852-3333-4444',
+    permitStatus: 'Terverifikasi ✓',
+    emergency: 'Hamzah (Ayah)',
+    youtubeUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+  },
+  {
+    id: 'eka_putri',
+    name: 'Eka Putri',
+    phase: 'evaluasi',
+    phaseLabel: 'Evaluasi & Cicilan',
+    dob: '11 Desember 2001',
+    address: 'Magelang, Jawa Tengah',
+    education: 'SMA Negeri Magelang',
+    avgScore: '87.0%',
+    dorm: 'Alumni (Penempatan Osaka)',
+    skills: ['JFT Passed', 'SSW Caregiver Certified', 'First Aid'],
+    parent: 'Joko Putri',
+    parentPhone: '0812-9999-0000',
+    permitStatus: 'Terverifikasi ✓',
+    emergency: 'Joko Putri (Ayah)',
+    youtubeUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+  }
+];
+
 export default function LPKDashboard() {
   const [activeRole, setActiveRole] = useState('owner'); // owner, rekrutmen, pelatihan, asrama, dokumentasi, IT, agen, mitra
   const [selectedLpk, setSelectedLpk] = useState('lpk_a');
   
   // Navigation Screens per Role
   const [activeTab, setActiveTab] = useState('overview'); 
+  const [selectedPhaseFilter, setSelectedPhaseFilter] = useState('all');
+  const [selectedDetailStudent, setSelectedDetailStudent] = useState(DETAIL_STUDENTS[0]);
   const [selectedReportType, setSelectedReportType] = useState('akademik');
   const [showNotifications, setShowNotifications] = useState(false);
   const sampleNotifications = [
@@ -1746,41 +1887,144 @@ export default function LPKDashboard() {
 
             {/* SCREEN: DETAIL SISWA & ORANG TUA */}
             {activeTab === 'detail_siswa' && (
-              <div className="card">
-                <h2 style={{ fontSize: '16px', marginBottom: '16px' }}>👤 Detail Informasi Siswa & Kontak Orang Tua</h2>
-                <table className="ledger-table">
-                  <thead>
-                    <tr>
-                      <th>Nama Siswa</th>
-                      <th>Nama Orang Tua / Wali</th>
-                      <th>No. Telp Orang Tua</th>
-                      <th>Alamat Rumah Lengkap</th>
-                      <th>Surat Izin Orang Tua</th>
-                      <th>Emergency Contact</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {[
-                      { name: 'Budi Utomo', parent: 'Slamet Utomo', phone: '0812-3456-7890', address: 'Sleman, D.I. Yogyakarta', permit: 'Terverifikasi ✓', emergency: 'Ibu Utomo (Ibu)' },
-                      { name: 'Agus Wijaya', parent: 'Hendro Wijaya', phone: '0813-9876-5432', address: 'Bantul, D.I. Yogyakarta', permit: 'Terverifikasi ✓', emergency: 'Hendro Wijaya (Ayah)' },
-                      { name: 'Siti Rahma', parent: 'Ahmad Dahlan', phone: '0857-4321-8765', address: 'Solo, Jawa Tengah', permit: 'Terverifikasi ✓', emergency: 'Ahmad Dahlan (Ayah)' },
-                      { name: 'Rudi Hermawan', parent: 'Subagio Hermawan', phone: '0821-5555-1234', address: 'Kulon Progo, DIY', permit: 'Dalam Proses ⏱', emergency: 'Ibu Hermawan (Ibu)' }
-                    ].map((item, idx) => (
-                      <tr key={idx}>
-                        <td><b>{item.name}</b></td>
-                        <td>{item.parent}</td>
-                        <td>{item.phone}</td>
-                        <td>{item.address}</td>
-                        <td>
-                          <span style={{ fontWeight: '700', color: item.permit.includes('✓') ? 'var(--secondary)' : 'var(--warning)' }}>
-                            {item.permit}
-                          </span>
-                        </td>
-                        <td><span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{item.emergency}</span></td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '12px' }}>
+                  <div>
+                    <h2 style={{ fontSize: '16px', margin: 0 }}>👤 Detail Informasi Siswa & Orang Tua</h2>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '11px', margin: '2px 0 0 0' }}>Informasi akademik, data asrama, dokumen izin orang tua, dan video perkenalan diri.</p>
+                  </div>
+                  <div>
+                    <select 
+                      value={selectedPhaseFilter} 
+                      onChange={(e) => setSelectedPhaseFilter(e.target.value)} 
+                      className="input-field" 
+                      style={{ width: '180px' }}
+                    >
+                      <option value="all">Semua Tahap Proses</option>
+                      <option value="daftar">1. Pendaftaran</option>
+                      <option value="seleksi">2. Seleksi Awal</option>
+                      <option value="pelatihan">3. Pelatihan & Asrama</option>
+                      <option value="matching">4. Job Matching</option>
+                      <option value="persiapan">5. Persiapan Terbang</option>
+                      <option value="penempatan">6. Penempatan & Kerja</option>
+                      <option value="alumni">7. Komunitas Alumni</option>
+                      <option value="evaluasi">8. Evaluasi & Cicilan</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '20px' }}>
+                  {/* Student List */}
+                  <div style={{ maxHeight: '550px', overflowY: 'auto', borderRight: '1px solid var(--border)', paddingRight: '16px' }}>
+                    <table className="ledger-table" style={{ width: '100%' }}>
+                      <thead>
+                        <tr>
+                          <th>Nama Siswa</th>
+                          <th>Tahap / Status</th>
+                          <th>Izin Orang Tua</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {DETAIL_STUDENTS
+                          .filter(s => selectedPhaseFilter === 'all' || s.phase === selectedPhaseFilter)
+                          .map((s) => (
+                            <tr 
+                              key={s.id} 
+                              onClick={() => setSelectedDetailStudent(s)}
+                              style={{ 
+                                cursor: 'pointer', 
+                                backgroundColor: selectedDetailStudent?.id === s.id ? 'var(--primary-light)' : 'transparent',
+                                transition: 'background-color 0.15s ease'
+                              }}
+                            >
+                              <td>
+                                <b style={{ color: selectedDetailStudent?.id === s.id ? 'var(--primary-accent)' : 'var(--text-main)' }}>{s.name}</b>
+                                <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>{s.dob}</div>
+                              </td>
+                              <td><span className="badge badge-blue" style={{ fontSize: '10px' }}>{s.phaseLabel}</span></td>
+                              <td><span style={{ fontSize: '10.5px', color: 'var(--secondary)' }}>{s.permitStatus}</span></td>
+                            </tr>
+                          ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Student Profile Card (Right Column) */}
+                  <div>
+                    {selectedDetailStudent ? (
+                      <div style={{ padding: '16px', border: '1px solid var(--border)', borderRadius: '12px', backgroundColor: 'var(--primary-light)' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+                          <div>
+                            <h3 style={{ fontSize: '16px', margin: '0 0 4px 0', color: 'var(--primary-accent)' }}>{selectedDetailStudent.name}</h3>
+                            <span className="badge badge-blue">{selectedDetailStudent.phaseLabel}</span>
+                          </div>
+                          <div style={{ textAlign: 'right' }}>
+                            <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Nilai Rata-rata</div>
+                            <div style={{ fontSize: '16px', fontWeight: '800', color: 'var(--secondary)' }}>{selectedDetailStudent.avgScore}</div>
+                          </div>
+                        </div>
+
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', fontSize: '12px', marginBottom: '16px' }}>
+                          <div>
+                            <span style={{ color: 'var(--text-muted)', fontSize: '10px', textTransform: 'uppercase', display: 'block' }}>Tanggal Lahir</span>
+                            <b>{selectedDetailStudent.dob}</b>
+                          </div>
+                          <div>
+                            <span style={{ color: 'var(--text-muted)', fontSize: '10px', textTransform: 'uppercase', display: 'block' }}>Asrama / Ranjang</span>
+                            <b>{selectedDetailStudent.dorm}</b>
+                          </div>
+                          <div style={{ gridColumn: 'span 2' }}>
+                            <span style={{ color: 'var(--text-muted)', fontSize: '10px', textTransform: 'uppercase', display: 'block' }}>Pendidikan Terakhir</span>
+                            <b>{selectedDetailStudent.education}</b>
+                          </div>
+                          <div style={{ gridColumn: 'span 2' }}>
+                            <span style={{ color: 'var(--text-muted)', fontSize: '10px', textTransform: 'uppercase', display: 'block' }}>Alamat Rumah</span>
+                            <b>{selectedDetailStudent.address}</b>
+                          </div>
+                          <div>
+                            <span style={{ color: 'var(--text-muted)', fontSize: '10px', textTransform: 'uppercase', display: 'block' }}>Orang Tua / Wali</span>
+                            <b>{selectedDetailStudent.parent} ({selectedDetailStudent.emergency.includes('Ayah') ? 'Ayah' : 'Ibu'})</b>
+                          </div>
+                          <div>
+                            <span style={{ color: 'var(--text-muted)', fontSize: '10px', textTransform: 'uppercase', display: 'block' }}>No. Telp Orang Tua</span>
+                            <b>{selectedDetailStudent.parentPhone}</b>
+                          </div>
+                        </div>
+
+                        {/* Skill Tags */}
+                        <div style={{ marginBottom: '16px' }}>
+                          <span style={{ color: 'var(--text-muted)', fontSize: '10px', textTransform: 'uppercase', display: 'block', marginBottom: '6px' }}>Kompetensi & Sertifikasi</span>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                            {selectedDetailStudent.skills.map((skill, index) => (
+                              <span key={index} className="badge" style={{ backgroundColor: 'var(--background)', border: '1px solid var(--border)', fontSize: '10.5px' }}>{skill}</span>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Youtube Embed Video Introduction */}
+                        <div>
+                          <span style={{ color: 'var(--text-muted)', fontSize: '10px', textTransform: 'uppercase', display: 'block', marginBottom: '6px' }}>📹 Video Introduction (Jikoshoukai)</span>
+                          <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', borderRadius: '8px', border: '1px solid var(--border)' }}>
+                            <iframe 
+                              src={selectedDetailStudent.youtubeUrl}
+                              title={`Jikoshoukai - ${selectedDetailStudent.name}`}
+                              frameBorder="0" 
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                              allowFullScreen
+                              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '40px 20px', border: '2px dashed var(--border)', borderRadius: '12px', color: 'var(--text-muted)' }}>
+                        <span style={{ fontSize: '32px', marginBottom: '12px' }}>👤</span>
+                        <b>Pilih Siswa dari Daftar</b>
+                        <span style={{ fontSize: '11px', textAlign: 'center', marginTop: '4px' }}>Klik nama siswa di kolom kiri untuk menampilkan profil biodata dan video perkenalan.</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             )}
 
