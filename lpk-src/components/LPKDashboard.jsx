@@ -103,7 +103,10 @@ const DETAIL_STUDENTS = [
     parentPhone: '0812-9900-8811',
     guardianName: 'Slamet Utomo (Ayah)',
     guardianPhone: '0812-9900-8811',
-    siblingsInfo: 'Anak ke-2 dari 3 bersaudara (Kakak: Roni Utomo - Wiraswasta)',
+    siblings: [
+      { relation: 'Kakak Kandung', name: 'Roni Utomo', dob: '14 September 1999', age: 26 },
+      { relation: 'Adik Kandung', name: 'Dewi Utomo', dob: '03 Juli 2010', age: 15 }
+    ],
     reference: 'Bambang Pamungkas (Alumni #042 - 0813-2244-5566)',
     dorm: 'Cabang Sleman - Kamar 101 - Ranjang A',
     skills: ['Dasar Kaiwa', 'Kebersihan Diri (Seiketsu)', 'Etika Kerja Jepang (5S)'],
@@ -148,7 +151,7 @@ const DETAIL_STUDENTS = [
     parentPhone: '0813-9900-1122',
     guardianName: 'Hendro Wijaya (Ayah)',
     guardianPhone: '0813-9900-1122',
-    siblingsInfo: 'Anak tunggal',
+    siblings: [],
     reference: 'Rian Hidayat (Alumni #055 - 0812-7788-9900)',
     dorm: 'Cabang Bantul - Kamar 102 - Ranjang B',
     skills: ['Pencegahan Infeksi', 'Komunikasi Lansia', 'Mengukur Tekanan Darah'],
@@ -193,7 +196,9 @@ const DETAIL_STUDENTS = [
     parentPhone: '0857-1111-2222',
     guardianName: 'Ahmad Dahlan (Ayah)',
     guardianPhone: '0857-1111-2222',
-    siblingsInfo: 'Anak ke-1 dari 2 bersaudara (Adik: Fikri Dahlan - Pelajar)',
+    siblings: [
+      { relation: 'Adik Kandung', name: 'Fikri Dahlan', dob: '05 Desember 2008', age: 17 }
+    ],
     reference: 'Siska Amelia (Alumni #078 - 0821-4455-6677)',
     dorm: 'Cabang Sleman - Kamar 103 - Ranjang C',
     skills: ['Nihongo N4', 'Patient Bedmaking', 'Membantu Makan Lansia'],
@@ -238,7 +243,11 @@ const DETAIL_STUDENTS = [
     parentPhone: '0821-9988-7766',
     guardianName: 'Ibu Hermawan (Ibu / Janda)',
     guardianPhone: '0821-9988-7766',
-    siblingsInfo: 'Anak ke-3 dari 4 bersaudara (Kakak tertua di Kalimantan)',
+    siblings: [
+      { relation: 'Kakak Kandung', name: 'Andi Hermawan', dob: '12 Januari 1995', age: 31 },
+      { relation: 'Kakak Kandung', name: 'Siska Hermawan', dob: '22 Agustus 1997', age: 28 },
+      { relation: 'Adik Kandung', name: 'Toni Hermawan', dob: '09 April 2007', age: 18 }
+    ],
     reference: 'Dian Nugraha (Alumni #021 - 0812-4433-2211)',
     dorm: 'Cabang Sleman - Kamar 104 - Ranjang A',
     skills: ['Nihongo N4', 'Dementia care basic', 'Technical Maintenance'],
@@ -283,7 +292,9 @@ const DETAIL_STUDENTS = [
     parentPhone: '0812-5566-7788',
     guardianName: 'Suwardi Lestari (Ayah)',
     guardianPhone: '0812-5566-7788',
-    siblingsInfo: 'Anak ke-1 dari 2 bersaudara (Adik: Andi Lestari - Mahasiswa)',
+    siblings: [
+      { relation: 'Adik Kandung', name: 'Andi Lestari', dob: '19 Juni 2006', age: 19 }
+    ],
     reference: 'Rina Rahmawati (Alumni #102 - 0852-8899-0011)',
     dorm: 'Cabang Sleman - Kamar 201 - Ranjang B',
     skills: ['Kaiwa Intermediate', 'Clinical Nursing Care', 'Physical Rehabilitation'],
@@ -328,7 +339,9 @@ const DETAIL_STUDENTS = [
     parentPhone: '0813-4455-6677',
     guardianName: 'Mulyono (Ayah)',
     guardianPhone: '0813-4455-6677',
-    siblingsInfo: 'Anak ke-2 dari 2 bersaudara (Kakak: Joko Mulyono - PNS)',
+    siblings: [
+      { relation: 'Kakak Kandung', name: 'Joko Mulyono', dob: '08 Maret 1996', age: 29 }
+    ],
     reference: 'Fitri Handayani (Alumni #111 - 0857-8899-2211)',
     dorm: 'Cabang Sleman - Kamar 202 - Ranjang C',
     skills: ['Patient Transfer', 'Bathing Care', 'Wheelchair Assistance'],
@@ -373,7 +386,10 @@ const DETAIL_STUDENTS = [
     parentPhone: '0852-9900-1122',
     guardianName: 'Hamzah (Ayah)',
     guardianPhone: '0852-9900-1122',
-    siblingsInfo: 'Anak ke-1 dari 3 bersaudara (Adik-adik sekolah dasar)',
+    siblings: [
+      { relation: 'Adik Kandung', name: 'Zainal Hamzah', dob: '14 April 2012', age: 13 },
+      { relation: 'Adik Kandung', name: 'Lia Hamzah', dob: '30 Oktober 2015', age: 10 }
+    ],
     reference: 'Hasan Basri (Alumni #012 - 0812-9988-7766)',
     dorm: 'Alumni (Penempatan Tokyo - Shinagawa)',
     skills: ['SSW Caregiver Expert', 'Elderly cooking', 'JLPT N3 Prep'],
@@ -418,7 +434,9 @@ const DETAIL_STUDENTS = [
     parentPhone: '0812-7777-6655',
     guardianName: 'Joko Putri (Ayah)',
     guardianPhone: '0812-7777-6655',
-    siblingsInfo: 'Anak bungsu dari 2 bersaudara (Kakak: Rian Putri - Ibu Rumah Tangga)',
+    siblings: [
+      { relation: 'Kakak Kandung', name: 'Rian Putri', dob: '11 November 1994', age: 31 }
+    ],
     reference: 'Nadia Rahma (Alumni #151 - 0856-7788-9922)',
     dorm: 'Alumni (Penempatan Osaka - Yodogawa)',
     skills: ['SSW Caregiver Certified', 'First Aid / P3K', 'Bathing Assistance'],
@@ -2285,8 +2303,19 @@ export default function LPKDashboard() {
                                 <b>{selectedDetailStudent.guardianPhone}</b>
                               </div>
                               <div style={{ borderTop: '1px solid var(--border)', paddingTop: '8px' }}>
-                                <span style={{ color: 'var(--text-muted)', display: 'block', marginBottom: '2px' }}>Sanak Saudara:</span>
-                                <span style={{ fontSize: '11.5px', fontWeight: '600' }}>{selectedDetailStudent.siblingsInfo}</span>
+                                <span style={{ color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Sanak Saudara:</span>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                                  {selectedDetailStudent.siblings && selectedDetailStudent.siblings.length > 0 ? (
+                                    selectedDetailStudent.siblings.map((sib, sIdx) => (
+                                      <div key={sIdx} style={{ fontSize: '11px', lineHeight: '1.4' }}>
+                                        <span style={{ color: 'var(--primary-accent)', fontWeight: '700' }}>• {sib.relation}:</span>{' '}
+                                        <b>{sib.name}</b> (Lahir: {sib.dob} | Umur: {sib.age} thn)
+                                      </div>
+                                    ))
+                                  ) : (
+                                    <span style={{ fontSize: '11.5px', fontWeight: '600', color: 'var(--text-muted)' }}>Anak Tunggal (Tidak memiliki saudara kandung)</span>
+                                  )}
+                                </div>
                               </div>
                               <div style={{ borderTop: '1px solid var(--border)', paddingTop: '8px' }}>
                                 <span style={{ color: 'var(--text-muted)', display: 'block', marginBottom: '2px' }}>Direferensikan Oleh:</span>
