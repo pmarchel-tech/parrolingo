@@ -946,7 +946,14 @@ export default function LPKDashboard() {
   useEffect(() => {
     const initData = async () => {
       try {
-        await seedDefaultChecklists();
+        const demoSeeded = localStorage.getItem('lpk_demo_seeded_v3');
+        if (!demoSeeded) {
+          console.log("Forcing database demo seeding (17 students)...");
+          await seedDefaultChecklists(true);
+          localStorage.setItem('lpk_demo_seeded_v3', 'true');
+        } else {
+          await seedDefaultChecklists();
+        }
       } catch (e) {
         console.error("Seeding failed: ", e);
       }
