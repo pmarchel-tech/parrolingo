@@ -86,138 +86,362 @@ const STUDENTS_BY_LPK = {
 const DETAIL_STUDENTS = [
   {
     id: 'budi_utomo',
+    photo: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Budi',
     name: 'Budi Utomo',
+    nik: '3404120805040001',
+    kk: '3404121204020008',
+    sim: 'SIM C - 8904129871',
+    dob: '12 Mei 2004',
+    religion: 'Islam',
+    maritalStatus: 'Lajang',
+    languages: ['Jepang', 'English'],
+    phone: '0812-3456-7890',
+    email: 'budi.utomo@gmail.com',
+    address: 'Jl. Kaliurang Km 10, Sardonoharjo, Ngaglik, Sleman, D.I. Yogyakarta',
+    education: 'SMA Negeri 1 Sleman (IPA)',
+    parentName: 'Slamet Utomo',
+    parentPhone: '0812-9900-8811',
+    guardianName: 'Slamet Utomo (Ayah)',
+    guardianPhone: '0812-9900-8811',
+    siblingsInfo: 'Anak ke-2 dari 3 bersaudara (Kakak: Roni Utomo - Wiraswasta)',
+    reference: 'Bambang Pamungkas (Alumni #042 - 0813-2244-5566)',
+    dorm: 'Cabang Sleman - Kamar 101 - Ranjang A',
+    skills: ['Dasar Kaiwa', 'Kebersihan Diri (Seiketsu)', 'Etika Kerja Jepang (5S)'],
+    certifications: ['Sertifikat Latihan Bahasa LPK (N5)'],
+    finance: {
+      talangan: 'Rp 20.000.000',
+      paid: 'Rp 0',
+      outstanding: 'Rp 20.000.000',
+      installment: 'Rp 1.660.000 / Bulan (Tenor 12x)'
+    },
+    documents: [
+      { name: 'KTP Siswa', status: 'Submitted ✓' },
+      { name: 'Kartu Keluarga (KK)', status: 'Submitted ✓' },
+      { name: 'Akta Kelahiran', status: 'Submitted ✓' },
+      { name: 'Ijazah Terakhir', status: 'Submitted ✓' },
+      { name: 'Surat Izin Orang Tua', status: 'Submitted ✓' },
+      { name: 'Paspor RI', status: 'Pending ⏱' },
+      { name: 'Sertifikat JFT/JLPT', status: 'Pending ⏱' },
+      { name: 'Sertifikat Kaigo SSW', status: 'Pending ⏱' }
+    ],
     phase: 'daftar',
     phaseLabel: 'Pendaftaran',
-    dob: '12 Mei 2004',
-    address: 'Sleman, D.I. Yogyakarta',
-    education: 'SMA Negeri 1 Sleman (Jurusan IPA)',
-    avgScore: '82.5%',
-    dorm: 'Asrama Sakura (Room 101)',
-    skills: ['Dasar Kaiwa', 'Kebersihan Diri', 'Etika Kerja Jepang'],
-    parent: 'Slamet Utomo',
-    parentPhone: '0812-3456-7890',
     permitStatus: 'Terverifikasi ✓',
-    emergency: 'Ibu Utomo (Ibu)',
     youtubeUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
   },
   {
     id: 'agus_wijaya',
+    photo: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Agus',
     name: 'Agus Wijaya',
+    nik: '3402110508030005',
+    kk: '3402112411990012',
+    sim: 'SIM A - 9807123456',
+    dob: '05 Agustus 2003',
+    religion: 'Islam',
+    maritalStatus: 'Lajang',
+    languages: ['Jepang', 'Arab'],
+    phone: '0813-9876-5432',
+    email: 'agus.wijaya@gmail.com',
+    address: 'Jl. Parangtritis Km 5, Bangunharjo, Sewon, Bantul, D.I. Yogyakarta',
+    education: 'SMK Kesehatan Bantul (Keperawatan)',
+    parentName: 'Hendro Wijaya',
+    parentPhone: '0813-9900-1122',
+    guardianName: 'Hendro Wijaya (Ayah)',
+    guardianPhone: '0813-9900-1122',
+    siblingsInfo: 'Anak tunggal',
+    reference: 'Rian Hidayat (Alumni #055 - 0812-7788-9900)',
+    dorm: 'Cabang Bantul - Kamar 102 - Ranjang B',
+    skills: ['Pencegahan Infeksi', 'Komunikasi Lansia', 'Mengukur Tekanan Darah'],
+    certifications: ['Sertifikat BLS (Basic Life Support)'],
+    finance: {
+      talangan: 'Rp 22.000.000',
+      paid: 'Rp 2.200.000',
+      outstanding: 'Rp 19.800.000',
+      installment: 'Rp 1.650.000 / Bulan (Tenor 12x)'
+    },
+    documents: [
+      { name: 'KTP Siswa', status: 'Submitted ✓' },
+      { name: 'Kartu Keluarga (KK)', status: 'Submitted ✓' },
+      { name: 'Akta Kelahiran', status: 'Submitted ✓' },
+      { name: 'Ijazah Terakhir', status: 'Submitted ✓' },
+      { name: 'Surat Izin Orang Tua', status: 'Submitted ✓' },
+      { name: 'Paspor RI', status: 'Submitted ✓' },
+      { name: 'Sertifikat JFT/JLPT', status: 'Pending ⏱' },
+      { name: 'Sertifikat Kaigo SSW', status: 'Pending ⏱' }
+    ],
     phase: 'seleksi',
     phaseLabel: 'Seleksi Awal',
-    dob: '05 Agustus 2003',
-    address: 'Bantul, D.I. Yogyakarta',
-    education: 'SMK Kesehatan Bantul (Keperawatan)',
-    avgScore: '78.0%',
-    dorm: 'Asrama Sakura (Room 102)',
-    skills: ['Pencegahan Infeksi', 'Komunikasi Lansia'],
-    parent: 'Hendro Wijaya',
-    parentPhone: '0813-9876-5432',
     permitStatus: 'Terverifikasi ✓',
-    emergency: 'Hendro Wijaya (Ayah)',
     youtubeUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
   },
   {
     id: 'siti_rahma',
+    photo: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Siti',
     name: 'Siti Rahma',
+    nik: '3372012211020004',
+    kk: '3372011003980009',
+    sim: 'Belum Memiliki',
+    dob: '22 November 2002',
+    religion: 'Islam',
+    maritalStatus: 'Lajang',
+    languages: ['Jepang', 'English', 'Mandarin'],
+    phone: '0857-4321-8765',
+    email: 'siti.rahma@yahoo.com',
+    address: 'Jl. Slamet Riyadi No. 120, Laweyan, Surakarta, Jawa Tengah',
+    education: 'SMA Negeri 3 Surakarta',
+    parentName: 'Ahmad Dahlan',
+    parentPhone: '0857-1111-2222',
+    guardianName: 'Ahmad Dahlan (Ayah)',
+    guardianPhone: '0857-1111-2222',
+    siblingsInfo: 'Anak ke-1 dari 2 bersaudara (Adik: Fikri Dahlan - Pelajar)',
+    reference: 'Siska Amelia (Alumni #078 - 0821-4455-6677)',
+    dorm: 'Cabang Sleman - Kamar 103 - Ranjang C',
+    skills: ['Nihongo N4', 'Patient Bedmaking', 'Membantu Makan Lansia'],
+    certifications: ['Sertifikat JFT-Basic N4', 'Sertifikat SSW Kaigo'],
+    finance: {
+      talangan: 'Rp 20.000.000',
+      paid: 'Rp 5.000.000',
+      outstanding: 'Rp 15.000.000',
+      installment: 'Rp 1.250.000 / Bulan (Tenor 12x)'
+    },
+    documents: [
+      { name: 'KTP Siswa', status: 'Submitted ✓' },
+      { name: 'Kartu Keluarga (KK)', status: 'Submitted ✓' },
+      { name: 'Akta Kelahiran', status: 'Submitted ✓' },
+      { name: 'Ijazah Terakhir', status: 'Submitted ✓' },
+      { name: 'Surat Izin Orang Tua', status: 'Submitted ✓' },
+      { name: 'Paspor RI', status: 'Submitted ✓' },
+      { name: 'Sertifikat JFT/JLPT', status: 'Submitted ✓' },
+      { name: 'Sertifikat Kaigo SSW', status: 'Submitted ✓' }
+    ],
     phase: 'pelatihan',
     phaseLabel: 'Pelatihan & Asrama',
-    dob: '22 November 2002',
-    address: 'Solo, Jawa Tengah',
-    education: 'SMA Negeri 3 Surakarta',
-    avgScore: '92.5%',
-    dorm: 'Asrama Sakura (Room 103)',
-    skills: ['Nihongo N4', 'JFT Passed', 'SSW Kaigo Ready', 'First Aid'],
-    parent: 'Ahmad Dahlan',
-    parentPhone: '0857-4321-8765',
     permitStatus: 'Terverifikasi ✓',
-    emergency: 'Ahmad Dahlan (Ayah)',
     youtubeUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
   },
   {
     id: 'rudi_hermawan',
+    photo: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Rudi',
     name: 'Rudi Hermawan',
+    nik: '3401081809030002',
+    kk: '3401080405000007',
+    sim: 'SIM C - 8704123890',
+    dob: '18 September 2003',
+    religion: 'Islam',
+    maritalStatus: 'Lajang',
+    languages: ['Jepang', 'Mandarin'],
+    phone: '0821-5555-1234',
+    email: 'rudi.hermawan@gmail.com',
+    address: 'Jl. Wates Km 14, Sentolo, Kulon Progo, D.I. Yogyakarta',
+    education: 'SMK Otomotif Kulon Progo',
+    parentName: 'Subagio Hermawan',
+    parentPhone: '0821-9988-7766',
+    guardianName: 'Ibu Hermawan (Ibu / Janda)',
+    guardianPhone: '0821-9988-7766',
+    siblingsInfo: 'Anak ke-3 dari 4 bersaudara (Kakak tertua di Kalimantan)',
+    reference: 'Dian Nugraha (Alumni #021 - 0812-4433-2211)',
+    dorm: 'Cabang Sleman - Kamar 104 - Ranjang A',
+    skills: ['Nihongo N4', 'Dementia care basic', 'Technical Maintenance'],
+    certifications: ['Sertifikat Ujian Praktek Kaigo LPK'],
+    finance: {
+      talangan: 'Rp 20.000.000',
+      paid: 'Rp 1.500.000',
+      outstanding: 'Rp 18.500.000',
+      installment: 'Rp 1.540.000 / Bulan (Tenor 12x)'
+    },
+    documents: [
+      { name: 'KTP Siswa', status: 'Submitted ✓' },
+      { name: 'Kartu Keluarga (KK)', status: 'Submitted ✓' },
+      { name: 'Akta Kelahiran', status: 'Submitted ✓' },
+      { name: 'Ijazah Terakhir', status: 'Submitted ✓' },
+      { name: 'Surat Izin Orang Tua', status: 'Dalam Proses ⏱' },
+      { name: 'Paspor RI', status: 'Submitted ✓' },
+      { name: 'Sertifikat JFT/JLPT', status: 'Submitted ✓' },
+      { name: 'Sertifikat Kaigo SSW', status: 'Pending ⏱' }
+    ],
     phase: 'matching',
     phaseLabel: 'Job Matching',
-    dob: '18 September 2003',
-    address: 'Kulon Progo, DIY',
-    education: 'SMK Otomotif Kulon Progo',
-    avgScore: '85.0%',
-    dorm: 'Asrama Sakura (Room 104)',
-    skills: ['Nihongo N4', 'SSW Kaigo Ready', 'Dementia Care Basic'],
-    parent: 'Subagio Hermawan',
-    parentPhone: '0821-5555-1234',
     permitStatus: 'Dalam Proses ⏱',
-    emergency: 'Ibu Hermawan (Ibu)',
     youtubeUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
   },
   {
     id: 'dewi_lestari',
+    photo: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Dewi',
     name: 'Dewi Lestari',
+    nik: '3310140204020003',
+    kk: '3310141512990001',
+    sim: 'SIM C - 8904123490',
+    dob: '02 April 2002',
+    religion: 'Kristen',
+    maritalStatus: 'Lajang',
+    languages: ['Jepang', 'English', 'Korea'],
+    phone: '0812-7777-8888',
+    email: 'dewi.lestari@gmail.com',
+    address: 'Perumahan Klaten Kencana, Karanganom, Klaten, Jawa Tengah',
+    education: 'D3 Keperawatan STIKES Klaten',
+    parentName: 'Suwardi Lestari',
+    parentPhone: '0812-5566-7788',
+    guardianName: 'Suwardi Lestari (Ayah)',
+    guardianPhone: '0812-5566-7788',
+    siblingsInfo: 'Anak ke-1 dari 2 bersaudara (Adik: Andi Lestari - Mahasiswa)',
+    reference: 'Rina Rahmawati (Alumni #102 - 0852-8899-0011)',
+    dorm: 'Cabang Sleman - Kamar 201 - Ranjang B',
+    skills: ['Kaiwa Intermediate', 'Clinical Nursing Care', 'Physical Rehabilitation'],
+    certifications: ['Sertifikat JFT N4 Passed', 'Sertifikat SSW Kaigo', 'Sertifikat STR Keperawatan'],
+    finance: {
+      talangan: 'Rp 25.000.000',
+      paid: 'Rp 15.000.000',
+      outstanding: 'Rp 10.000.000',
+      installment: 'Rp 2.500.000 / Bulan (Tenor 4x sisa)'
+    },
+    documents: [
+      { name: 'KTP Siswa', status: 'Submitted ✓' },
+      { name: 'Kartu Keluarga (KK)', status: 'Submitted ✓' },
+      { name: 'Akta Kelahiran', status: 'Submitted ✓' },
+      { name: 'Ijazah Terakhir', status: 'Submitted ✓' },
+      { name: 'Surat Izin Orang Tua', status: 'Submitted ✓' },
+      { name: 'Paspor RI', status: 'Submitted ✓' },
+      { name: 'Sertifikat JFT/JLPT', status: 'Submitted ✓' },
+      { name: 'Sertifikat Kaigo SSW', status: 'Submitted ✓' }
+    ],
     phase: 'persiapan',
     phaseLabel: 'Persiapan Terbang (COE)',
-    dob: '02 April 2002',
-    address: 'Klaten, Jawa Tengah',
-    education: 'D3 Keperawatan STIKES Klaten',
-    avgScore: '90.0%',
-    dorm: 'Asrama Sakura (Room 201)',
-    skills: ['JFT Passed', 'SSW Kaigo Certified', 'Kaiwa Intermediate', 'First Aid'],
-    parent: 'Suwardi Lestari',
-    parentPhone: '0812-7777-8888',
     permitStatus: 'Terverifikasi ✓',
-    emergency: 'Suwardi Lestari (Ayah)',
     youtubeUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
   },
   {
     id: 'larasati',
+    photo: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Laras',
     name: 'Larasati',
+    nik: '3306121402010006',
+    kk: '3306120202980004',
+    sim: 'SIM C - 8704123567',
+    dob: '14 Februari 2001',
+    religion: 'Islam',
+    maritalStatus: 'Lajang',
+    languages: ['Jepang', 'Korea'],
+    phone: '0813-1111-2222',
+    email: 'larasati.care@gmail.com',
+    address: 'Jl. Purworejo-Magelang Km 8, Purworejo, Jawa Tengah',
+    education: 'SMK Keperawatan Purworejo',
+    parentName: 'Mulyono',
+    parentPhone: '0813-4455-6677',
+    guardianName: 'Mulyono (Ayah)',
+    guardianPhone: '0813-4455-6677',
+    siblingsInfo: 'Anak ke-2 dari 2 bersaudara (Kakak: Joko Mulyono - PNS)',
+    reference: 'Fitri Handayani (Alumni #111 - 0857-8899-2211)',
+    dorm: 'Cabang Sleman - Kamar 202 - Ranjang C',
+    skills: ['Patient Transfer', 'Bathing Care', 'Wheelchair Assistance'],
+    certifications: ['Sertifikat JLPT N4', 'Sertifikat SSW Kaigo Certified'],
+    finance: {
+      talangan: 'Rp 20.000.000',
+      paid: 'Rp 10.000.000',
+      outstanding: 'Rp 10.000.000',
+      installment: 'Rp 1.660.000 / Bulan (Tenor 6x sisa)'
+    },
+    documents: [
+      { name: 'KTP Siswa', status: 'Submitted ✓' },
+      { name: 'Kartu Keluarga (KK)', status: 'Submitted ✓' },
+      { name: 'Akta Kelahiran', status: 'Submitted ✓' },
+      { name: 'Ijazah Terakhir', status: 'Submitted ✓' },
+      { name: 'Surat Izin Orang Tua', status: 'Submitted ✓' },
+      { name: 'Paspor RI', status: 'Submitted ✓' },
+      { name: 'Sertifikat JFT/JLPT', status: 'Submitted ✓' },
+      { name: 'Sertifikat Kaigo SSW', status: 'Submitted ✓' }
+    ],
     phase: 'penempatan',
     phaseLabel: 'Penempatan & Kerja',
-    dob: '14 Februari 2001',
-    address: 'Purworejo, Jawa Tengah',
-    education: 'SMK Keperawatan Purworejo',
-    avgScore: '88.5%',
-    dorm: 'Asrama Sakura (Room 202)',
-    skills: ['JLPT N4 Passed', 'SSW Kaigo Certified', 'Patient Transfer'],
-    parent: 'Mulyono',
-    parentPhone: '0813-1111-2222',
     permitStatus: 'Terverifikasi ✓',
-    emergency: 'Mulyono (Ayah)',
     youtubeUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
   },
   {
     id: 'fahri_hamzah',
+    photo: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Fahri',
     name: 'Fahri Hamzah',
+    nik: '3403013010000004',
+    kk: '3403011409980009',
+    sim: 'SIM C - 8904123789',
+    dob: '30 Oktober 2000',
+    religion: 'Islam',
+    maritalStatus: 'Lajang',
+    languages: ['Jepang', 'Arab', 'English'],
+    phone: '0852-3333-4444',
+    email: 'fahri.hamzah@gmail.com',
+    address: 'Jl. Baron Km 4, Karangrejek, Wonosari, Gunungkidul, D.I. Yogyakarta',
+    education: 'SMA Negeri 1 Wonosari',
+    parentName: 'Hamzah',
+    parentPhone: '0852-9900-1122',
+    guardianName: 'Hamzah (Ayah)',
+    guardianPhone: '0852-9900-1122',
+    siblingsInfo: 'Anak ke-1 dari 3 bersaudara (Adik-adik sekolah dasar)',
+    reference: 'Hasan Basri (Alumni #012 - 0812-9988-7766)',
+    dorm: 'Alumni (Penempatan Tokyo - Shinagawa)',
+    skills: ['SSW Caregiver Expert', 'Elderly cooking', 'JLPT N3 Prep'],
+    certifications: ['Sertifikat JLPT N4', 'Sertifikat Tokutei Ginou Kaigo'],
+    finance: {
+      talangan: 'Rp 20.000.000',
+      paid: 'Rp 20.000.000',
+      outstanding: 'Rp 0',
+      installment: 'Lunas Lunas ✓'
+    },
+    documents: [
+      { name: 'KTP Siswa', status: 'Submitted ✓' },
+      { name: 'Kartu Keluarga (KK)', status: 'Submitted ✓' },
+      { name: 'Akta Kelahiran', status: 'Submitted ✓' },
+      { name: 'Ijazah Terakhir', status: 'Submitted ✓' },
+      { name: 'Surat Izin Orang Tua', status: 'Submitted ✓' },
+      { name: 'Paspor RI', status: 'Submitted ✓' },
+      { name: 'Sertifikat JFT/JLPT', status: 'Submitted ✓' },
+      { name: 'Sertifikat Kaigo SSW', status: 'Submitted ✓' }
+    ],
     phase: 'alumni',
     phaseLabel: 'Komunitas Alumni',
-    dob: '30 Oktober 2000',
-    address: 'Wonosari, Gunungkidul',
-    education: 'SMA Negeri 1 Wonosari',
-    avgScore: '86.5%',
-    dorm: 'Alumni (Penempatan Tokyo)',
-    skills: ['JLPT N3 Prep', 'SSW Caregiver Expert', 'Elderly Cooking'],
-    parent: 'Hamzah',
-    parentPhone: '0852-3333-4444',
     permitStatus: 'Terverifikasi ✓',
-    emergency: 'Hamzah (Ayah)',
     youtubeUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
   },
   {
     id: 'eka_putri',
+    photo: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Eka',
     name: 'Eka Putri',
+    nik: '3308141112010009',
+    kk: '3308140410970002',
+    sim: 'SIM C - 8904123112',
+    dob: '11 Desember 2001',
+    religion: 'Islam',
+    maritalStatus: 'Lajang',
+    languages: ['Jepang', 'English'],
+    phone: '0812-9999-0000',
+    email: 'eka.putri.care@outlook.com',
+    address: 'Jl. Magelang-Yogya Km 12, Mertoyudan, Magelang, Jawa Tengah',
+    education: 'SMA Negeri Magelang',
+    parentName: 'Joko Putri',
+    parentPhone: '0812-7777-6655',
+    guardianName: 'Joko Putri (Ayah)',
+    guardianPhone: '0812-7777-6655',
+    siblingsInfo: 'Anak bungsu dari 2 bersaudara (Kakak: Rian Putri - Ibu Rumah Tangga)',
+    reference: 'Nadia Rahma (Alumni #151 - 0856-7788-9922)',
+    dorm: 'Alumni (Penempatan Osaka - Yodogawa)',
+    skills: ['SSW Caregiver Certified', 'First Aid / P3K', 'Bathing Assistance'],
+    certifications: ['Sertifikat JFT-Basic N4', 'Sertifikat Tokutei Ginou Kaigo'],
+    finance: {
+      talangan: 'Rp 20.000.000',
+      paid: 'Rp 12.000.000',
+      outstanding: 'Rp 8.000.000',
+      installment: 'Rp 2.000.000 / Bulan (Tenor 4x sisa)'
+    },
+    documents: [
+      { name: 'KTP Siswa', status: 'Submitted ✓' },
+      { name: 'Kartu Keluarga (KK)', status: 'Submitted ✓' },
+      { name: 'Akta Kelahiran', status: 'Submitted ✓' },
+      { name: 'Ijazah Terakhir', status: 'Submitted ✓' },
+      { name: 'Surat Izin Orang Tua', status: 'Submitted ✓' },
+      { name: 'Paspor RI', status: 'Submitted ✓' },
+      { name: 'Sertifikat JFT/JLPT', status: 'Submitted ✓' },
+      { name: 'Sertifikat Kaigo SSW', status: 'Submitted ✓' }
+    ],
     phase: 'evaluasi',
     phaseLabel: 'Evaluasi & Cicilan',
-    dob: '11 Desember 2001',
-    address: 'Magelang, Jawa Tengah',
-    education: 'SMA Negeri Magelang',
-    avgScore: '87.0%',
-    dorm: 'Alumni (Penempatan Osaka)',
-    skills: ['JFT Passed', 'SSW Caregiver Certified', 'First Aid'],
-    parent: 'Joko Putri',
-    parentPhone: '0812-9999-0000',
     permitStatus: 'Terverifikasi ✓',
-    emergency: 'Joko Putri (Ayah)',
     youtubeUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
   }
 ];
@@ -229,6 +453,7 @@ export default function LPKDashboard() {
   // Navigation Screens per Role
   const [activeTab, setActiveTab] = useState('overview'); 
   const [selectedPhaseFilter, setSelectedPhaseFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
   const [selectedDetailStudent, setSelectedDetailStudent] = useState(DETAIL_STUDENTS[0]);
   const [selectedReportType, setSelectedReportType] = useState('akademik');
   const [showNotifications, setShowNotifications] = useState(false);
@@ -1888,17 +2113,26 @@ export default function LPKDashboard() {
             {/* SCREEN: DETAIL SISWA & ORANG TUA */}
             {activeTab === 'detail_siswa' && (
               <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '12px' }}>
+                {/* Header with Search and Filter */}
+                <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '16px', gap: '12px' }}>
                   <div>
                     <h2 style={{ fontSize: '16px', margin: 0 }}>👤 Detail Informasi Siswa & Orang Tua</h2>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '11px', margin: '2px 0 0 0' }}>Informasi akademik, data asrama, dokumen izin orang tua, dan video perkenalan diri.</p>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '11px', margin: '2px 0 0 0' }}>Informasi biodata terperinci, dokumen, asrama, status keuangan, dan video perkenalan diri.</p>
                   </div>
-                  <div>
+                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                    <input 
+                      type="text" 
+                      placeholder="Cari nama siswa..." 
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="input-field"
+                      style={{ width: '200px', margin: 0 }}
+                    />
                     <select 
                       value={selectedPhaseFilter} 
                       onChange={(e) => setSelectedPhaseFilter(e.target.value)} 
                       className="input-field" 
-                      style={{ width: '180px' }}
+                      style={{ width: '180px', margin: 0 }}
                     >
                       <option value="all">Semua Tahap Proses</option>
                       <option value="daftar">1. Pendaftaran</option>
@@ -1913,106 +2147,254 @@ export default function LPKDashboard() {
                   </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '20px' }}>
-                  {/* Student List */}
-                  <div style={{ maxHeight: '550px', overflowY: 'auto', borderRight: '1px solid var(--border)', paddingRight: '16px' }}>
-                    <table className="ledger-table" style={{ width: '100%' }}>
-                      <thead>
-                        <tr>
-                          <th>Nama Siswa</th>
-                          <th>Tahap / Status</th>
-                          <th>Izin Orang Tua</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {DETAIL_STUDENTS
-                          .filter(s => selectedPhaseFilter === 'all' || s.phase === selectedPhaseFilter)
-                          .map((s) => (
-                            <tr 
-                              key={s.id} 
-                              onClick={() => setSelectedDetailStudent(s)}
-                              style={{ 
-                                cursor: 'pointer', 
-                                backgroundColor: selectedDetailStudent?.id === s.id ? 'var(--primary-light)' : 'transparent',
-                                transition: 'background-color 0.15s ease'
-                              }}
-                            >
-                              <td>
-                                <b style={{ color: selectedDetailStudent?.id === s.id ? 'var(--primary-accent)' : 'var(--text-main)' }}>{s.name}</b>
-                                <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>{s.dob}</div>
-                              </td>
-                              <td><span className="badge badge-blue" style={{ fontSize: '10px' }}>{s.phaseLabel}</span></td>
-                              <td><span style={{ fontSize: '10.5px', color: 'var(--secondary)' }}>{s.permitStatus}</span></td>
-                            </tr>
-                          ))}
-                      </tbody>
-                    </table>
+                <div style={{ display: 'grid', gridTemplateColumns: '350px 1fr', gap: '20px' }}>
+                  {/* Left Column: Student List with Search Results */}
+                  <div style={{ maxHeight: '650px', overflowY: 'auto', borderRight: '1px solid var(--border)', paddingRight: '16px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      {DETAIL_STUDENTS
+                        .filter(s => {
+                          const matchesPhase = selectedPhaseFilter === 'all' || s.phase === selectedPhaseFilter;
+                          const matchesSearch = s.name.toLowerCase().includes(searchTerm.toLowerCase());
+                          return matchesPhase && matchesSearch;
+                        })
+                        .map((s) => (
+                          <div 
+                            key={s.id}
+                            onClick={() => setSelectedDetailStudent(s)}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '12px',
+                              padding: '12px',
+                              borderRadius: '8px',
+                              cursor: 'pointer',
+                              backgroundColor: selectedDetailStudent?.id === s.id ? 'var(--primary-light)' : 'transparent',
+                              border: selectedDetailStudent?.id === s.id ? '1px solid var(--border-active)' : '1px solid transparent',
+                              transition: 'all 0.15s ease'
+                            }}
+                            className="student-list-item"
+                          >
+                            <img 
+                              src={s.photo} 
+                              alt={s.name} 
+                              style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: 'var(--primary-light)', border: '1px solid var(--border)' }}
+                            />
+                            <div style={{ flex: 1 }}>
+                              <b style={{ fontSize: '13px', color: selectedDetailStudent?.id === s.id ? 'var(--primary-accent)' : 'var(--text-main)' }}>{s.name}</b>
+                              <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>{s.phaseLabel}</div>
+                            </div>
+                            <span className="badge badge-blue" style={{ fontSize: '9px', padding: '2px 6px' }}>{s.religion}</span>
+                          </div>
+                        ))}
+                      {DETAIL_STUDENTS.filter(s => {
+                        const matchesPhase = selectedPhaseFilter === 'all' || s.phase === selectedPhaseFilter;
+                        const matchesSearch = s.name.toLowerCase().includes(searchTerm.toLowerCase());
+                        return matchesPhase && matchesSearch;
+                      }).length === 0 && (
+                        <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '24px', fontSize: '12px' }}>
+                          Tidak ada siswa yang cocok.
+                        </div>
+                      )}
+                    </div>
                   </div>
 
-                  {/* Student Profile Card (Right Column) */}
+                  {/* Right Column: Full Student Profile & Documents */}
                   <div>
                     {selectedDetailStudent ? (
-                      <div style={{ padding: '16px', border: '1px solid var(--border)', borderRadius: '12px', backgroundColor: 'var(--primary-light)' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
-                          <div>
-                            <h3 style={{ fontSize: '16px', margin: '0 0 4px 0', color: 'var(--primary-accent)' }}>{selectedDetailStudent.name}</h3>
-                            <span className="badge badge-blue">{selectedDetailStudent.phaseLabel}</span>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                        {/* Profile Hero Block */}
+                        <div style={{ display: 'flex', gap: '20px', alignItems: 'center', padding: '20px', borderRadius: '12px', background: 'var(--primary-light)', border: '1px solid var(--border)' }}>
+                          <img 
+                            src={selectedDetailStudent.photo} 
+                            alt={selectedDetailStudent.name} 
+                            style={{ width: '80px', height: '80px', borderRadius: '50%', backgroundColor: 'var(--background)', border: '2px solid var(--border-active)' }}
+                          />
+                          <div style={{ flex: 1 }}>
+                            <h3 style={{ fontSize: '18px', margin: '0 0 6px 0', color: 'var(--text-main)' }}>{selectedDetailStudent.name}</h3>
+                            <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                              <span className="badge badge-blue">{selectedDetailStudent.phaseLabel}</span>
+                              <span className="badge" style={{ backgroundColor: 'var(--background)', border: '1px solid var(--border)' }}>{selectedDetailStudent.religion}</span>
+                              <span className="badge" style={{ backgroundColor: 'var(--background)', border: '1px solid var(--border)' }}>{selectedDetailStudent.maritalStatus}</span>
+                            </div>
                           </div>
                           <div style={{ textAlign: 'right' }}>
-                            <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Nilai Rata-rata</div>
-                            <div style={{ fontSize: '16px', fontWeight: '800', color: 'var(--secondary)' }}>{selectedDetailStudent.avgScore}</div>
+                            <div style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Bahasa Dikuasai</div>
+                            <div style={{ display: 'flex', gap: '4px', marginTop: '4px', justifyContent: 'flex-end' }}>
+                              {selectedDetailStudent.languages.map((lang, index) => (
+                                <span key={index} className="badge badge-green" style={{ fontSize: '10px' }}>{lang}</span>
+                              ))}
+                            </div>
                           </div>
                         </div>
 
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', fontSize: '12px', marginBottom: '16px' }}>
-                          <div>
-                            <span style={{ color: 'var(--text-muted)', fontSize: '10px', textTransform: 'uppercase', display: 'block' }}>Tanggal Lahir</span>
-                            <b>{selectedDetailStudent.dob}</b>
+                        {/* Two Column details grid */}
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                          {/* Card Section 1: Biodata Identitas */}
+                          <div style={{ padding: '16px', border: '1px solid var(--border)', borderRadius: '12px' }}>
+                            <h4 style={{ fontSize: '12px', margin: '0 0 12px 0', color: 'var(--primary-accent)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>🆔 Data Identitas & Kontak</h4>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '12px' }}>
+                              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                <span style={{ color: 'var(--text-muted)' }}>Nomor Identitas (NIK):</span>
+                                <b>{selectedDetailStudent.nik}</b>
+                              </div>
+                              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                <span style={{ color: 'var(--text-muted)' }}>Nomor KK:</span>
+                                <b>{selectedDetailStudent.kk}</b>
+                              </div>
+                              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                <span style={{ color: 'var(--text-muted)' }}>Nomor SIM:</span>
+                                <b>{selectedDetailStudent.sim}</b>
+                              </div>
+                              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                <span style={{ color: 'var(--text-muted)' }}>Tanggal Lahir:</span>
+                                <b>{selectedDetailStudent.dob}</b>
+                              </div>
+                              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                <span style={{ color: 'var(--text-muted)' }}>Nomor HP:</span>
+                                <b>{selectedDetailStudent.phone}</b>
+                              </div>
+                              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                <span style={{ color: 'var(--text-muted)' }}>Email:</span>
+                                <b>{selectedDetailStudent.email}</b>
+                              </div>
+                              <div style={{ borderTop: '1px solid var(--border)', paddingTop: '8px' }}>
+                                <span style={{ color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Alamat Lengkap:</span>
+                                <b>{selectedDetailStudent.address}</b>
+                              </div>
+                            </div>
                           </div>
-                          <div>
-                            <span style={{ color: 'var(--text-muted)', fontSize: '10px', textTransform: 'uppercase', display: 'block' }}>Asrama / Ranjang</span>
-                            <b>{selectedDetailStudent.dorm}</b>
+
+                          {/* Card Section 2: Keluarga & Referensi */}
+                          <div style={{ padding: '16px', border: '1px solid var(--border)', borderRadius: '12px' }}>
+                            <h4 style={{ fontSize: '12px', margin: '0 0 12px 0', color: 'var(--primary-accent)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>👨‍👩‍👧 Kontak Keluarga & Referensi</h4>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '12px' }}>
+                              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                <span style={{ color: 'var(--text-muted)' }}>Nama Orang Tua:</span>
+                                <b>{selectedDetailStudent.parentName}</b>
+                              </div>
+                              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                <span style={{ color: 'var(--text-muted)' }}>HP Orang Tua:</span>
+                                <b>{selectedDetailStudent.parentPhone}</b>
+                              </div>
+                              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                <span style={{ color: 'var(--text-muted)' }}>Wali:</span>
+                                <b>{selectedDetailStudent.guardianName}</b>
+                              </div>
+                              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                <span style={{ color: 'var(--text-muted)' }}>HP Wali:</span>
+                                <b>{selectedDetailStudent.guardianPhone}</b>
+                              </div>
+                              <div style={{ borderTop: '1px solid var(--border)', paddingTop: '8px' }}>
+                                <span style={{ color: 'var(--text-muted)', display: 'block', marginBottom: '2px' }}>Sanak Saudara:</span>
+                                <span style={{ fontSize: '11.5px', fontWeight: '600' }}>{selectedDetailStudent.siblingsInfo}</span>
+                              </div>
+                              <div style={{ borderTop: '1px solid var(--border)', paddingTop: '8px' }}>
+                                <span style={{ color: 'var(--text-muted)', display: 'block', marginBottom: '2px' }}>Direferensikan Oleh:</span>
+                                <span style={{ fontSize: '11.5px', color: 'var(--secondary)', fontWeight: '700' }}>{selectedDetailStudent.reference}</span>
+                              </div>
+                            </div>
                           </div>
-                          <div style={{ gridColumn: 'span 2' }}>
-                            <span style={{ color: 'var(--text-muted)', fontSize: '10px', textTransform: 'uppercase', display: 'block' }}>Pendidikan Terakhir</span>
-                            <b>{selectedDetailStudent.education}</b>
+
+                          {/* Card Section 3: Asrama & Kompetensi */}
+                          <div style={{ padding: '16px', border: '1px solid var(--border)', borderRadius: '12px' }}>
+                            <h4 style={{ fontSize: '12px', margin: '0 0 12px 0', color: 'var(--primary-accent)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>🏫 Asrama & Akademis</h4>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '12px' }}>
+                              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                <span style={{ color: 'var(--text-muted)' }}>Ruang Asrama:</span>
+                                <b style={{ color: 'var(--secondary)' }}>{selectedDetailStudent.dorm}</b>
+                              </div>
+                              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                <span style={{ color: 'var(--text-muted)' }}>Pendidikan Terakhir:</span>
+                                <b>{selectedDetailStudent.education}</b>
+                              </div>
+                              <div style={{ borderTop: '1px solid var(--border)', paddingTop: '8px' }}>
+                                <span style={{ color: 'var(--text-muted)', display: 'block', marginBottom: '6px' }}>Keahlian (Skill) Dikuasai:</span>
+                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                                  {selectedDetailStudent.skills.map((skill, idx) => (
+                                    <span key={idx} className="badge" style={{ backgroundColor: 'var(--primary-light)', fontSize: '10.5px' }}>{skill}</span>
+                                  ))}
+                                </div>
+                              </div>
+                              <div style={{ borderTop: '1px solid var(--border)', paddingTop: '8px' }}>
+                                <span style={{ color: 'var(--text-muted)', display: 'block', marginBottom: '6px' }}>Sertifikasi Resmi:</span>
+                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                                  {selectedDetailStudent.certifications.map((cert, idx) => (
+                                    <span key={idx} className="badge badge-green" style={{ fontSize: '10.5px' }}>{cert}</span>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
                           </div>
-                          <div style={{ gridColumn: 'span 2' }}>
-                            <span style={{ color: 'var(--text-muted)', fontSize: '10px', textTransform: 'uppercase', display: 'block' }}>Alamat Rumah</span>
-                            <b>{selectedDetailStudent.address}</b>
-                          </div>
-                          <div>
-                            <span style={{ color: 'var(--text-muted)', fontSize: '10px', textTransform: 'uppercase', display: 'block' }}>Orang Tua / Wali</span>
-                            <b>{selectedDetailStudent.parent} ({selectedDetailStudent.emergency.includes('Ayah') ? 'Ayah' : 'Ibu'})</b>
-                          </div>
-                          <div>
-                            <span style={{ color: 'var(--text-muted)', fontSize: '10px', textTransform: 'uppercase', display: 'block' }}>No. Telp Orang Tua</span>
-                            <b>{selectedDetailStudent.parentPhone}</b>
+
+                          {/* Card Section 4: Pembayaran & Dana Keuangan */}
+                          <div style={{ padding: '16px', border: '1px solid var(--border)', borderRadius: '12px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                            <div>
+                              <h4 style={{ fontSize: '12px', margin: '0 0 12px 0', color: 'var(--primary-accent)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>💰 Status Keuangan & Talangan</h4>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '12px' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                  <span style={{ color: 'var(--text-muted)' }}>Total Dana Talangan:</span>
+                                  <b>{selectedDetailStudent.finance.talangan}</b>
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                  <span style={{ color: 'var(--text-muted)' }}>Sudah Dibayar (Paid):</span>
+                                  <b style={{ color: 'var(--secondary)' }}>{selectedDetailStudent.finance.paid}</b>
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                  <span style={{ color: 'var(--text-muted)' }}>Sisa Tagihan (Outstanding):</span>
+                                  <b style={{ color: 'var(--warning)' }}>{selectedDetailStudent.finance.outstanding}</b>
+                                </div>
+                                <div style={{ borderTop: '1px solid var(--border)', paddingTop: '8px', display: 'flex', justifyContent: 'space-between' }}>
+                                  <span style={{ color: 'var(--text-muted)' }}>Tenor & Angsuran:</span>
+                                  <b>{selectedDetailStudent.finance.installment}</b>
+                                </div>
+                              </div>
+                            </div>
+                            <div style={{ marginTop: '16px', padding: '10px', borderRadius: '8px', backgroundColor: 'var(--primary-light)', border: '1px dashed var(--border)', textAlign: 'center', fontSize: '11px', color: 'var(--text-muted)' }}>
+                              Data ditarik secara real-time dari modul Buku Kas Utama LPK.
+                            </div>
                           </div>
                         </div>
 
-                        {/* Skill Tags */}
-                        <div style={{ marginBottom: '16px' }}>
-                          <span style={{ color: 'var(--text-muted)', fontSize: '10px', textTransform: 'uppercase', display: 'block', marginBottom: '6px' }}>Kompetensi & Sertifikasi</span>
-                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                            {selectedDetailStudent.skills.map((skill, index) => (
-                              <span key={index} className="badge" style={{ backgroundColor: 'var(--background)', border: '1px solid var(--border)', fontSize: '10.5px' }}>{skill}</span>
-                            ))}
+                        {/* Full width attachments & video section */}
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '20px' }}>
+                          {/* Documents Checklist */}
+                          <div style={{ padding: '16px', border: '1px solid var(--border)', borderRadius: '12px' }}>
+                            <h4 style={{ fontSize: '12px', margin: '0 0 12px 0', color: 'var(--primary-accent)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>📂 Berkas & Dokumen Siswa</h4>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                              {selectedDetailStudent.documents.map((doc, idx) => (
+                                <div 
+                                  key={idx} 
+                                  style={{ 
+                                    padding: '8px 10px', 
+                                    borderRadius: '6px', 
+                                    backgroundColor: doc.status.includes('✓') ? 'rgba(46, 204, 113, 0.08)' : 'rgba(241, 196, 15, 0.08)',
+                                    border: '1px solid var(--border)', 
+                                    display: 'flex', 
+                                    justifyContent: 'space-between', 
+                                    alignItems: 'center',
+                                    fontSize: '11px' 
+                                  }}
+                                >
+                                  <span>{doc.name}</span>
+                                  <span style={{ fontWeight: '700', color: doc.status.includes('✓') ? 'var(--secondary)' : 'var(--warning)' }}>{doc.status.split(' ')[1] || doc.status}</span>
+                                </div>
+                              ))}
+                            </div>
                           </div>
-                        </div>
 
-                        {/* Youtube Embed Video Introduction */}
-                        <div>
-                          <span style={{ color: 'var(--text-muted)', fontSize: '10px', textTransform: 'uppercase', display: 'block', marginBottom: '6px' }}>📹 Video Introduction (Jikoshoukai)</span>
-                          <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', borderRadius: '8px', border: '1px solid var(--border)' }}>
-                            <iframe 
-                              src={selectedDetailStudent.youtubeUrl}
-                              title={`Jikoshoukai - ${selectedDetailStudent.name}`}
-                              frameBorder="0" 
-                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                              allowFullScreen
-                              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
-                            />
+                          {/* Video Embed */}
+                          <div style={{ padding: '16px', border: '1px solid var(--border)', borderRadius: '12px' }}>
+                            <h4 style={{ fontSize: '12px', margin: '0 0 12px 0', color: 'var(--primary-accent)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>📹 Video Introduction (Jikoshoukai)</h4>
+                            <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', borderRadius: '8px', border: '1px solid var(--border)' }}>
+                              <iframe 
+                                src={selectedDetailStudent.youtubeUrl}
+                                title={`Jikoshoukai - ${selectedDetailStudent.name}`}
+                                frameBorder="0" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                allowFullScreen
+                                style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+                              />
+                            </div>
                           </div>
                         </div>
                       </div>
