@@ -599,15 +599,37 @@ export default function LPKDashboard() {
             </>
           )}
 
-          {/* 8. OWNER (FULL ACCESS) */}
+          {/* 8. OWNER (FULL ACCESS - ALPHABETICALLY SORTED) */}
           {activeRole === 'owner' && (
             <>
-              <button className={`sidebar-link ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setActiveTab('overview')}>Ringkasan LPK</button>
-              <button className={`sidebar-link ${activeTab === 'asrama' ? 'active' : ''}`} onClick={() => setActiveTab('asrama')}>Peta Ranjang Asrama</button>
-              <button className={`sidebar-link ${activeTab === 'keuangan' ? 'active' : ''}`} onClick={() => setActiveTab('keuangan')}>Buku Kas & Cicilan</button>
-              <button className={`sidebar-link ${activeTab === 'siswa_proses' ? 'active' : ''}`} onClick={() => setActiveTab('siswa_proses')}>Alur Kerja Siswa</button>
-              <button className={`sidebar-link ${activeTab === 'prescreening' ? 'active' : ''}`} onClick={() => setActiveTab('prescreening')}>Pendaftaran Baru</button>
-              <button className={`sidebar-link ${activeTab === 'laporan_analisa' ? 'active' : ''}`} onClick={() => setActiveTab('laporan_analisa')}>📊 Laporan & Analisa</button>
+              {[
+                { id: 'absensi', label: '📅 Absensi' },
+                { id: 'alumni', label: '👥 Alumni' },
+                { id: 'keuangan', label: '💰 Buku Kas & Cicilan' },
+                { id: 'detail_siswa', label: '👤 Detail Siswa & Orang Tua' },
+                { id: 'dompet_koperasi', label: '👛 Dompet & Koperasi' },
+                { id: 'events', label: '🎉 Events' },
+                { id: 'hrd', label: '👔 HRD' },
+                { id: 'inventory', label: '📦 Inventory' },
+                { id: 'job_offer', label: '💼 Job Offer' },
+                { id: 'kelas_akademis', label: '🏫 Kelas & Akademis' },
+                { id: 'laporan_analisa', label: '📊 Laporan & Analisa' },
+                { id: 'prescreening', label: '📝 Pendaftaran Baru' },
+                { id: 'asrama', label: '🛏️ Peta Ranjang Asrama' },
+                { id: 'siswa_proses', label: '📋 Progres Kerja Siswa' },
+                { id: 'overview', label: '🏢 Ringkasan LPK (Overview)' },
+                { id: 'skill_sertifikasi', label: '🏆 Skill vs Sertifikasi' },
+                { id: 'teachers', label: '🎓 Teachers' },
+                { id: 'ujian', label: '📝 Ujian' }
+              ].map(tab => (
+                <button 
+                  key={tab.id}
+                  className={`sidebar-link ${activeTab === tab.id ? 'active' : ''}`} 
+                  onClick={() => setActiveTab(tab.id)}
+                >
+                  {tab.label}
+                </button>
+              ))}
             </>
           )}
         </nav>
@@ -756,6 +778,18 @@ export default function LPKDashboard() {
                       {dormRooms.reduce((sum, r) => sum + r.beds.length, 0)} Ranjang
                     </div>
                     <div style={{ fontSize: '11px', color: 'var(--primary-accent)', marginTop: '4px', fontWeight: '600' }}>Klik untuk peta kamar tidur</div>
+                  </div>
+
+                  <div className="finance-card" onClick={() => setActiveTab('absensi')} style={{ cursor: 'pointer', transition: 'transform 0.15s ease' }}>
+                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.02em' }}>ABSENSI HARI INI ➔</div>
+                    <div className="finance-val">96.8% Hadir</div>
+                    <div style={{ fontSize: '11px', color: 'var(--secondary)', marginTop: '4px', fontWeight: '600' }}>7 Hadir | 1 Sakit</div>
+                  </div>
+
+                  <div className="finance-card" onClick={() => setActiveTab('job_offer')} style={{ cursor: 'pointer', transition: 'transform 0.15s ease' }}>
+                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.02em' }}>JOB OPEN VS MATCH ➔</div>
+                    <div className="finance-val">15 / 6 Lowongan</div>
+                    <div style={{ fontSize: '11px', color: 'var(--warning)', marginTop: '4px', fontWeight: '600' }}>9 Lowongan Tersisa</div>
                   </div>
                 </div>
 
@@ -1276,7 +1310,10 @@ export default function LPKDashboard() {
                     { id: 'akademik', label: '📖 Kelulusan & Kesiapan Akademik', desc: 'Nilai kelulusan, skor latihan, & status kelayakan SSW.' },
                     { id: 'keuangan', label: '💰 Keuangan & Aging Talangan', desc: 'Distribusi piutang dana talangan alumni di Jepang/Korea.' },
                     { id: 'keberangkatan', label: '✈️ Keberangkatan & Pipeline', desc: 'Rata-rata durasi tunggu wawancara (Mensetsu) & COE.' },
-                    { id: 'screening', label: '🔍 Pre-Screening & Rekrutmen', desc: 'Statistik drop-out calon siswa & kegagalan uji fisik.' }
+                    { id: 'screening', label: '🔍 Pre-Screening & Rekrutmen', desc: 'Statistik drop-out calon siswa & kegagalan uji fisik.' },
+                    { id: 'talent_mapping', label: '🗺️ Talent Mapping', desc: 'Pengelompokan siswa berdasarkan level bahasa vs keahlian.' },
+                    { id: 'skill_job_desc', label: '📋 Skill vs Job Desc Match', desc: 'Kesesuaian keahlian siswa dengan deskripsi pekerjaan mitra.' },
+                    { id: 'skill_terbanyak', label: '📊 Distribusi Skill Terbanyak', desc: 'Daftar sertifikat keahlian terbanyak diurutkan.' }
                   ].map(tab => (
                     <button 
                       key={tab.id}
@@ -1428,7 +1465,7 @@ export default function LPKDashboard() {
                       <div className="finance-card">
                         <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: '700' }}>RATA-RATA WAKTU TUNGGU MENSETSU</div>
                         <div className="finance-val">18 Hari</div>
-                        <div style={{ fontSize: '10px', color: 'var(--secondary)', marginTop: '4px' }}>Siswa Lulus -> Sukses Match</div>
+                        <div style={{ fontSize: '10px', color: 'var(--secondary)', marginTop: '4px' }}>Siswa Lulus ➔ Sukses Match</div>
                       </div>
                       <div className="finance-card">
                         <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: '700' }}>RATA-RATA PROSES COE & VISA</div>
@@ -1512,6 +1549,575 @@ export default function LPKDashboard() {
                     </table>
                   </div>
                 )}
+
+                {selectedReportType === 'talent_mapping' && (
+                  <div>
+                    <h3 style={{ fontSize: '13px', marginBottom: '12px' }}>🗺️ Peta Bakat & Kesiapan Kerja (Talent Mapping)</h3>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
+                      <div style={{ padding: '12px', border: '1px solid var(--border)', borderRadius: '8px', backgroundColor: 'rgba(34, 197, 94, 0.05)' }}>
+                        <h4 style={{ fontSize: '12px', color: 'var(--secondary)', margin: '0 0 6px 0', fontWeight: '800' }}>🟩 Kuadran I: JFT Passed & SSW Ready (Siap Terbang)</h4>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                          {['Siti Rahma', 'Budi Utomo', 'Dewi Lestari', 'Eka Putri'].map(name => (
+                            <span key={name} className="badge badge-blue" style={{ fontSize: '10px' }}>{name}</span>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div style={{ padding: '12px', border: '1px solid var(--border)', borderRadius: '8px', backgroundColor: 'rgba(37, 99, 235, 0.05)' }}>
+                        <h4 style={{ fontSize: '12px', color: 'var(--primary-accent)', margin: '0 0 6px 0', fontWeight: '800' }}>🟦 Kuadran II: JFT Prep & SSW Ready (Siap Wawancara)</h4>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                          {['Rudi Hermawan', 'Larasati'].map(name => (
+                            <span key={name} className="badge badge-blue" style={{ fontSize: '10px', backgroundColor: 'rgba(37, 99, 235, 0.1)', color: 'var(--primary-accent)' }}>{name}</span>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div style={{ padding: '12px', border: '1px solid var(--border)', borderRadius: '8px', backgroundColor: 'rgba(234, 179, 8, 0.05)' }}>
+                        <h4 style={{ fontSize: '12px', color: 'var(--warning)', margin: '0 0 6px 0', fontWeight: '800' }}>🟨 Kuadran III: JFT Prep & SSW Prep (Sedang Belajar)</h4>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                          {['Fahri Hamzah'].map(name => (
+                            <span key={name} className="badge" style={{ fontSize: '10px', backgroundColor: 'rgba(234, 179, 8, 0.1)', color: 'var(--warning)' }}>{name}</span>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div style={{ padding: '12px', border: '1px solid var(--border)', borderRadius: '8px', backgroundColor: 'rgba(239, 68, 68, 0.05)' }}>
+                        <h4 style={{ fontSize: '12px', color: 'var(--danger)', margin: '0 0 6px 0', fontWeight: '800' }}>🟥 Kuadran IV: Perlu Perhatian Khusus (Skor Rendah)</h4>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                          {['Agus Wijaya'].map(name => (
+                            <span key={name} className="badge" style={{ fontSize: '10px', backgroundColor: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)' }}>{name}</span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {selectedReportType === 'skill_job_desc' && (
+                  <div>
+                    <h3 style={{ fontSize: '13px', marginBottom: '8px' }}>📋 Kesesuaian Keahlian Siswa dengan Deskripsi Pekerjaan (Skill Match)</h3>
+                    <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '12px' }}>Mengukur kecocokan keahlian teknis caregiver LPK dengan kriteria spesifik panti lansia Jepang.</p>
+                    <table className="ledger-table">
+                      <thead>
+                        <tr>
+                          <th>Nama Siswa</th>
+                          <th>Pemindahan Pasien (Transfer)</th>
+                          <th>Membantu Makan (Feeding)</th>
+                          <th>Membantu Mandi (Bathing)</th>
+                          <th>Dementia Care</th>
+                          <th>Kesesuaian (Match Rate)</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {[
+                          { name: 'Budi Utomo', transfer: 'Kompete ✓', feeding: 'Kompete ✓', bathing: 'Kompete ✓', dementia: 'Kompete ✓', pct: '95%' },
+                          { name: 'Siti Rahma', transfer: 'Kompete ✓', feeding: 'Kompete ✓', bathing: 'Kompete ✓', dementia: 'Kompete ✓', pct: '98%' },
+                          { name: 'Larasati', transfer: 'Kompete ✓', feeding: 'Kompete ✓', bathing: 'Belum Uji', dementia: 'Kompete ✓', pct: '80%' },
+                          { name: 'Agus Wijaya', transfer: 'Belum Uji', feeding: 'Cukup', bathing: 'Belum Uji', dementia: 'Belum Uji', pct: '40%' }
+                        ].map((item, idx) => (
+                          <tr key={idx}>
+                            <td><b>{item.name}</b></td>
+                            <td>{item.transfer}</td>
+                            <td>{item.feeding}</td>
+                            <td>{item.bathing}</td>
+                            <td>{item.dementia}</td>
+                            <td><b style={{ color: 'var(--secondary)' }}>{item.pct} Match</b></td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+
+                {selectedReportType === 'skill_terbanyak' && (
+                  <div>
+                    <h3 style={{ fontSize: '13px', marginBottom: '12px' }}>📊 Kepemilikan Sertifikat & Keahlian Terbanyak</h3>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                      {[
+                        { name: 'Sertifikasi JFT-Basic / JLPT N4 (Bahasa Jepang)', count: 5, pct: 62 },
+                        { name: 'Sertifikasi Tokutei Ginou SSW Caregiver (Keterampilan)', count: 4, pct: 50 },
+                        { name: 'Sertifikasi P3K & Keselamatan Kerja (First Aid)', count: 3, pct: 37 },
+                        { name: 'Sertifikasi Pelatihan Dementia Care Lansia', count: 2, pct: 25 },
+                        { name: 'Sertifikasi Pengelolaan Gizi & Memasak Lansia', count: 1, pct: 12 }
+                      ].map((item, idx) => (
+                        <div key={idx}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: '600', marginBottom: '4px' }}>
+                            <span>{idx + 1}. {item.name}</span>
+                            <span style={{ color: 'var(--primary-accent)' }}>{item.count} Siswa ({item.pct}%)</span>
+                          </div>
+                          <div style={{ width: '100%', height: '10px', backgroundColor: 'var(--primary-light)', borderRadius: '5px', overflow: 'hidden' }}>
+                            <div style={{ width: `${item.pct}%`, height: '100%', backgroundColor: 'var(--primary-accent)' }}></div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* SCREEN: ABSENSI */}
+            {activeTab === 'absensi' && (
+              <div className="card">
+                <h2 style={{ fontSize: '16px', marginBottom: '16px' }}>📅 Laporan Absensi Harian Siswa LPK</h2>
+                <div className="finance-grid" style={{ marginBottom: '20px' }}>
+                  <div className="finance-card">
+                    <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: '700' }}>PERSENTASE KEHADIRAN BULAN INI</div>
+                    <div className="finance-val" style={{ color: 'var(--secondary)' }}>96.8%</div>
+                    <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginTop: '4px' }}>Hadir: 7 Siswa | Sakit: 1 Siswa</div>
+                  </div>
+                  <div className="finance-card">
+                    <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: '700' }}>TOTAL TERLAMBAT</div>
+                    <div className="finance-val">0 Kali</div>
+                    <div style={{ fontSize: '10px', color: 'var(--secondary)', marginTop: '4px' }}>Disiplin waktu sangat tinggi</div>
+                  </div>
+                </div>
+                <table className="ledger-table">
+                  <thead>
+                    <tr>
+                      <th>Nama Siswa</th>
+                      <th>Kehadiran (%)</th>
+                      <th>Hadir</th>
+                      <th>Sakit / Izin</th>
+                      <th>Tanpa Keterangan</th>
+                      <th>Status Disiplin</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      { name: 'Budi Utomo', pct: '98%', present: 24, permission: 0, absent: 0, status: 'Sangat Disiplin' },
+                      { name: 'Siti Rahma', pct: '96%', present: 23, permission: 1, absent: 0, status: 'Sangat Disiplin' },
+                      { name: 'Agus Wijaya', pct: '92%', present: 22, permission: 2, absent: 0, status: 'Disiplin' },
+                      { name: 'Dewi Lestari', pct: '97%', present: 23, permission: 0, absent: 0, status: 'Sangat Disiplin' },
+                      { name: 'Rudi Hermawan', pct: '95%', present: 23, permission: 1, absent: 0, status: 'Disiplin' },
+                      { name: 'Larasati', pct: '98%', present: 24, permission: 0, absent: 0, status: 'Sangat Disiplin' },
+                      { name: 'Fahri Hamzah', pct: '96%', present: 23, permission: 1, absent: 0, status: 'Disiplin' },
+                      { name: 'Eka Putri', pct: '97%', present: 23, permission: 0, absent: 0, status: 'Sangat Disiplin' }
+                    ].map((item, idx) => (
+                      <tr key={idx}>
+                        <td><b>{item.name}</b></td>
+                        <td><b style={{ color: 'var(--primary-accent)' }}>{item.pct}</b></td>
+                        <td>{item.present} Hari</td>
+                        <td>{item.permission} Hari</td>
+                        <td>{item.absent} Hari</td>
+                        <td><span className="badge badge-blue">{item.status}</span></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {/* SCREEN: ALUMNI */}
+            {activeTab === 'alumni' && (
+              <div className="card">
+                <h2 style={{ fontSize: '16px', marginBottom: '16px' }}>👥 Portal Pemantauan & Hubungan Alumni di Jepang / Korea</h2>
+                <p style={{ color: 'var(--text-muted)', fontSize: '12px', marginBottom: '16px' }}>Daftar alumni LPK Hikari yang sudah bekerja di panti lansia / rumah sakit mitra luar negeri.</p>
+                <table className="ledger-table">
+                  <thead>
+                    <tr>
+                      <th>Nama Alumni</th>
+                      <th>Penempatan Mitra</th>
+                      <th>Kota / Prefektur</th>
+                      <th>Gaji Ditawarkan (Lokal)</th>
+                      <th>Kontrak Mulai</th>
+                      <th>Ulasan User Jepang</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      { name: 'Siti Rahma', partner: 'Tokyo Elder Care Home', city: 'Tokyo', salary: '¥195.000', start: 'Maret 2026', rating: 'Sangat Baik (A)' },
+                      { name: 'Dewi Lestari', partner: 'Osaka Sunrise Care Corp', city: 'Osaka', salary: '¥190.000', start: 'April 2026', rating: 'Sangat Baik (A)' },
+                      { name: 'Fahri Hamzah', partner: 'Kyoto Green Garden Lodge', city: 'Kyoto', salary: '¥185.000', start: 'Mei 2026', rating: 'Memuaskan (B)' }
+                    ].map((item, idx) => (
+                      <tr key={idx}>
+                        <td><b>{item.name}</b></td>
+                        <td><span className="badge badge-blue">{item.partner}</span></td>
+                        <td>{item.city}</td>
+                        <td><b style={{ color: 'var(--secondary)' }}>{item.salary}</b></td>
+                        <td>{item.start}</td>
+                        <td><span style={{ fontWeight: '800', color: 'var(--secondary)' }}>{item.rating}</span></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {/* SCREEN: DETAIL SISWA & ORANG TUA */}
+            {activeTab === 'detail_siswa' && (
+              <div className="card">
+                <h2 style={{ fontSize: '16px', marginBottom: '16px' }}>👤 Detail Informasi Siswa & Kontak Orang Tua</h2>
+                <table className="ledger-table">
+                  <thead>
+                    <tr>
+                      <th>Nama Siswa</th>
+                      <th>Nama Orang Tua / Wali</th>
+                      <th>No. Telp Orang Tua</th>
+                      <th>Alamat Rumah Lengkap</th>
+                      <th>Surat Izin Orang Tua</th>
+                      <th>Emergency Contact</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      { name: 'Budi Utomo', parent: 'Slamet Utomo', phone: '0812-3456-7890', address: 'Sleman, D.I. Yogyakarta', permit: 'Terverifikasi ✓', emergency: 'Ibu Utomo (Ibu)' },
+                      { name: 'Agus Wijaya', parent: 'Hendro Wijaya', phone: '0813-9876-5432', address: 'Bantul, D.I. Yogyakarta', permit: 'Terverifikasi ✓', emergency: 'Hendro Wijaya (Ayah)' },
+                      { name: 'Siti Rahma', parent: 'Ahmad Dahlan', phone: '0857-4321-8765', address: 'Solo, Jawa Tengah', permit: 'Terverifikasi ✓', emergency: 'Ahmad Dahlan (Ayah)' },
+                      { name: 'Rudi Hermawan', parent: 'Subagio Hermawan', phone: '0821-5555-1234', address: 'Kulon Progo, DIY', permit: 'Dalam Proses ⏱', emergency: 'Ibu Hermawan (Ibu)' }
+                    ].map((item, idx) => (
+                      <tr key={idx}>
+                        <td><b>{item.name}</b></td>
+                        <td>{item.parent}</td>
+                        <td>{item.phone}</td>
+                        <td>{item.address}</td>
+                        <td>
+                          <span style={{ fontWeight: '700', color: item.permit.includes('✓') ? 'var(--secondary)' : 'var(--warning)' }}>
+                            {item.permit}
+                          </span>
+                        </td>
+                        <td><span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{item.emergency}</span></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {/* SCREEN: DOMPET & KOPERASI */}
+            {activeTab === 'dompet_koperasi' && (
+              <div className="card">
+                <h2 style={{ fontSize: '16px', marginBottom: '16px' }}>👛 Keuangan Dompet Siswa & Simpan-Pinjam Koperasi LPK</h2>
+                <div className="finance-grid" style={{ marginBottom: '20px' }}>
+                  <div className="finance-card">
+                    <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: '700' }}>TOTAL KAS KOPERASI LPK</div>
+                    <div className="finance-val">Rp 24.500.000</div>
+                    <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginTop: '4px' }}>Simpanan Pokok & Wajib Aktif</div>
+                  </div>
+                  <div className="finance-card">
+                    <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: '700' }}>ALOKASI KANTIN / TRANSAKSI SISWA</div>
+                    <div className="finance-val" style={{ color: 'var(--secondary)' }}>Rp 4.250.000</div>
+                    <div style={{ fontSize: '10px', color: 'var(--secondary)', marginTop: '4px' }}>Menggunakan deposit QR Code PWA</div>
+                  </div>
+                </div>
+                <table className="ledger-table">
+                  <thead>
+                    <tr>
+                      <th>Nama Siswa</th>
+                      <th>Saldo Saku PWA</th>
+                      <th>Simpanan Wajib</th>
+                      <th>Simpanan Pokok</th>
+                      <th>Pinjaman Koperasi</th>
+                      <th>Status Anggota</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      { name: 'Budi Utomo', wallet: 'Rp 250.000', wajib: 'Rp 100.000', pokok: 'Rp 200.000', loan: 'Rp 0', status: 'Anggota Aktif' },
+                      { name: 'Siti Rahma', wallet: 'Rp 120.000', wajib: 'Rp 100.000', pokok: 'Rp 200.000', loan: 'Rp 50.000', status: 'Anggota Aktif' },
+                      { name: 'Agus Wijaya', wallet: 'Rp 450.000', wajib: 'Rp 100.000', pokok: 'Rp 200.000', loan: 'Rp 0', status: 'Anggota Aktif' }
+                    ].map((item, idx) => (
+                      <tr key={idx}>
+                        <td><b>{item.name}</b></td>
+                        <td><b style={{ color: 'var(--primary-accent)' }}>{item.wallet}</b></td>
+                        <td>{item.wajib}</td>
+                        <td>{item.pokok}</td>
+                        <td><span style={{ color: item.loan !== 'Rp 0' ? 'var(--danger)' : 'var(--text-muted)', fontWeight: '700' }}>{item.loan}</span></td>
+                        <td><span className="badge badge-blue">{item.status}</span></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {/* SCREEN: EVENTS */}
+            {activeTab === 'events' && (
+              <div className="card">
+                <h2 style={{ fontSize: '16px', marginBottom: '16px' }}>🎉 Kalender Kegiatan & Acara Mendatang LPK</h2>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  {[
+                    { title: 'Wawancara Kerja (Mensetsu) Sakura Care Corp', date: '10 Juli 2026', time: '09:00 - 12:00', loc: 'Ruang Rapat Utama & Zoom', desc: 'Wawancara kerja untuk 3 siswa JFT lulus dengan pimpinan panti lansia Tokyo.' },
+                    { title: 'Simulasi Ujian JFT-Basic Mandiri', date: '15 Juli 2026', time: '08:00 - 11:30', loc: 'Lab Komputer LPK', desc: 'Simulasi ujian bahasa akhir untuk mengukur kesiapan pendaftaran JFT resmi.' },
+                    { title: 'Pemberangkatan Gelombang IV (Terbang Jepang)', date: '25 Juli 2026', time: '17:00 - Selesai', loc: 'Bandara Adisutjipto / YIA', desc: 'Pelepasan resmi dan flight alumni ke Tokyo/Osaka (Dewi Lestari & Larasati).' }
+                  ].map((ev, idx) => (
+                    <div key={idx} style={{ padding: '16px', border: '1px solid var(--border)', borderRadius: '8px', backgroundColor: 'var(--background)' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                        <span style={{ fontWeight: '800', fontSize: '13.5px', color: 'var(--primary-accent)' }}>{ev.title}</span>
+                        <span style={{ fontSize: '11px', fontWeight: '700', padding: '2px 8px', borderRadius: '12px', backgroundColor: 'var(--primary-light)', color: 'var(--primary-accent)' }}>{ev.date}</span>
+                      </div>
+                      <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', marginBottom: '4px' }}>🕒 {ev.time} | 📍 {ev.loc}</div>
+                      <p style={{ fontSize: '12px', color: 'var(--text-main)', margin: 0 }}>{ev.desc}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* SCREEN: HRD */}
+            {activeTab === 'hrd' && (
+              <div className="card">
+                <h2 style={{ fontSize: '16px', marginBottom: '16px' }}>👔 Daftar Pegawai & HRD LPK Hikari</h2>
+                <table className="ledger-table">
+                  <thead>
+                    <tr>
+                      <th>Nama Staff</th>
+                      <th>Jabatan / Departemen</th>
+                      <th>No. Handphone</th>
+                      <th>Status Kepegawaian</th>
+                      <th>Kehadiran Bulan Ini</th>
+                      <th>Gaji Pokok</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      { name: 'Dr. Slamet Budiono', pos: 'Kepala Lembaga LPK / Owner', phone: '0811-2222-3333', type: 'Owner / Direktur', att: '100%', salary: 'Rp 15.000.000' },
+                      { name: 'Tanaka Kenji', pos: 'Kepala Kurikulum & Bahasa Jepang', phone: '0812-4444-5555', type: 'Pegawai Kontrak Expat', att: '98%', salary: 'Rp 12.000.000' },
+                      { name: 'Heri Prasetyo', pos: 'Staf Dokumentasi & COE Imigrasi', phone: '0813-6666-7777', type: 'Pegawai Tetap', att: '96%', salary: 'Rp 5.500.000' },
+                      { name: 'Santi Handayani', pos: 'Pengelola Asrama & Logistik', phone: '0814-8888-9999', type: 'Pegawai Tetap', att: '97%', salary: 'Rp 4.800.000' }
+                    ].map((item, idx) => (
+                      <tr key={idx}>
+                        <td><b>{item.name}</b></td>
+                        <td>{item.pos}</td>
+                        <td>{item.phone}</td>
+                        <td><span className="badge badge-blue">{item.type}</span></td>
+                        <td><b>{item.att}</b></td>
+                        <td><span style={{ fontWeight: '700', color: 'var(--secondary)' }}>{item.salary}</span></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {/* SCREEN: INVENTORY */}
+            {activeTab === 'inventory' && (
+              <div className="card">
+                <h2 style={{ fontSize: '16px', marginBottom: '16px' }}>📦 Inventaris Logistik & Sarana Pelatihan Asrama</h2>
+                <table className="ledger-table">
+                  <thead>
+                    <tr>
+                      <th>Nama Barang / Aset</th>
+                      <th>Kategori</th>
+                      <th>Stok Total</th>
+                      <th>Kondisi Baik</th>
+                      <th>Kondisi Rusak</th>
+                      <th>Status Inventaris</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      { name: 'Buku Pelatihan Minna no Nihongo I', cat: 'Bahan Ajar Bahasa', total: 50, good: 48, bad: 2, status: 'Cukup' },
+                      { name: 'Ranjang Kayu Susun Asrama', cat: 'Logistik Asrama', total: 20, good: 20, bad: 0, status: 'Optimal' },
+                      { name: 'Kursi Roda Praktek Pasien Lansia', cat: 'Alat Peraga Kaigo', total: 4, good: 4, bad: 0, status: 'Optimal' },
+                      { name: 'Dummy Tempat Tidur Transfer Pasien', cat: 'Alat Peraga Kaigo', total: 2, good: 2, bad: 0, status: 'Optimal' },
+                      { name: 'Sprei Asrama & Sarung Bantal Set', cat: 'Logistik Asrama', total: 40, good: 35, bad: 5, status: 'Perlu Pengadaan' }
+                    ].map((item, idx) => (
+                      <tr key={idx}>
+                        <td><b>{item.name}</b></td>
+                        <td>{item.cat}</td>
+                        <td><b>{item.total} Unit</b></td>
+                        <td>{item.good} Unit</td>
+                        <td>{item.bad} Unit</td>
+                        <td>
+                          <span className={`badge ${item.status === 'Optimal' ? 'badge-blue' : 'badge-danger'}`} style={{ fontSize: '11px' }}>
+                            {item.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {/* SCREEN: JOB OFFER */}
+            {activeTab === 'job_offer' && (
+              <div className="card">
+                <h2 style={{ fontSize: '16px', marginBottom: '16px' }}>💼 Informasi Lowongan Kerja Caregiver Aktif (Job Offer Jepang & Korea)</h2>
+                <table className="ledger-table">
+                  <thead>
+                    <tr>
+                      <th>Posisi / Perusahaan</th>
+                      <th>Prefektur (Wilayah)</th>
+                      <th>Gaji Ditawarkan</th>
+                      <th>Syarat Bahasa</th>
+                      <th>Slot Kuota</th>
+                      <th>Status Proses</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      { title: 'Caregiver Lansia / Sakura Care Corp', loc: 'Tokyo, Jepang', salary: '¥195.000 / Bulan', req: 'JFT-Basic / N4 + SSW', slot: '5 Slot', status: 'Wawancara Berjalan' },
+                      { title: 'Nursing Assistant / Sunrise Center', loc: 'Osaka, Jepang', salary: '¥190.000 / Bulan', req: 'JFT-Basic / N4 + SSW', slot: '3 Slot', status: 'Match Terpenuhi' },
+                      { title: 'Kaigo Care Worker / Green Lodge', loc: 'Kyoto, Jepang', salary: '¥185.000 / Bulan', req: 'JFT-Basic / N4 + SSW', slot: '2 Slot', status: 'Membuka Lamaran' }
+                    ].map((item, idx) => (
+                      <tr key={idx}>
+                        <td>
+                          <div style={{ fontWeight: '700' }}>{item.title}</div>
+                        </td>
+                        <td>{item.loc}</td>
+                        <td><b style={{ color: 'var(--secondary)' }}>{item.salary}</b></td>
+                        <td><span className="badge badge-blue">{item.req}</span></td>
+                        <td><b>{item.slot}</b></td>
+                        <td><span style={{ fontSize: '11px', color: 'var(--primary-accent)', fontWeight: '700' }}>{item.status}</span></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {/* SCREEN: KELAS & AKADEMIS */}
+            {activeTab === 'kelas_akademis' && (
+              <div className="card">
+                <h2 style={{ fontSize: '16px', marginBottom: '16px' }}>🏫 Pembagian Kelas Akademik & Bahasa LPK</h2>
+                <table className="ledger-table">
+                  <thead>
+                    <tr>
+                      <th>Nama Kelas</th>
+                      <th>Materi Pembelajaran</th>
+                      <th>Sensei Pengajar</th>
+                      <th>Jumlah Siswa</th>
+                      <th>Jadwal Kelas</th>
+                      <th>Ruang Belajar</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      { name: 'Kelas Kaigo Alfa (A)', cat: 'Praktek Keterampilan Caregiver (SSW)', teacher: 'Tanaka Kenji Sensei', students: '4 Siswa', schedule: 'Senin - Rabu, 08:00 - 12:00', room: 'Ruang Lab Praktek' },
+                      { name: 'Kelas Nihongo Beta (B)', cat: 'Bahasa Jepang & Budaya (N4/JFT)', teacher: 'Yuki Kanda Sensei', students: '4 Siswa', schedule: 'Senin - Jumat, 13:00 - 17:00', room: 'Ruang Teori 102' },
+                      { name: 'Kelas Kaiwa Intensive', cat: 'Percakapan Harian & Persiapan Kerja', teacher: 'Tanaka Kenji Sensei', students: '2 Siswa (Lulus JFT)', schedule: 'Kamis - Jumat, 08:00 - 12:00', room: 'Ruang Meeting Utama' }
+                    ].map((item, idx) => (
+                      <tr key={idx}>
+                        <td><b>{item.name}</b></td>
+                        <td>{item.cat}</td>
+                        <td>{item.teacher}</td>
+                        <td><b>{item.students}</b></td>
+                        <td>{item.schedule}</td>
+                        <td><span className="badge badge-blue">{item.room}</span></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {/* SCREEN: SKILL VS SERTIFIKASI */}
+            {activeTab === 'skill_sertifikasi' && (
+              <div className="card">
+                <h2 style={{ fontSize: '16px', marginBottom: '16px' }}>🏆 Matrix Kompetensi Skill vs Sertifikat Siswa</h2>
+                <table className="ledger-table">
+                  <thead>
+                    <tr>
+                      <th>Nama Siswa</th>
+                      <th>Sertifikat JFT-Basic</th>
+                      <th>Sertifikat JLPT N4</th>
+                      <th>Sertifikat SSW Kaigo</th>
+                      <th>Sertifikat First Aid (P3K)</th>
+                      <th>Kesiapan Match Kerja</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      { name: 'Budi Utomo', jft: 'Lulus ✓', jlpt: 'Proses Ujian', ssw: 'Lulus ✓', firstaid: 'Lulus ✓', status: 'Sangat Siap (100%)' },
+                      { name: 'Agus Wijaya', jft: 'Belum Ujian', jlpt: 'Belum Ujian', ssw: 'Proses Ujian', firstaid: 'Lulus ✓', status: 'Belum Layak (40%)' },
+                      { name: 'Siti Rahma', jft: 'Lulus ✓', jlpt: 'Lulus ✓', ssw: 'Lulus ✓', firstaid: 'Lulus ✓', status: 'Sangat Siap (100%)' },
+                      { name: 'Dewi Lestari', jft: 'Lulus ✓', jlpt: 'Proses Ujian', ssw: 'Lulus ✓', firstaid: 'Lulus ✓', status: 'Sangat Siap (100%)' }
+                    ].map((item, idx) => (
+                      <tr key={idx}>
+                        <td><b>{item.name}</b></td>
+                        <td><span style={{ color: item.jft.includes('✓') ? 'var(--secondary)' : 'var(--text-muted)', fontWeight: '700' }}>{item.jft}</span></td>
+                        <td>{item.jlpt}</td>
+                        <td><span style={{ color: item.ssw.includes('✓') ? 'var(--secondary)' : 'var(--text-muted)', fontWeight: '700' }}>{item.ssw}</span></td>
+                        <td>{item.firstaid}</td>
+                        <td>
+                          <span style={{ 
+                            fontWeight: '800', 
+                            color: item.status.includes('100%') ? 'var(--secondary)' : 'var(--danger)'
+                          }}>
+                            {item.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {/* SCREEN: TEACHERS */}
+            {activeTab === 'teachers' && (
+              <div className="card">
+                <h2 style={{ fontSize: '16px', marginBottom: '16px' }}>🎓 Daftar Tenaga Pengajar & Instruktur Caregiver LPK</h2>
+                <table className="ledger-table">
+                  <thead>
+                    <tr>
+                      <th>Nama Pengajar</th>
+                      <th>Spesialisasi</th>
+                      <th>Jam Mengajar / Minggu</th>
+                      <th>Rating Penilaian Siswa</th>
+                      <th>Kontak Email</th>
+                      <th>Status Keaktifan</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      { name: 'Tanaka Kenji Sensei', spec: 'Keterampilan Caregiver & Kaiwa', hours: '20 Jam', rating: '⭐️ 4.9', email: 'tanaka@lpk-hikari.com', status: 'Aktif Mengajar' },
+                      { name: 'Yuki Kanda Sensei', spec: 'Tata Bahasa Jepang & JFT Prep', hours: '24 Jam', rating: '⭐️ 4.7', email: 'yuki.kanda@lpk-hikari.com', status: 'Aktif Mengajar' },
+                      { name: 'Budi Santoso, S.Kep.', spec: 'Dasar Medis & Anatomi Lansia', hours: '12 Jam', rating: '⭐️ 4.8', email: 'budi@lpk-hikari.com', status: 'Aktif Mengajar' }
+                    ].map((item, idx) => (
+                      <tr key={idx}>
+                        <td><b>{item.name}</b></td>
+                        <td>{item.spec}</td>
+                        <td><b>{item.hours}</b></td>
+                        <td><span style={{ fontWeight: '700', color: 'var(--secondary)' }}>{item.rating}</span></td>
+                        <td>{item.email}</td>
+                        <td><span className="badge badge-blue">{item.status}</span></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {/* SCREEN: UJIAN */}
+            {activeTab === 'ujian' && (
+              <div className="card">
+                <h2 style={{ fontSize: '16px', marginBottom: '16px' }}>📝 Ujian Akademik & Praktek Kerja Mandiri LPK</h2>
+                <table className="ledger-table">
+                  <thead>
+                    <tr>
+                      <th>Nama Siswa</th>
+                      <th>Ujian JFT Mock-Test</th>
+                      <th>Ujian Teori Caregiver</th>
+                      <th>Ujian Praktek Transfer Pasien</th>
+                      <th>Nilai Akhir Kelulusan</th>
+                      <th>Status Hasil</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      { name: 'Budi Utomo', jft: '90 / 100', theory: '85 / 100', practice: 'Sangat Baik', final: '87.5%', status: 'LULUS MANDIRI' },
+                      { name: 'Agus Wijaya', jft: '40 / 100', theory: '50 / 100', practice: 'Cukup', final: '45.0%', status: 'MENGULANG (HER)' },
+                      { name: 'Siti Rahma', jft: '95 / 100', theory: '90 / 100', practice: 'Sempurna', final: '92.5%', status: 'LULUS MANDIRI' },
+                      { name: 'Dewi Lestari', jft: '92 / 100', theory: '88 / 100', practice: 'Sangat Baik', final: '90.0%', status: 'LULUS MANDIRI' }
+                    ].map((item, idx) => (
+                      <tr key={idx}>
+                        <td><b>{item.name}</b></td>
+                        <td>{item.jft}</td>
+                        <td>{item.theory}</td>
+                        <td>{item.practice}</td>
+                        <td><b style={{ color: 'var(--primary-accent)' }}>{item.final}</b></td>
+                        <td>
+                          <span className={`badge ${item.status.includes('LULUS') ? 'badge-blue' : 'badge-danger'}`} style={{ fontSize: '11px' }}>
+                            {item.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             )}
           </div>

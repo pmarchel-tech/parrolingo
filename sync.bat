@@ -1,4 +1,4 @@
 @echo off
 git add .
-git commit -m "feat: seed 8 students for 8 stages, add top-right system notification bell, and implement 8 department roles switcher"
+git commit -m "feat: add 12 alphabetical sidebar menus, overview KPI widgets, and 3 new reports under Laporan & Analisa"
 git push
