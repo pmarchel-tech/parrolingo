@@ -1,7 +1,7 @@
 // IndexedDB local storage utility for KaigoLingo
 
 const DB_NAME = 'kaigolingo_db';
-const DB_VERSION = 5;
+const DB_VERSION = 6;
 
 let dbInstance = null;
 let dbPromise = null;
@@ -70,10 +70,11 @@ export function initDB() {
       }
 
       // 5. Questions Store
-      if (!db.objectStoreNames.contains('questions')) {
-        const qStore = db.createObjectStore('questions', { keyPath: 'id' });
-        qStore.createIndex('week', 'week', { unique: false });
+      if (db.objectStoreNames.contains('questions')) {
+        db.deleteObjectStore('questions');
       }
+      const qStore = db.createObjectStore('questions', { keyPath: 'id' });
+      qStore.createIndex('week', 'week', { unique: false });
 
       // 6. Vocabulary Store
       if (db.objectStoreNames.contains('vocabulary')) {

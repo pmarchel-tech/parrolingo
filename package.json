@@ -9,6 +9,7 @@
     "copy-mascot": "node copy_mascot.js",
     "test": "npx -y vitest run src/components/LearnScreen.test.jsx --environment jsdom",
     "test-session": "node test_session.js",
+    "gen-template": "node gen.js",
     "export-questions": "node export_questions.js",
     "git-sync": "node git_sync_now.js",
     "gen-icons": "node generate_icons.js"

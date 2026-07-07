@@ -218,6 +218,43 @@ export default function App() {
             </div>
           </div>
 
+          {/* Pemilih Bahasa Pengantar (Bahasa Murid) */}
+          <div style={{ marginLeft: '12px', borderLeft: '1px solid var(--outline-variant)', paddingLeft: '12px' }}>
+            <div style={{ fontSize: '10px', color: 'var(--outline)', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Materi Bahasa</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '2px' }}>
+              <select 
+                value={localStorage.getItem('kaigolingo_selected_language') || 'ja'}
+                onChange={(e) => {
+                  localStorage.setItem('kaigolingo_selected_language', e.target.value);
+                  window.location.reload(); // Reload untuk memperbarui database bahasa
+                }}
+                style={{
+                  fontFamily: 'var(--font-display)',
+                  fontSize: '18px',
+                  fontWeight: '700',
+                  color: 'var(--primary)',
+                  border: 'none',
+                  backgroundColor: 'transparent',
+                  cursor: 'pointer',
+                  outline: 'none',
+                  padding: 0,
+                  margin: 0,
+                  appearance: 'none',
+                  WebkitAppearance: 'none',
+                  MozAppearance: 'none'
+                }}
+              >
+                <option value="ja" style={{ color: 'var(--on-surface)' }}>JA - Jepang</option>
+                <option value="en" style={{ color: 'var(--on-surface)' }}>EN - Inggris</option>
+                <option value="ar" style={{ color: 'var(--on-surface)' }}>AR - Arab</option>
+                <option value="zh" style={{ color: 'var(--on-surface)' }}>ZH - Mandarin</option>
+                <option value="ko" style={{ color: 'var(--on-surface)' }}>KO - Korea</option>
+              </select>
+              <ChevronDown size={16} color="var(--primary)" style={{ cursor: 'pointer', pointerEvents: 'none' }} />
+            </div>
+          </div>
+
+
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#f97316', fontWeight: '700', fontSize: '14px' }}>
               <Flame size={18} fill="#f97316" />

@@ -455,13 +455,71 @@ export default function LearnScreen({ weekNumber, sessionType, progress, onEndSe
     return arr;
   };
 
+  // Helper to localize questions and vocabulary
+  const getLocalizedDataForSession = (qs, vs, lang, prog) => {
+    const programMap = {
+      'kaigo': 'Healthcare',
+      'seizogyo': 'Manufacturing',
+      'kensetsugyo': 'Construction & Engineering',
+      'nogyo': 'Agriculture'
+    };
+    const targetJobGroup = programMap[prog] || 'Healthcare';
+
+    // 1. Filter questions by selected job group
+    const filteredQs = qs.filter(q => q.jobCategory === targetJobGroup || !q.jobCategory || q.jobCategory === 'Other');
+
+    // 2. Localize vocabulary
+    const localizedVs = localizeVocab(vs, lang);
+
+    // 3. Localize questions based on selected target practice language
+    const localizedQs = filteredQs.map(q => {
+      if (q.translations && q.translations[lang]) {
+        const t = q.translations[lang];
+        
+        let answerIndex = 0;
+        if (t.options && t.options.length > 0) {
+          const correctAns = t.correctAnswer || t.Correct_Answer;
+          if (correctAns) {
+            const idx = t.options.indexOf(correctAns);
+            if (idx !== -1) answerIndex = idx;
+          }
+        }
+
+        return {
+          ...q,
+          prompt: q.prompt,
+          meaning: q.meaning,
+          explanation: {
+            word: t.targetText || q.audioText,
+            romaji: t.phonetic || q.romaji,
+            translation: q.meaning,
+            context: q.prompt,
+            tip: q.explanation_id,
+            vocabList: t.pairs || q.pairs || []
+          },
+          audioText: t.targetText || q.audioText,
+          targetJa: t.targetText || q.targetJa,
+          romaji: t.phonetic || q.romaji,
+          targetRomaji: q.type === "C" ? ((t.correctAnswer || t.Correct_Answer || "").toLowerCase()) : "",
+          options: (t.options && t.options.length > 0) ? t.options : q.options,
+          pairs: (t.pairs && t.pairs.length > 0) ? t.pairs : q.pairs,
+          answer: answerIndex
+        };
+      }
+      return q;
+    });
+
+    return { localizedQs, localizedVs };
+  };
+
   // Helper to generate dynamic questions for the session using IndexedDB data
   const generateQuestionsForSession = (dbQuestions, dbVocab, weekNum) => {
     const staticQuestions = dbQuestions || [];
     const vocab = dbVocab.length > 0 ? dbVocab : [];
+    const lang = localStorage.getItem('kaigolingo_selected_language') || 'ja';
     
-    // Target count scales from 10 (Week 1) to 20 (Week 11 & 12)
-    const targetCount = Math.min(20, 10 + (weekNum - 1));
+    // Target count uses static questions if available, otherwise scales from 10 to 20
+    const targetCount = staticQuestions.length > 0 ? staticQuestions.length : Math.min(20, 10 + (weekNum - 1));
     
     let generated = [...staticQuestions];
     
@@ -506,12 +564,14 @@ export default function LearnScreen({ weekNumber, sessionType, progress, onEndSe
           
         // 5. Generate question based on chosenType
         if (chosenType === 'B') {
-          const otherTranslations = vocab
-            .filter(v => v.ja !== item.ja)
-            .map(v => v.id);
-          const wrongOptions = shuffleArray(otherTranslations).slice(0, 2);
-          const options = shuffleArray([item.id, ...wrongOptions]);
-          const correctIndex = options.indexOf(item.id);
+          const wrongCandidates = vocab.filter(v => v.ja !== item.ja);
+          const wrongOptions = shuffleArray(wrongCandidates).slice(0, 2);
+          
+          const correctOptionText = `${item.ja} (${item.id})`;
+          const wrongOptionTexts = wrongOptions.map(v => `${v.ja} (${v.id})`);
+          
+          const options = shuffleArray([correctOptionText, ...wrongOptionTexts]);
+          const correctIndex = options.indexOf(correctOptionText);
           
           generated.push({
             type: 'B',
@@ -538,7 +598,7 @@ export default function LearnScreen({ weekNumber, sessionType, progress, onEndSe
           });
         } else {
           // Shadowing
-          const formattedRomaji = item.romaji.split('').join('-');
+          const formattedRomaji = lang === 'ja' ? item.romaji.split('').join('-') : item.romaji;
           generated.push({
             type: 'D',
             prompt: 'Ucapkan kata berikut melalui mikrofon (Shadowing)!',
@@ -560,8 +620,12 @@ export default function LearnScreen({ weekNumber, sessionType, progress, onEndSe
       try {
         let qs = await getQuestionsByWeek(weekNumber);
         let vs = await getVocabByWeek(weekNumber);
-        if (qs.length === 0 || vs.length === 0) {
-          console.log('Seeding database from local JSON files...');
+        
+        // Auto re-seed if we find the old format questions (no translations)
+        const isOldFormat = qs.length > 0 && !qs[0].translations;
+
+        if (qs.length === 0 || vs.length === 0 || isOldFormat) {
+          console.log('Seeding database from local JSON files (multilingual)...');
           const qRes = await fetch('/questions.json');
           const vRes = await fetch('/vocabulary.json');
           if (qRes.ok && vRes.ok) {
@@ -572,8 +636,15 @@ export default function LearnScreen({ weekNumber, sessionType, progress, onEndSe
             vs = await getVocabByWeek(weekNumber);
           }
         }
-        initDynamicKanjiMap(vs);
-        const sessionQs = generateQuestionsForSession(qs, vs, weekNumber);
+
+        // Apply program and language filters
+        const lang = localStorage.getItem('kaigolingo_selected_language') || 'ja';
+        const prog = localStorage.getItem('kaigolingo_selected_program') || 'kaigo';
+
+        const { localizedQs, localizedVs } = getLocalizedDataForSession(qs, vs, lang, prog);
+
+        initDynamicKanjiMap(localizedVs);
+        const sessionQs = generateQuestionsForSession(localizedQs, localizedVs, weekNumber);
         setSessionQuestions(sessionQs);
         setInitialLength(sessionQs.length);
         setCurrentQIndex(0);
@@ -726,8 +797,9 @@ export default function LearnScreen({ weekNumber, sessionType, progress, onEndSe
   // Handle Matching Question Generation
   useEffect(() => {
     if (currentQuestion && currentQuestion.type === 'A') {
-      const left = currentQuestion.pairs.map((p, idx) => ({ id: idx, text: p.ja })).sort(() => Math.random() - 0.5);
-      const right = currentQuestion.pairs.map((p, idx) => ({ id: idx, text: p.id })).sort(() => Math.random() - 0.5);
+      const pairs = currentQuestion.pairs || [];
+      const left = pairs.map((p, idx) => ({ id: idx, text: p.ja })).sort(() => Math.random() - 0.5);
+      const right = pairs.map((p, idx) => ({ id: idx, text: p.id })).sort(() => Math.random() - 0.5);
       setMatchLeft(left);
       setMatchRight(right);
       setSelectedLeft(null);
@@ -800,6 +872,311 @@ export default function LearnScreen({ weekNumber, sessionType, progress, onEndSe
     }
   };
 
+const VOCAB_TRANSLATIONS = {
+  ja: {
+    'おはようございます (Selamat Pagi)': 'おはようございます (Selamat Pagi)',
+    'いち (Satu)': 'いち (Satu)',
+    'に (Dua)': 'に (Dua)',
+    'さん (Tiga)': 'さん (Tiga)',
+    'おやすみなさい (Selamat Tidur)': 'おやすみなさい (Selamat Tidur)',
+    'お疲れ様です (Terima kasih atas kerja kerasnya)': 'お疲れ様です (Terima kasih)',
+    '失礼します (Permisi / Maaf mengganggu)': '失礼します (Permisi)',
+    'お邪魔します (Permisi / Masuk rumah)': 'お邪魔します (Permisi Masuk)',
+    'かしこまりました (Baik / Dimengerti)': 'かしこまりました (Baik)',
+    '食堂: shokudou (Kantin / Ruang makan)': '食堂: shokudou (Kantin)',
+    'トイレ: toire (Toilet)': 'トイレ: toire (Toilet)',
+    'あちら: achira (Sebelah sana)': 'あちら: achira (Sebelah sana)',
+    '右: migi (Kanan)': '右: migi (Kanan)',
+    '危ない: abunai (Bahaya)': '危ない: abunai (Bahaya)',
+    '注意: chuui (Peringatan / Hati-たたみ)': '注意: chuui (Hati-hati)',
+    '火事: kaji (Kebakaran)': '火事: kaji (Kebakaran)',
+    '助けて: tasukete (Tolong)': '助けて: tasukete (Tolong)',
+    '足: ashi (Kaki)': '足: ashi (Kaki)',
+    '手: te (Tangan)': '手: te (Tangan)',
+    '腰: koshi (Pinggang)': '腰: koshi (Pinggang)',
+    '頭: atama (Kepala)': '頭: atama (Kepala)',
+    '背中: senaka (Punggung)': '背中: senaka (Punggung)',
+    '痛い: itai (Sakit)': '痛い: itai (Sakit)',
+    '痛みます: itamimasu (Terasa sakit)': '痛みます: itamimasu (Sakit)',
+    '吐き気: hakike (Mual)': '吐き気: hakike (Mual)',
+    '熱: netsu (Demam)': '熱: netsu (Demam)',
+    '車椅子: kurumaisu (Kursi roda)': '車椅子: kurumaisu (Kursi roda)',
+    '杖: tsue (Tongkat)': '杖: tsue (Tongkat)',
+    '歩行器: hokouki (Alat bantu jalan)': '歩行器: hokouki (Alat bantu jalan)',
+    'ベッド: beddo (Tempat tidur)': 'ベッド: beddo (Ranjang)',
+    '薬: kusuri (Obat)': '薬: kusuri (Obat)',
+    '食後: shokugo (Setelah makan)': '食後: shokugo (Setelah makan)',
+    '食前: shokuzen (Sebelum makan)': '食前: shokuzen (Sebelum makan)',
+    '飲みます: nomimasu (Minum)': '飲みます: nomimasu (Minum)',
+    '報告: houkoku (Laporan)': '報告: houkoku (Lapor)',
+    '連絡: renraku (Hubungi)': '連絡: renraku (Hubungi)',
+    '相談: soudan (Konsultasi)': '相談: soudan (Konsultasi)',
+    '壊れました: kowaremashita (Rusak)': '壊れました: kowaremashita (Rusak)',
+    '地震: jishin (Gempa bumi)': '地震: jishin (Gempa)',
+    '避難: henan (Evakuasi)': '避難: henan (Evakuasi)',
+    '火災: kasai (Kebakaran)': '火災: kasai (Kebakaran)',
+    '非常口: hijouguchi (Pintu darurat)': '非常口: hijouguchi (Pintu darurat)',
+    '日本語能力試験: jlpt (Ujian JLPT)': '日本語能力試験: jlpt (Ujian JLPT)',
+    '練習問題: renshuu mondai (Latihan Soal)': '練習問題: renshuu mondai (Soal)',
+    '文法: bunpou (Tata Bahasa)': '文法: bunpou (Tata Bahasa)',
+    '読解: dokkai (Membaca)': '読解: dokkai (Membaca)',
+    '面接: mensetsu (Wawancara)': '面接: mensetsu (Wawancara)',
+    '自己紹介: jiko shoukai (Perkenalan Diri)': '自己紹介 (Perkenalan Diri)',
+    '履歴書: rirekisho (Daftar Riwayat Hidup)': '履歴書 (CV / Riwayat Hidup)',
+    '志望動機: shibou douki (Motivasi Melamar)': '志望動機 (Motivasi Melamar)'
+  },
+  zh: {
+    'おはようございます (Selamat Pagi)': '早上好: zǎoshang hǎo (Selamat Pagi)',
+    'いち (Satu)': '一: yī (Satu)',
+    'に (Dua)': '二: èr (Dua)',
+    'さん (Tiga)': '三: sān (Tiga)',
+    'おやすみなさい (Selamat Tidur)': '晚安: wǎn\'ān (Selamat Tidur)',
+    'お疲れ様です (Terima kasih atas kerja kerasnya)': '辛苦了: xīnkǔle (Terima kasih)',
+    '失礼します (Permisi / Maaf mengganggu)': '打扰了: dǎrǎole (Permisi)',
+    'お邪魔します (Permisi / Masuk rumah)': '打扰一下 (Permisi Masuk)',
+    'かしこまりました (Baik / Dimengerti)': '知道了: zhīdàole (Baik)',
+    '食堂: shokudou (Kantin / Ruang makan)': '食堂: shítáng (Kantin)',
+    'トイレ: toire (Toilet)': '洗手间: xǐshǒujiān (Toilet)',
+    'あちら: achira (Sebelah sana)': '那儿: nà\'er (Sebelah sana)',
+    '右: migi (Kanan)': '右边: yòubiān (Kanan)',
+    '危ない: abunai (Bahaya)': '危险: wēixiǎn (Bahaya)',
+    '注意: chuui (Peringatan / Hati-hati)': '注意: zhùyì (Hati-hati)',
+    '火事: kaji (Kebakaran)': '着火: zháohuǒ (Kebakaran)',
+    '助けて: tasukete (Tolong)': '救命: jiùmìng (Tolong)',
+    '足: ashi (Kaki)': '脚: jiǎo (Kaki)',
+    '手: te (Tangan)': '手: shǒu (Tangan)',
+    '腰: koshi (Pinggang)': '腰: yāo (Pinggang)',
+    '頭: atama (Kepala)': '头: tóu (Kepala)',
+    '背中: senaka (Punggung)': '背: bèi (Punggung)',
+    '痛い: itai (Sakit)': '疼: téng (Sakit)',
+    '痛みます: itamimasu (Terasa sakit)': '痛: tòng (Sakit)',
+    '吐き気: hakike (Mual)': '恶心: ěxīn (Mual)',
+    '熱: netsu (Demam)': '发烧: fāshāo (Demam)',
+    '車椅子: kurumaisu (Kursi roda)': '轮椅: lúnyǐ (Kursi roda)',
+    '杖: tsue (Tongkat)': '拐杖: guǎizhàng (Tongkat)',
+    '歩行器: hokouki (Alat bantu jalan)': '助行器: zhùxíngqì (Alat bantu jalan)',
+    'ベッド: beddo (Tempat tidur)': '床: chuáng (Ranjang)',
+    '薬: kusuri (Obat)': '药: yào (Obat)',
+    '食後: shokugo (Setelah makan)': '饭后: fànhòu (Setelah makan)',
+    '食前: shokuzen (Sebelum makan)': '饭前: fànqián (Sebelum makan)',
+    '飲みます: nomimasu (Minum)': '吃药: chīyào (Minum)',
+    '報告: houkoku (Laporan)': '报告: bàogào (Lapor)',
+    '連絡: renraku (Hubungi)': '联系: liánxì (Hubungi)',
+    '相談: soudan (Konsultasi)': '商量: shāngliang (Konsultasi)',
+    '壊れました: kowaremashita (Rusak)': '坏了: huàile (Rusak)',
+    '地震: jishin (Gempa bumi)': '地震: dìzhèn (Gempa)',
+    '避難: henan (Evakuasi)': '避难: bìnán (Evakuasi)',
+    '火災: kasai (Kebakaran)': '火灾: huǒzāi (Kebakaran)',
+    '非常口: hijouguchi (Pintu darurat)': '安全出口 (Pintu darurat)',
+    '日本語能力試験: jlpt (Ujian JLPT)': '汉语水平考试: hsk (Ujian Bahasa)',
+    '練習問題: renshuu mondai (Latihan Soal)': '练习题 (Soal)',
+    '文法: bunpou (Tata Bahasa)': '语法: yǔfǎ (Tata Bahasa)',
+    '読解: dokkai (Membaca)': '阅读: yuèdú (Membaca)',
+    '面接: mensetsu (Wawancara)': '面试: miànshì (Wawancara)',
+    '自己紹介: jiko shoukai (Perkenalan Diri)': '自我介绍 (Perkenalan Diri)',
+    '履歴書: rirekisho (Daftar Riwayat Hidup)': '简历: jiǎnlì (CV / Riwayat Hidup)',
+    '志望動機: shibou douki (Motivasi Melamar)': '求职意向 (Motivasi Melamar)'
+  },
+  en: {
+    'おはようございます (Selamat Pagi)': 'Good Morning (Selamat Pagi)',
+    'いち (Satu)': 'One (Satu)',
+    'に (Dua)': 'Two (Dua)',
+    'さん (Tiga)': 'Three (Tiga)',
+    'おやすみなさい (Selamat Tidur)': 'Good Night (Selamat Tidur)',
+    'お疲れ様です (Terima kasih atas kerja kerasnya)': 'Thank you for your hard work (Terima kasih)',
+    '失礼します (Permisi / Maaf mengganggu)': 'Excuse me (Permisi)',
+    'お邪魔します (Permisi / Masuk rumah)': 'Excuse me (Permisi Masuk)',
+    'かしこまりました (Baik / Dimengerti)': 'Understood (Baik)',
+    '食堂: shokudou (Kantin / Ruang makan)': 'Cafeteria / Dining Hall (Kantin)',
+    'トイレ: toire (Toilet)': 'Restroom / Toilet (Toilet)',
+    'あちら: achira (Sebelah sana)': 'Over there (Sebelah sana)',
+    '右: migi (Kanan)': 'Right (Kanan)',
+    '危ない: abunai (Bahaya)': 'Danger (Bahaya)',
+    '注意: chuui (Peringatan / Hati-hati)': 'Caution / Attention (Hati-hati)',
+    '火事: kaji (Kebakaran)': 'Fire (Kebakaran)',
+    '助けて: tasukete (Tolong)': 'Help (Tolong)',
+    '足: ashi (Kaki)': 'Leg / Foot (Kaki)',
+    '手: te (Tangan)': 'Hand (Tangan)',
+    '腰: koshi (Pinggang)': 'Waist / Lower Back (Pinggang)',
+    '頭: atama (Kepala)': 'Head (Kepala)',
+    '背中: senaka (Punggung)': 'Back (Punggung)',
+    '痛い: itai (Sakit)': 'Painful (Sakit)',
+    '痛みます: itamimasu (Terasa sakit)': 'It hurts (Sakit)',
+    '吐き気: hakike (Mual)': 'Nausea (Mual)',
+    '熱: netsu (Demam)': 'Fever (Demam)',
+    '車椅子: kurumaisu (Kursi roda)': 'Wheelchair (Kursi roda)',
+    '杖: tsue (Tongkat)': 'Cane / Stick (Tongkat)',
+    '歩行器: hokouki (Alat bantu jalan)': 'Walker (Alat bantu jalan)',
+    'ベッド: beddo (Tempat tidur)': 'Bed (Ranjang)',
+    '薬: kusuri (Obat)': 'Medicine (Obat)',
+    '食後: shokugo (Setelah makan)': 'After meals (Setelah makan)',
+    '食前: shokuzen (Sebelum makan)': 'Before meals (Sebelum makan)',
+    '飲みます: nomimasu (Minum)': 'Drink / Take (Minum)',
+    '報告: houkoku (Laporan)': 'Report (Lapor)',
+    '連絡: renraku (Hubungi)': 'Contact (Hubungi)',
+    '相談: soudan (Konsultasi)': 'Consult (Konsultasi)',
+    '壊れました: kowaremashita (Rusak)': 'Broken (Rusak)',
+    '地震: jishin (Gempa bumi)': 'Earthquake (Gempa)',
+    '避難: henan (Evakuasi)': 'Evacuation (Evakuasi)',
+    '火災: kasai (Kebakaran)': 'Fire (Kebakaran)',
+    '非常口: hijouguchi (Pintu darurat)': 'Emergency Exit (Pintu darurat)',
+    '日本語能力試験: jlpt (Ujian JLPT)': 'Language Test (Ujian Bahasa)',
+    '練習問題: renshuu mondai (Latihan Soal)': 'Practice Exercises (Soal)',
+    '文法: bunpou (Tata Bahasa)': 'Grammar (Tata Bahasa)',
+    '読解: dokkai (Membaca)': 'Reading Comprehension (Membaca)',
+    '面接: mensetsu (Wawancara)': 'Interview (Wawancara)',
+    '自己紹介: jiko shoukai (Perkenalan Diri)': 'Self Introduction (Perkenalan Diri)',
+    '履歴書: rirekisho (Daftar Riwayat Hidup)': 'Resume / CV (CV / Riwayat Hidup)',
+    '志望動機: shibou douki (Motivasi Melamar)': 'Reason for Applying (Motivasi Melamar)'
+  },
+  ar: {
+    'おはようございます (Selamat Pagi)': 'صباح الخير (Selamat Pagi)',
+    'いち (Satu)': 'واحد (Satu)',
+    'に (Dua)': 'اثنان (Dua)',
+    'さん (Tiga)': 'ثلاثة (Tiga)',
+    'おやすみなさい (Selamat Tidur)': 'تصبح على خير (Selamat Tidur)',
+    'お疲れ様です (Terima kasih atas kerja kerasnya)': 'شكرا لجهودكم (Terima kasih)',
+    '失礼します (Permisi / Maaf mengganggu)': 'عذراً (Permisi)',
+    'お邪魔します (Permisi / Masuk rumah)': 'تفضل بالدخول (Permisi Masuk)',
+    'かしこまりました (Baik / Dimengerti)': 'مفهوم (Baik)',
+    '食堂: shokudou (Kantin / Ruang makan)': 'مطعم (Kantin)',
+    'トイレ: toire (Toilet)': 'مرحاض (Toilet)',
+    'あちら: achira (Sebelah sana)': 'هناك (Sebelah sana)',
+    '右: migi (Kanan)': 'يمين (Kanan)',
+    '危ない: abunai (Bahaya)': 'خطر (Bahaya)',
+    '注意: chuui (Peringatan / Hati-hati)': 'انتباه (Hati-hati)',
+    '火事: kaji (Kebakaran)': 'حريق (Kebakaran)',
+    '助けて: tasukete (Tolong)': 'النجدة (Tolong)',
+    '足: ashi (Kaki)': 'قدم (Kaki)',
+    '手: te (Tangan)': 'يد (Tangan)',
+    '腰: koshi (Pinggang)': 'خصر (Pinggang)',
+    '頭: atama (Kepala)': 'رأس (Kepala)',
+    '背中: senaka (Punggung)': 'ظهر (Punggung)',
+    '痛い: itai (Sakit)': 'مؤلم (Sakit)',
+    '痛みます: itamimasu (Terasa sakit)': 'يؤلم (Sakit)',
+    '吐き気: hakike (Mual)': 'غثيان (Mual)',
+    '熱: netsu (Demam)': 'حمى (Demam)',
+    '車椅子: kurumaisu (Kursi roda)': 'كرسي متحرك (Kursi roda)',
+    '杖: tsue (Tongkat)': 'عصا (Tongkat)',
+    '歩行器: hokouki (Alat bantu jalan)': 'مشاية (Alat bantu jalan)',
+    'ベッド: beddo (Tempat tidur)': 'سرير (Ranjang)',
+    '薬: kusuri (Obat)': 'دواء (Obat)',
+    '食後: shokugo (Setelah makan)': 'بعد الأكل (Setelah makan)',
+    '食前: shokuzen (Sebelum makan)': 'قبل الأكل (Sebelum makan)',
+    '飲みます: nomimasu (Minum)': 'يأخذ الدواء (Minum)',
+    '報告: houkoku (Laporan)': 'تقرير (Lapor)',
+    '連絡: renraku (Hubungi)': 'اتصال (Hubungi)',
+    '相談: soudan (Konsultasi)': 'استشارة (Konsultasi)',
+    '壊れました: kowaremashita (Rusak)': 'مكسور (Rusak)',
+    '地震: jishin (Gempa bumi)': 'زلزال (Gempa)',
+    '避難: henan (Evakuasi)': 'إخلاء (Evakuasi)',
+    '火災: kasai (Kebakaran)': 'حريق (Kebakaran)',
+    '非常口: hijouguchi (Pintu darurat)': 'مخرج طوارئ (Pintu darurat)',
+    '日本語能力試験: jlpt (Ujian JLPT)': 'امتحان اللغة (Ujian Bahasa)',
+    '練習問題: renshuu mondai (Latihan Soal)': 'تمارين (Soal)',
+    '文法: bunpou (Tata Bahasa)': 'قواعد (Tata Bahasa)',
+    '読解: dokkai (Membaca)': 'قراءة (Membaca)',
+    '面接: mensetsu (Wawancara)': 'مقابلة (Wawancara)',
+    '自己紹介: jiko shoukai (Perkenalan Diri)': 'تعريف بالنفس (Perkenalan Diri)',
+    '履歴書: rirekisho (Daftar Riwayat Hidup)': 'سيرة ذاتية (CV / Riwayat Hidup)',
+    '志望動機: shibou douki (Motivasi Melamar)': 'دافع للتقديم (Motivasi Melamar)'
+  },
+  ko: {
+    'おはようございます (Selamat Pagi)': '좋은 아침입니다 (Selamat Pagi)',
+    'いち (Satu)': '하나 (Satu)',
+    'に (Dua)': '둘 (Dua)',
+    'さん (Tiga)': '셋 (Tiga)',
+    'おやすみなさい (Selamat Tidur)': '안녕히 주무세요 (Selamat Tidur)',
+    'お疲れ様です (Terima kasih atas kerja kerasnya)': '수고하셨습니다 (Terima kasih)',
+    '失礼します (Permisi / Maaf mengganggu)': '실례합니다 (Permisi)',
+    'お邪魔します (Permisi / Masuk rumah)': '실례하겠습니다 (Permisi Masuk)',
+    'かしこまりました (Baik / Dimengerti)': '알겠습니다 (Baik)',
+    '食堂: shokudou (Kantin / Ruang makan)': '식당 (Kantin)',
+    'トイレ: toire (Toilet)': '화장실 (Toilet)',
+    'あちら: achira (Sebelah sana)': '저쪽 (Sebelah sana)',
+    '右: migi (Kanan)': '오른쪽 (Kanan)',
+    '危ない: abunai (Bahaya)': '위험해 (Bahaya)',
+    '注意: chuui (Peringatan / Hati-hati)': '주의 / 조심 (Hati-hati)',
+    '火事: kaji (Kebakaran)': '불이야 (Kebakaran)',
+    '助けて: tasukete (Tolong)': '살려주세요 (Tolong)',
+    '足: ashi (Kaki)': '발 / 다리 (Kaki)',
+    '手: te (Tangan)': '손 (Tangan)',
+    '腰: koshi (Pinggang)': '허리 (Pinggang)',
+    '頭: atama (Kepala)': '머리 (Kepala)',
+    '背中: senaka (Punggung)': '등 (Punggung)',
+    '痛い: itai (Sakit)': '아프다 (Sakit)',
+    '痛みます: itamimasu (Terasa sakit)': '아픕니다 (Sakit)',
+    '吐き気: hakike (Mual)': '메스꺼움 (Mual)',
+    '熱: netsu (Demam)': '열 (Demam)',
+    '車椅子: kurumaisu (Kursi roda)': '휠체어 (Kursi roda)',
+    '杖: tsue (Tongkat)': '지팡이 (Tongkat)',
+    '歩行器: hokouki (Alat bantu jalan)': '보행기 (Alat bantu jalan)',
+    'ベッド: beddo (Tempat tidur)': '침대 (Ranjang)',
+    '薬: kusuri (Obat)': '약 (Obat)',
+    '食後: shokugo (Setelah makan)': '식후 (Setelah makan)',
+    '食前: shokuzen (Sebelum makan)': '식전 (Sebelum makan)',
+    '飲みます: nomimasu (Minum)': '약을 먹습니다 (Minum)',
+    '報告: houkoku (Laporan)': '보고 (Lapor)',
+    '連絡: renraku (Hubungi)': '연락 (Hubungi)',
+    '相談: soudan (Konsultasi)': '상담 (Konsultasi)',
+    '壊れました: kowaremashita (Rusak)': '고장 났습니다 (Rusak)',
+    '地震: jishin (Gempa bumi)': '지진 (Gempa)',
+    '避難: henan (Evakuasi)': '대피 (Evakuasi)',
+    '火災: kasai (Kebakaran)': '화재 (Kebakaran)',
+    '非常口: hijouguchi (Pintu darurat)': '비상구 (Pintu darurat)',
+    '日本語能力試験: jlpt (Ujian JLPT)': '시험 (Ujian Bahasa)',
+    '練習問題: renshuu mondai (Latihan Soal)': '연습 문제 (Soal)',
+    '文法: bunpou (Tata Bahasa)': '문법 (Tata Bahasa)',
+    '読解: dokkai (Membaca)': '독해 (Membaca)',
+    '面接: mensetsu (Wawancara)': '면접 (Wawancara)',
+    '自己紹介: jiko shoukai (Perkenalan Diri)': '자기소개 (Perkenalan Diri)',
+    '履歴書: rirekisho (Daftar Riwayat Hidup)': '이력서 (CV / Riwayat Hidup)',
+    '志望動機: shibou douki (Motivasi Melamar)': '지원 동기 (Motivasi Melamar)'
+  }
+};
+
+const localizeVocab = (dbVocab, lang) => {
+  return dbVocab.map(v => {
+    const key = `${v.ja} (${v.id})`;
+    const translation = VOCAB_TRANSLATIONS[lang]?.[key] || VOCAB_TRANSLATIONS[lang]?.[v.ja] || null;
+    if (translation) {
+      const colonIdx = translation.indexOf(':');
+      if (colonIdx !== -1) {
+        const wordPart = translation.substring(0, colonIdx).trim();
+        let romajiPart = translation.substring(colonIdx + 1).trim();
+        let meaningPart = v.id;
+        
+        const parenIdx = romajiPart.indexOf('(');
+        if (parenIdx !== -1) {
+          meaningPart = romajiPart.substring(parenIdx + 1, romajiPart.length - 1).trim();
+          romajiPart = romajiPart.substring(0, parenIdx).trim();
+        }
+        return {
+          ...v,
+          ja: wordPart,
+          romaji: romajiPart,
+          id: meaningPart
+        };
+      } else {
+        let wordPart = translation;
+        let meaningPart = v.id;
+        const parenIdx = translation.indexOf('(');
+        if (parenIdx !== -1) {
+          meaningPart = translation.substring(parenIdx + 1, translation.length - 1).trim();
+          wordPart = translation.substring(0, parenIdx).trim();
+        }
+        return {
+          ...v,
+          ja: wordPart,
+          romaji: wordPart,
+          id: meaningPart
+        };
+      }
+    }
+    return v;
+  });
+};
+
 // Pronunciation mapping for single Kanji words to prevent TTS engines from mispronouncing them (Onyomi vs Kunyomi)
 const KANJI_TO_HIRAGANA_TTS = {
   '右': 'みぎ',
@@ -812,29 +1189,107 @@ const KANJI_TO_HIRAGANA_TTS = {
   '胃薬': 'いぐすり'
 };
 
-  // Speak Japanese Text using Web Speech Synthesis
-  const speakText = (text, speed = 1.0) => {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      
-      // Prevent single Kanji mispronunciation (e.g., '左' read as 'sa' instead of 'hidari')
-      const ttsText = KANJI_TO_HIRAGANA_TTS[text] || text;
-      const utterance = new SpeechSynthesisUtterance(ttsText);
-      utterance.lang = 'ja-JP';
-      utterance.rate = speed;
-      
-      // Attempt to find a native Japanese voice
-      const voices = window.speechSynthesis.getVoices();
-      const jaVoice = voices.find(voice => voice.lang.startsWith('ja'));
-      if (jaVoice) utterance.voice = jaVoice;
+  // Speak Text using Web Speech Synthesis — supports all target languages with fallback
+  const speakText = (text, speed = 1.0, phoneticFallback = null) => {
+    if (!('speechSynthesis' in window)) {
+      alert('Speech Synthesis tidak didukung di browser ini.');
+      return;
+    }
 
-      // Track speaking word and highlight index
+    // Unfreeze speech synthesis engine if browser put it in paused state
+    if (window.speechSynthesis.paused) {
+      window.speechSynthesis.resume();
+    }
+    window.speechSynthesis.cancel();
+
+    const lang = localStorage.getItem('kaigolingo_selected_language') || 'ja';
+
+    // Multiple locale fallbacks per language (Arabic has many regional variants)
+    const ttsLocaleMap = {
+      'ja': ['ja-JP', 'ja'],
+      'zh': ['zh-CN', 'zh-TW', 'zh-HK', 'zh'],
+      'ar': ['ar-SA', 'ar-EG', 'ar-AE', 'ar-MA', 'ar-IQ', 'ar'],
+      'en': ['en-US', 'en-GB', 'en-AU', 'en'],
+      'ko': ['ko-KR', 'ko']
+    };
+
+    const preferredLocales = ttsLocaleMap[lang] || ['ja-JP'];
+    const primaryLocale    = preferredLocales[0];
+
+    // Only apply kanji-to-hiragana fix for Japanese
+    const ttsText = lang === 'ja' ? (KANJI_TO_HIRAGANA_TTS[text] || text) : text;
+
+    const doSpeak = (voices) => {
+      // Prioritize natural/online high-quality voices
+      const rateVoiceQuality = (voice) => {
+        const name = voice.name.toLowerCase();
+        if (name.includes('natural')) return 4; // Microsoft Natural (Edge online)
+        if (name.includes('google')) return 3;  // Google Translate online (Chrome)
+        if (name.includes('online')) return 2;  // Other online voices
+        return 1; // Offline local voice
+      };
+
+      const targetPrefix = lang.toLowerCase();
+
+      // Filter all voices that match the target language (handling hyphens, underscores, etc.)
+      const matchingVoices = voices.filter(v => {
+        const norm = v.lang.replace(/_/g, '-').toLowerCase();
+        return norm === targetPrefix || norm.startsWith(targetPrefix + '-');
+      });
+
+      let chosenVoice = null;
+      if (matchingVoices.length > 0) {
+        matchingVoices.sort((a, b) => rateVoiceQuality(b) - rateVoiceQuality(a));
+        chosenVoice = matchingVoices[0];
+      }
+
+      // If no voice matches the chosen language in the browser's local TTS engine,
+      // dynamically fall back to Google Translate's high-quality online TTS API via HTML5 Audio.
+      if (!chosenVoice) {
+        console.log(`No native browser voice found for language: ${lang}. Falling back to Google Translate TTS API.`);
+        
+        const targetGoogleLangCode = lang === 'zh' ? 'zh-CN' : (lang === 'ar' ? 'ar' : lang);
+        const googleTtsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=${targetGoogleLangCode}&client=tw-ob&q=${encodeURIComponent(ttsText)}`;
+        
+        setSpeakingWord(text);
+        setHighlightRange({ start: 0, end: ttsText.length });
+        
+        const audioObj = new Audio(googleTtsUrl);
+        audioObj.playbackRate = speed;
+        
+        audioObj.onended = () => {
+          setSpeakingWord('');
+          setHighlightRange(null);
+        };
+        
+        audioObj.onerror = (e) => {
+          console.error('Google Translate TTS fallback playback failed:', e);
+          setSpeakingWord('');
+          setHighlightRange(null);
+          alert(`Tidak dapat memutar audio. Pastikan koneksi internet Anda aktif.`);
+        };
+        
+        audioObj.play().catch(err => {
+          console.error('Audio element playback blocked by browser autocomplete/interaction rules:', err);
+          setSpeakingWord('');
+          setHighlightRange(null);
+        });
+        return;
+      }
+
+      const utterance = new SpeechSynthesisUtterance(ttsText);
+      utterance.voice = chosenVoice;
+      utterance.lang  = chosenVoice.lang;
+      utterance.rate  = speed;
+
+      console.log(`Speaking in native ${lang}: ${ttsText} using voice: ${chosenVoice.name} (${chosenVoice.lang})`);
+
       setSpeakingWord(text);
       setHighlightRange({ start: 0, end: 0 });
 
       utterance.onboundary = (event) => {
         if (event.name === 'word' || event.name === 'char') {
-          const start = event.charIndex;
+          const start  = event.charIndex;
           const length = event.charLength || 1;
           setHighlightRange({ start, end: start + length });
         }
@@ -845,21 +1300,42 @@ const KANJI_TO_HIRAGANA_TTS = {
         setHighlightRange(null);
       };
 
-      utterance.onerror = () => {
+      utterance.onerror = (err) => {
+        console.error('SpeechSynthesis error:', err);
         setSpeakingWord('');
         setHighlightRange(null);
       };
 
+      window.speechSynthesis.resume();
       window.speechSynthesis.speak(utterance);
+    };
+
+    // Voices may not be loaded on first call — handle async loading
+    const voices = window.speechSynthesis.getVoices();
+    if (voices && voices.length > 0) {
+      doSpeak(voices);
     } else {
-      alert('Speech Synthesis tidak didukung di browser ini.');
+      // Wait for voices to load
+      window.speechSynthesis.onvoiceschanged = () => {
+        window.speechSynthesis.onvoiceschanged = null;
+        doSpeak(window.speechSynthesis.getVoices());
+      };
+      // Safety timeout: speak anyway after 1.5s if event never fires
+      setTimeout(() => {
+        if (window.speechSynthesis.onvoiceschanged) {
+          window.speechSynthesis.onvoiceschanged = null;
+          doSpeak(window.speechSynthesis.getVoices());
+        }
+      }, 1500);
     }
   };
 
   // Play Question Audio
   const playQuestionAudio = () => {
     if (currentQuestion.audioText) {
-      speakText(currentQuestion.audioText, audioSpeed);
+      // Pass romaji as fallback for languages without native TTS voices
+      const phonetic = currentQuestion.romaji || null;
+      speakText(currentQuestion.audioText, audioSpeed, phonetic);
     }
   };
 
@@ -942,7 +1418,7 @@ const KANJI_TO_HIRAGANA_TTS = {
       const correct = selectedOption === currentQuestion.answer;
       setIsCorrect(correct);
       setIsAnswerChecked(true);
-      if (correct) speakText(currentQuestion.audioText);
+      if (correct) speakText(currentQuestion.audioText, 1.0, currentQuestion.romaji);
     } else if (currentQuestion.type === 'C') {
       const cleanInput = typedInput.trim().toLowerCase().replace(/[\s\-]/g, '');
       const cleanTarget = currentQuestion.targetRomaji.toLowerCase().replace(/[\s\-]/g, '');
@@ -952,7 +1428,7 @@ const KANJI_TO_HIRAGANA_TTS = {
       
       setIsCorrect(correct);
       setIsAnswerChecked(true);
-      if (correct) speakText(currentQuestion.targetJa);
+      if (correct) speakText(currentQuestion.targetJa, 1.0, currentQuestion.romaji);
     } else if (currentQuestion.type === 'D') {
       evaluateSpeech(shadowingResult);
     }
@@ -1076,7 +1552,13 @@ const currentFails = currentQuestion.failCount || 0;
     try {
       const qs = await getQuestionsByWeek(weekNumber);
       const vs = await getVocabByWeek(weekNumber);
-      const sessionQs = generateQuestionsForSession(qs, vs, weekNumber);
+      
+      const lang = localStorage.getItem('kaigolingo_selected_language') || 'ja';
+      const prog = localStorage.getItem('kaigolingo_selected_program') || 'kaigo';
+      
+      const { localizedQs, localizedVs } = getLocalizedDataForSession(qs, vs, lang, prog);
+      
+      const sessionQs = generateQuestionsForSession(localizedQs, localizedVs, weekNumber);
       setSessionQuestions(sessionQs);
       setInitialLength(sessionQs.length);
       setCurrentQIndex(0);
@@ -1432,7 +1914,7 @@ const currentFails = currentQuestion.failCount || 0;
               </button>
 
               <div style={{ width: '100%' }}>
-                {currentQuestion.options.map((opt, idx) => {
+                {(currentQuestion.options || []).map((opt, idx) => {
                   let optClass = '';
                   if (selectedOption === idx) optClass = 'selected';
                   if (isAnswerChecked) {
@@ -1516,7 +1998,7 @@ const currentFails = currentQuestion.failCount || 0;
 
               <div style={{ display: 'flex', gap: '16px' }}>
                 <button
-                  onClick={() => speakText(currentQuestion.targetJa)}
+                  onClick={() => speakText(currentQuestion.targetJa, 1.0, currentQuestion.romaji)}
                   style={{
                     width: '56px',
                     height: '56px',
@@ -1636,10 +2118,10 @@ const currentFails = currentQuestion.failCount || 0;
                 })()}
               </h2>
               <div style={{ display: 'flex', gap: '8px' }}>
-                <button className="audio-btn" onClick={() => speakText(currentQuestion.explanation.word, 1.0)}>
+                <button className="audio-btn" onClick={() => speakText(currentQuestion.explanation.word, 1.0, currentQuestion.explanation.romaji)}>
                   1.0x
                 </button>
-                <button className="audio-btn" onClick={() => speakText(currentQuestion.explanation.word, 0.5)}>
+                <button className="audio-btn" onClick={() => speakText(currentQuestion.explanation.word, 0.5, currentQuestion.explanation.romaji)}>
                   0.5x
                 </button>
               </div>
