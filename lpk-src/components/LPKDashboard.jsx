@@ -604,48 +604,114 @@ export default function LPKDashboard() {
                   </div>
                 </div>
 
-                {/* VISUAL CHARTS & GRAPHS SECTION */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '24px' }}>
-                  {/* Graph 1: Student Pipeline Stage distribution */}
-                  <div className="card" onClick={() => setActiveTab('siswa_proses')} style={{ cursor: 'pointer' }}>
-                    <h3 style={{ fontSize: '14px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      📊 Distribusi Tahap Alur Kerja Siswa (Klik untuk Detail)
-                    </h3>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                      {['daftar', 'seleksi', 'pelatihan', 'matching', 'persiapan', 'penempatan', 'alumni', 'evaluasi'].map(categoryKey => {
-                        const label = {
-                          daftar: '1. Pendaftaran (Daftar)',
-                          seleksi: '2. Tahap Seleksi',
-                          pelatihan: '3. Pelatihan & Asrama',
-                          matching: '4. Job Matching',
-                          persiapan: '5. Persiapan Terbang',
-                          penempatan: '6. Penempatan & Kerja',
-                          alumni: '7. Komunitas Alumni',
-                          evaluasi: '8. Evaluasi & Cicilan'
-                        }[categoryKey];
-                        
-                        const count = allChecklists.filter(c => getStudentCurrentPhase(c) === categoryKey).length;
-                        const total = allChecklists.length || 1;
-                        const percentage = Math.round((count / total) * 100);
-                        
-                        return (
-                          <div key={categoryKey}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: '600', marginBottom: '4px' }}>
-                              <span>{label}</span>
-                              <span style={{ color: count > 0 ? 'var(--primary-accent)' : 'var(--text-muted)' }}>
-                                {count} Siswa ({percentage}%)
+                {/* PIPELINE WORKFLOW STEPS (100% WIDTH) */}
+                <div className="card" onClick={() => setActiveTab('siswa_proses')} style={{ cursor: 'pointer', marginBottom: '24px' }}>
+                  <h3 style={{ fontSize: '15px', fontWeight: '800', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-main)' }}>
+                    📊 Distribusi Tahap Alur Kerja Siswa (Step-by-Step Pipeline)
+                  </h3>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '16px' }}>
+                    {['daftar', 'seleksi', 'pelatihan', 'matching', 'persiapan', 'penempatan', 'alumni', 'evaluasi'].map((categoryKey, idx) => {
+                      const label = {
+                        daftar: '1. Pendaftaran (Daftar)',
+                        seleksi: '2. Tahap Seleksi awal',
+                        pelatihan: '3. Pelatihan & Asrama',
+                        matching: '4. Job Matching / Wawancara',
+                        persiapan: '5. Persiapan Terbang (COE)',
+                        penempatan: '6. Penempatan & Kerja',
+                        alumni: '7. Komunitas Alumni',
+                        evaluasi: '8. Evaluasi & Dana Talangan'
+                      }[categoryKey];
+                      
+                      const info = {
+                        daftar: 'Pendaftaran via Website/WA, pengisian Google Form, kelas trial, dan booking seat LPK.',
+                        seleksi: 'Pemeriksaan dokumen, tes fisik & BMI, interview awal LPK, penjelasan kriteria kerja, & skema talangan.',
+                        pelatihan: 'Pelatihan bahasa & budaya, kurikulum caregiver (Kaigo), masuk asrama, & ujian berkala.',
+                        matching: 'Tinjauan job offer Jepang/Korea, unggah video skill, wawancara mensetsu dengan pengguna asing.',
+                        persiapan: 'Penerbitan visa & COE, kesiapan mental & fisik, check out asrama LPK, & cicilan talangan awal.',
+                        penempatan: 'Tanda tangan kontrak kerja resmi, tiket pesawat & jadwal terbang, penjemputan bandara di negara tujuan.',
+                        alumni: 'Pembentukan jaringan alumni/komunitas Kaigo, rekomendasi / referensi pendaftar baru.',
+                        evaluasi: 'Adaptasi budaya kerja di lapangan, pelunasan potong gaji, evaluasi kinerja 1, 3, 6 bulan oleh mitra.'
+                      }[categoryKey];
+                      
+                      const studentsInPhase = allChecklists.filter(c => getStudentCurrentPhase(c) === categoryKey).map(c => c.studentName);
+                      const count = studentsInPhase.length;
+                      const isActive = count > 0;
+                      
+                      return (
+                        <div 
+                          key={categoryKey} 
+                          style={{
+                            border: isActive ? '2px solid var(--primary-accent)' : '1px solid var(--border)',
+                            borderRadius: '12px',
+                            padding: '16px',
+                            backgroundColor: isActive ? 'rgba(37, 99, 235, 0.04)' : 'var(--background)',
+                            boxShadow: isActive ? '0 8px 16px rgba(37, 99, 235, 0.1)' : 'none',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'space-between',
+                            transition: 'all 0.2s ease',
+                            transform: isActive ? 'scale(1.01)' : 'none'
+                          }}
+                        >
+                          <div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                              <span style={{ fontSize: '13px', fontWeight: '800', color: isActive ? 'var(--primary-accent)' : 'var(--text-main)' }}>
+                                {label}
+                              </span>
+                              <span style={{ 
+                                fontSize: '10px', 
+                                fontWeight: '700', 
+                                padding: '2px 8px', 
+                                borderRadius: '12px', 
+                                backgroundColor: isActive ? 'var(--primary-accent)' : 'var(--border)',
+                                color: isActive ? 'white' : 'var(--text-muted)'
+                              }}>
+                                {count} Siswa
                               </span>
                             </div>
-                            <div style={{ width: '100%', height: '8px', backgroundColor: 'var(--primary-light)', borderRadius: '4px', overflow: 'hidden' }}>
-                              <div style={{ width: `${percentage}%`, height: '100%', backgroundColor: categoryKey === 'matching' ? 'var(--warning)' : categoryKey === 'penempatan' ? 'var(--secondary)' : 'var(--primary-accent)', transition: 'width 0.3s ease' }}></div>
+                            
+                            <p style={{ fontSize: '11.5px', color: 'var(--text-muted)', lineHeight: '1.45', marginBottom: '12px', minHeight: '44px' }}>
+                              {info}
+                            </p>
+                          </div>
+
+                          <div style={{ borderTop: '1px solid var(--border)', paddingTop: '10px', marginTop: '6px' }}>
+                            <span style={{ fontSize: '9px', textTransform: 'uppercase', color: 'var(--text-muted)', fontWeight: '700', display: 'block', marginBottom: '4px' }}>
+                              Siswa di Tahap Ini:
+                            </span>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                              {isActive ? (
+                                studentsInPhase.map(name => (
+                                  <span 
+                                    key={name} 
+                                    className="badge badge-blue" 
+                                    style={{ 
+                                      fontSize: '10px', 
+                                      fontWeight: '600', 
+                                      padding: '2px 6px',
+                                      backgroundColor: 'var(--primary-light)',
+                                      color: 'var(--primary-accent)',
+                                      border: '1px solid rgba(37, 99, 235, 0.15)'
+                                    }}
+                                  >
+                                    {name}
+                                  </span>
+                                ))
+                              ) : (
+                                <span style={{ fontSize: '10.5px', color: 'var(--text-muted)', fontStyle: 'italic' }}>
+                                  Kosong
+                                </span>
+                              )}
                             </div>
                           </div>
-                        );
-                      })}
-                    </div>
+                        </div>
+                      );
+                    })}
                   </div>
+                </div>
 
-                  {/* Graph 2: Financial collection target */}
+                {/* GRAPH 2 & QUICK GUIDE (2-COLUMN ROW) */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '24px' }}>
                   <div className="card" onClick={() => setActiveTab('keuangan')} style={{ cursor: 'pointer' }}>
                     <h3 style={{ fontSize: '14px', marginBottom: '16px' }}>📉 Cash Flow: Cicilan Dana Talangan Terkumpul</h3>
                     
@@ -670,6 +736,15 @@ export default function LPKDashboard() {
                     </div>
                   </div>
 
+                  <div className="card">
+                    <h3 style={{ fontSize: '14px', marginBottom: '12px' }}>💡 Panduan Akses Cepat Dashboard</h3>
+                    <ul style={{ fontSize: '11.5px', color: 'var(--text-muted)', paddingLeft: '20px', lineHeight: '1.6' }}>
+                      <li>Kelola pendaftaran otomatis dan BMI di tab <b>Prescreening</b>.</li>
+                      <li>Perbarui asrama dan penempatan ranjang siswa di tab <b>Asrama</b>.</li>
+                      <li>Verifikasi pembayaran dana talangan dan potong gaji di tab <b>Buku Keuangan</b>.</li>
+                      <li>Lihat postingan lowongan kerja yang diunggah mitra Jepang di tab <b>Lowongan</b>.</li>
+                    </ul>
+                  </div>
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px' }}>
