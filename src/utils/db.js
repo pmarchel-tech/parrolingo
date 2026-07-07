@@ -822,6 +822,17 @@ export async function updateStudentChecklist(studentName, checklistData) {
   });
 }
 
+export async function getAllStudentChecklists() {
+  const store = await getStore('student_checklists');
+  return new Promise((resolve) => {
+    const request = store.getAll();
+    request.onsuccess = () => {
+      resolve(request.result || []);
+    };
+    request.onerror = () => resolve([]);
+  });
+}
+
 export async function seedDefaultChecklists() {
   // Call new B2B seed functions first (self-guarding)
   try {

@@ -3,6 +3,7 @@ import {
   getLogs, 
   getStudentChecklist, 
   updateStudentChecklist, 
+  getAllStudentChecklists,
   getDormRooms,
   saveDormRoom,
   getFinancialLedgers,
@@ -91,7 +92,24 @@ export default function LPKDashboard() {
   
   // Database States
   const [checklist, setChecklist] = useState(null);
+  const [allChecklists, setAllChecklists] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState('Budi Utomo');
+
+  // Helper to get student's current active workflow phase
+  const getStudentCurrentPhase = (studentChecklist) => {
+    if (!studentChecklist || !studentChecklist.statuses) return 'daftar';
+    const phases = ['daftar', 'seleksi', 'pelatihan', 'matching', 'persiapan', 'penempatan', 'alumni', 'evaluasi'];
+    let currentPhase = 'daftar';
+    for (let i = 0; i < phases.length; i++) {
+      const phaseKey = phases[i];
+      const items = PROCESS_ITEMS[phaseKey] || [];
+      const completedCount = items.filter(item => studentChecklist.statuses[item.id] === 'completed').length;
+      if (completedCount > 0) {
+        currentPhase = phaseKey;
+      }
+    }
+    return currentPhase;
+  };
   const [dormRooms, setDormRooms] = useState([]);
   const [financialLedgers, setFinancialLedgers] = useState([]);
   const [jobListings, setJobListings] = useState([]);
@@ -146,6 +164,9 @@ export default function LPKDashboard() {
     try {
       const checkData = await getStudentChecklist(selectedStudent);
       if (checkData) setChecklist(checkData);
+
+      const allChecklistsData = await getAllStudentChecklists();
+      setAllChecklists(allChecklistsData || []);
 
       const rooms = await getDormRooms();
       setDormRooms(rooms);
@@ -585,52 +606,42 @@ export default function LPKDashboard() {
 
                 {/* VISUAL CHARTS & GRAPHS SECTION */}
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '24px' }}>
-                  
                   {/* Graph 1: Student Pipeline Stage distribution */}
                   <div className="card" onClick={() => setActiveTab('siswa_proses')} style={{ cursor: 'pointer' }}>
                     <h3 style={{ fontSize: '14px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      📊 Grafik Distribusi Tahap Alur Terbang (Klik untuk Detail)
+                      📊 Distribusi Tahap Alur Kerja Siswa (Klik untuk Detail)
                     </h3>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                      <div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: '600', marginBottom: '4px' }}>
-                          <span>1. Persiapan Awal (Briefing & BMI)</span>
-                          <span>60% (Lulus 3/5 Siswa)</span>
-                        </div>
-                        <div style={{ width: '100%', height: '8px', backgroundColor: 'var(--primary-light)', borderRadius: '4px', overflow: 'hidden' }}>
-                          <div style={{ width: '60%', height: '100%', backgroundColor: 'var(--primary-accent)' }}></div>
-                        </div>
-                      </div>
-
-                      <div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: '600', marginBottom: '4px' }}>
-                          <span>2. Kelas Bahasa & Asrama</span>
-                          <span>80% (Lulus 4/5 Siswa)</span>
-                        </div>
-                        <div style={{ width: '100%', height: '8px', backgroundColor: 'var(--primary-light)', borderRadius: '4px', overflow: 'hidden' }}>
-                          <div style={{ width: '80%', height: '100%', backgroundColor: 'var(--secondary)' }}></div>
-                        </div>
-                      </div>
-
-                      <div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: '600', marginBottom: '4px' }}>
-                          <span>3. Wawancara Kerja & Kontrak</span>
-                          <span>40% (2 Siswa Match)</span>
-                        </div>
-                        <div style={{ width: '100%', height: '8px', backgroundColor: 'var(--primary-light)', borderRadius: '4px', overflow: 'hidden' }}>
-                          <div style={{ width: '40%', height: '100%', backgroundColor: 'var(--warning)' }}></div>
-                        </div>
-                      </div>
-
-                      <div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: '600', marginBottom: '4px' }}>
-                          <span>4. Paspor & Kelayakan CoE</span>
-                          <span>20% (1 Siswa Terbit)</span>
-                        </div>
-                        <div style={{ width: '100%', height: '8px', backgroundColor: 'var(--primary-light)', borderRadius: '4px', overflow: 'hidden' }}>
-                          <div style={{ width: '20%', height: '100%', backgroundColor: 'var(--danger)' }}></div>
-                        </div>
-                      </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                      {['daftar', 'seleksi', 'pelatihan', 'matching', 'persiapan', 'penempatan', 'alumni', 'evaluasi'].map(categoryKey => {
+                        const label = {
+                          daftar: '1. Pendaftaran (Daftar)',
+                          seleksi: '2. Tahap Seleksi',
+                          pelatihan: '3. Pelatihan & Asrama',
+                          matching: '4. Job Matching',
+                          persiapan: '5. Persiapan Terbang',
+                          penempatan: '6. Penempatan & Kerja',
+                          alumni: '7. Komunitas Alumni',
+                          evaluasi: '8. Evaluasi & Cicilan'
+                        }[categoryKey];
+                        
+                        const count = allChecklists.filter(c => getStudentCurrentPhase(c) === categoryKey).length;
+                        const total = allChecklists.length || 1;
+                        const percentage = Math.round((count / total) * 100);
+                        
+                        return (
+                          <div key={categoryKey}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: '600', marginBottom: '4px' }}>
+                              <span>{label}</span>
+                              <span style={{ color: count > 0 ? 'var(--primary-accent)' : 'var(--text-muted)' }}>
+                                {count} Siswa ({percentage}%)
+                              </span>
+                            </div>
+                            <div style={{ width: '100%', height: '8px', backgroundColor: 'var(--primary-light)', borderRadius: '4px', overflow: 'hidden' }}>
+                              <div style={{ width: `${percentage}%`, height: '100%', backgroundColor: categoryKey === 'matching' ? 'var(--warning)' : categoryKey === 'penempatan' ? 'var(--secondary)' : 'var(--primary-accent)', transition: 'width 0.3s ease' }}></div>
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
 
