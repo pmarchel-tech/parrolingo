@@ -1,7 +1,7 @@
 // IndexedDB local storage utility for KaigoLingo
 
 const DB_NAME = 'kaigolingo_db';
-const DB_VERSION = 14;
+const DB_VERSION = 16;
 
 let dbInstance = null;
 let dbPromise = null;
@@ -537,8 +537,8 @@ function generateDynamicCaregiverData() {
 
   const coreGreetings = [
     { id: "Selamat Pagi", ja: "おはようございます", ja_r: "ohayou gozaimasu", zh: "早上好", zh_r: "zǎoshang hǎo", ar: "صباح الخير", ar_r: "sabah al-khayr", en: "Good morning", en_r: "good morning", ko: "좋은 아침이에요", ko_r: "joeun achimieyo" },
-    { id: "Selamat Siang", ja: "こんにちは", ja_r: "konnichiwa", zh: "下午好", zh_r: "xiàwǔ hǎo", ar: "طاب يومك", ar_r: "tab yawmuk", en: "Good afternoon", en_r: "good afternoon", ko: "안녕하세요", ko_r: "annyeonghaseyo" },
-    { id: "Selamat Malam", ja: "こんばんは", ja_r: "konbanwa", zh: "晚上好", zh_r: "wǎnshàng hǎo", ar: "مساء الخير", ar_r: "masa' al-khayr", en: "Good evening", en_r: "good evening", ko: "안녕하세요", ko_r: "annyeonghaseyo" },
+    { id: "Selamat Siang", ja: "こんにちは", ja_r: "konnichiwa", zh: "下午好", zh_r: "xiàwǔ hǎo", ar: "طاب يومك", ar_r: "tab yawmuk", en: "Good afternoon", en_r: "good afternoon", ko: "좋은 오후예요", ko_r: "joeun ohuyeyo" },
+    { id: "Selamat Malam", ja: "こんばんは", ja_r: "konbanwa", zh: "晚上好", zh_r: "wǎnshàng hǎo", ar: "مساء الخير", ar_r: "masa' al-khayr", en: "Good evening", en_r: "good evening", ko: "좋은 저녁이에요", ko_r: "joeun jeonyeog-ieyo" },
     { id: "Selamat Tidur", ja: "おやすみなさい", ja_r: "oyasuminasai", zh: "晚安", zh_r: "wǎn'ān", ar: "تصبح على خير", ar_r: "tusbih ala khayr", en: "Good night", en_r: "good night", ko: "안녕히 주무세요", ko_r: "annyeonghi jumuseyo" },
     { id: "Tunggu Sebentar", ja: "少々お待ちください", ja_r: "shoushou omachi kudasai", zh: "请稍等", zh_r: "qǐng shāo děng", ar: "انتظر لحظة من فضلك", ar_r: "intazir lahzah min fadlak", en: "Please wait a moment", en_r: "please wait a moment", ko: "잠깐만 기다려 주세요", ko_r: "jamkkanman gidaryeo juseyo" },
     { id: "Terima Kasih Kerja Kerasnya", ja: "お疲れ様です", ja_r: "otsukaresama desu", zh: "辛苦了", zh_r: "xīnkǔle", ar: "شكرا لجهودكم", ar_r: "shukran lijuhudikum", en: "Thank you for your hard work", en_r: "thank you for your hard work", ko: "수고하셨습니다", ko_r: "sugohashyeotseumnida" },
