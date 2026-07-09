@@ -1,3 +1,3 @@
 git add .
-git commit -m "fix: change Korean translation of Selamat Siang to 좋은 오후예요 and bump db version to 16"
+git commit -m "fix: translate dynamic additional vocabularies for non-caregiver programs and bump db version to 17"
 git push origin main

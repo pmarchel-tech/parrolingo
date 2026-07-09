@@ -1,7 +1,7 @@
 // IndexedDB local storage utility for KaigoLingo
 
 const DB_NAME = 'kaigolingo_db';
-const DB_VERSION = 16;
+const DB_VERSION = 17;
 
 let dbInstance = null;
 let dbPromise = null;
@@ -1839,15 +1839,141 @@ export async function seedReferralClaims() {
 export async function seedDynamicVocab() {
   const store = await getStore('vocabulary', 'readwrite');
   const additionalVocabs = [
-    { vocabId: 'seizogyo_1', word: '安全第一', reading: 'Anzen Daiichi', meaning: 'Utamakan Keselamatan', week: 1, category: 'Pabrik', orderIndex: 0 },
-    { vocabId: 'seizogyo_2', word: '作業服', reading: 'Sagyoufuku', meaning: 'Baju Kerja Pabrik', week: 1, category: 'Pabrik', orderIndex: 1 },
-    { vocabId: 'seizogyo_3', word: '点検', reading: 'Tenken', meaning: 'Inspeksi / Pemeriksaan', week: 2, category: 'Pabrik', orderIndex: 0 },
-    { vocabId: 'kensetsugyo_1', word: 'ヘルメット', reading: 'Herumetto', meaning: 'Helm Proyek', week: 1, category: 'Konstruksi', orderIndex: 0 },
-    { vocabId: 'kensetsugyo_2', word: '足場', reading: 'Ashiba', meaning: 'Scaffolding / Stang Perancah', week: 1, category: 'Konstruksi', orderIndex: 1 },
-    { vocabId: 'kensetsugyo_3', word: '図面', reading: 'Zumen', meaning: 'Gambar Cetak Biru / Desain', week: 2, category: 'Konstruksi', orderIndex: 0 },
-    { vocabId: 'nogyo_1', word: '収穫', reading: 'Shuukaku', meaning: 'Panen', week: 1, category: 'Pertanian', orderIndex: 0 },
-    { vocabId: 'nogyo_2', word: '肥料', reading: 'Hiryou', meaning: 'Pupuk', week: 1, category: 'Pertanian', orderIndex: 1 },
-    { vocabId: 'nogyo_3', word: '温室', reading: 'Onshitsu', meaning: 'Rumah Kaca (Greenhouse)', week: 2, category: 'Pertanian', orderIndex: 0 }
+    { 
+      vocabId: 'seizogyo_1', 
+      ja: '安全第一', 
+      romaji: 'Anzen Daiichi', 
+      id: 'Utamakan Keselamatan', 
+      week: 1, 
+      category: 'Pabrik', 
+      orderIndex: 0,
+      translations: {
+        zh: { target: '安全第一', phonetic: 'ānquán dìyī' },
+        ko: { target: '안전 제일', phonetic: 'anjeon jeil' },
+        ar: { target: 'العمل بأمان أولاً', phonetic: 'al-amal bi-aman' },
+        en: { target: 'Safety First', phonetic: 'safety first' }
+      }
+    },
+    { 
+      vocabId: 'seizogyo_2', 
+      ja: '作業服', 
+      romaji: 'Sagyoufuku', 
+      id: 'Baju Kerja Pabrik', 
+      week: 1, 
+      category: 'Pabrik', 
+      orderIndex: 1,
+      translations: {
+        zh: { target: '工作服', phonetic: 'gōngzuòfú' },
+        ko: { target: '작업복', phonetic: 'jageopbok' },
+        ar: { target: 'ملابس العمل', phonetic: 'malabis al-amal' },
+        en: { target: 'Work Clothes', phonetic: 'work clothes' }
+      }
+    },
+    { 
+      vocabId: 'seizogyo_3', 
+      ja: '点検', 
+      romaji: 'Tenken', 
+      id: 'Inspeksi / Pemeriksaan', 
+      week: 2, 
+      category: 'Pabrik', 
+      orderIndex: 0,
+      translations: {
+        zh: { target: '检查', phonetic: 'jiǎnchá' },
+        ko: { target: '점검', phonetic: 'jeomgeom' },
+        ar: { target: 'فحص', phonetic: 'fahs' },
+        en: { target: 'Inspection', phonetic: 'inspection' }
+      }
+    },
+    { 
+      vocabId: 'kensetsugyo_1', 
+      ja: 'ヘルメット', 
+      romaji: 'Herumetto', 
+      id: 'Helm Proyek', 
+      week: 1, 
+      category: 'Konstruksi', 
+      orderIndex: 0,
+      translations: {
+        zh: { target: '安全帽', phonetic: 'ānquánmào' },
+        ko: { target: '안전모', phonetic: 'anjeonmo' },
+        ar: { target: 'خوذة الأمان', phonetic: 'khudhat al-aman' },
+        en: { target: 'Safety Helmet', phonetic: 'safety helmet' }
+      }
+    },
+    { 
+      vocabId: 'kensetsugyo_2', 
+      ja: '足場', 
+      romaji: 'Ashiba', 
+      id: 'Scaffolding / Stang Perancah', 
+      week: 1, 
+      category: 'Konstruksi', 
+      orderIndex: 1,
+      translations: {
+        zh: { target: '脚手架', phonetic: 'jiǎoshǒujià' },
+        ko: { target: '비계', phonetic: 'bigye' },
+        ar: { target: 'سقالة', phonetic: 'siqalah' },
+        en: { target: 'Scaffolding', phonetic: 'scaffolding' }
+      }
+    },
+    { 
+      vocabId: 'kensetsugyo_3', 
+      ja: '図面', 
+      romaji: 'Zumen', 
+      id: 'Gambar Cetak Biru / Desain', 
+      week: 2, 
+      category: 'Konstruksi', 
+      orderIndex: 0,
+      translations: {
+        zh: { target: '图纸', phonetic: 'túzhǐ' },
+        ko: { target: '도면', phonetic: 'domyeon' },
+        ar: { target: 'مخطط', phonetic: 'mukhattat' },
+        en: { target: 'Blueprint', phonetic: 'blueprint' }
+      }
+    },
+    { 
+      vocabId: 'nogyo_1', 
+      ja: '収穫', 
+      romaji: 'Shuukaku', 
+      id: 'Panen', 
+      week: 1, 
+      category: 'Pertanian', 
+      orderIndex: 0,
+      translations: {
+        zh: { target: '收获', phonetic: 'shōuhuò' },
+        ko: { target: '수확', phonetic: 'suhwak' },
+        ar: { target: 'حصاد', phonetic: 'hasad' },
+        en: { target: 'Harvest', phonetic: 'harvest' }
+      }
+    },
+    { 
+      vocabId: 'nogyo_2', 
+      ja: '肥料', 
+      romaji: 'Hiryou', 
+      id: 'Pupuk', 
+      week: 1, 
+      category: 'Pertanian', 
+      orderIndex: 1,
+      translations: {
+        zh: { target: '肥料', phonetic: 'féiliào' },
+        ko: { target: '비료', phonetic: 'biryo' },
+        ar: { target: 'سماد', phonetic: 'samad' },
+        en: { target: 'Fertilizer', phonetic: 'fertilizer' }
+      }
+    },
+    { 
+      vocabId: 'nogyo_3', 
+      ja: '温室', 
+      romaji: 'Onshitsu', 
+      id: 'Rumah Kaca (Greenhouse)', 
+      week: 2, 
+      category: 'Pertanian', 
+      orderIndex: 0,
+      translations: {
+        zh: { target: '温室', phonetic: 'wēnshì' },
+        ko: { target: '온실', phonetic: 'onsil' },
+        ar: { target: 'دفيئة', phonetic: 'dafi\'ah' },
+        en: { target: 'Greenhouse', phonetic: 'greenhouse' }
+      }
+    }
   ];
   for (const v of additionalVocabs) {
     await store.put({

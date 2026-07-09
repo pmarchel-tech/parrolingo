@@ -502,10 +502,13 @@ export default function LearnScreen({ weekNumber, sessionType, progress, onEndSe
         }
         
         let answerIndex = 0;
-        if (t.options && t.options.length > 0) {
-          const correctAns = t.correctAnswer || t.Correct_Answer;
+        let finalOptions = (t.options && t.options.length > 0) ? [...t.options] : [...(q.options || [])];
+        
+        if (finalOptions.length > 0) {
+          const correctAns = t.correctAnswer || t.Correct_Answer || (q.options && q.options[q.answer]);
           if (correctAns) {
-            const idx = t.options.indexOf(correctAns);
+            finalOptions = shuffleArray(finalOptions);
+            const idx = finalOptions.indexOf(correctAns);
             if (idx !== -1) answerIndex = idx;
           }
         }
@@ -526,7 +529,7 @@ export default function LearnScreen({ weekNumber, sessionType, progress, onEndSe
           targetJa: t.targetText || q.targetJa,
           romaji: t.phonetic || q.romaji,
           targetRomaji: (q.type === "C" || q.type === "F") ? (t.phonetic || "").toLowerCase().replace(/[\s\-]/g, '') : "",
-          options: (t.options && t.options.length > 0) ? t.options : q.options,
+          options: finalOptions,
           pairs: (t.pairs && t.pairs.length > 0) ? t.pairs : q.pairs,
           answer: answerIndex
         };
@@ -1218,13 +1221,16 @@ const localizeVocab = (dbVocab, lang) => {
     }
     
     // 2. Fallback: If not in static translations, check if database object has the translation property for the selected language
-    if (lang !== 'ja' && v[lang]) {
-      return {
-        ...v,
-        ja: v[lang], // target text is the translated word (e.g. '腰' or '勺子')
-        romaji: v[lang + '_r'] || v.romaji, // target pronunciation is the translated pronunciation (e.g. 'yāo' or 'sháozi')
-        id: v.id // keep meaning as Indonesian (already v.id, e.g. 'Pinggang' or 'Sendok')
-      };
+    if (lang !== 'ja') {
+      const t = v.translations?.[lang] || (v[lang] ? { target: v[lang], phonetic: v[lang + '_r'] } : null);
+      if (t) {
+        return {
+          ...v,
+          ja: t.target || v.ja, // target text is the translated word (e.g. '腰' or '无力')
+          romaji: t.phonetic || v.romaji, // target pronunciation is the translated pronunciation (e.g. 'yāo' or 'wúlì')
+          id: v.id // keep meaning as Indonesian (already v.id, e.g. 'Pinggang' or 'Lemas')
+        };
+      }
     }
 
     return v;
@@ -2052,6 +2058,15 @@ const currentFails = currentQuestion.failCount || 0;
                 value={typedInput}
                 onChange={(e) => setTypedInput(e.target.value)}
                 disabled={isAnswerChecked}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    if (!isAnswerChecked && typedInput.trim() !== '') {
+                      checkAnswer();
+                    } else if (isAnswerChecked) {
+                      handleNext();
+                    }
+                  }
+                }}
               />
             </div>
           )}
@@ -2086,6 +2101,15 @@ const currentFails = currentQuestion.failCount || 0;
                   value={typedInput}
                   onChange={(e) => setTypedInput(e.target.value)}
                   disabled={isAnswerChecked}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      if (!isAnswerChecked && typedInput.trim() !== '') {
+                        checkAnswer();
+                      } else if (isAnswerChecked) {
+                        handleNext();
+                      }
+                    }
+                  }}
                 />
                 
                 {isAnswerChecked && (
