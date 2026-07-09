@@ -492,6 +492,15 @@ export default function LearnScreen({ weekNumber, sessionType, progress, onEndSe
       if (q.translations && q.translations[lang]) {
         const t = q.translations[lang];
         
+        // Replace target word in prompt with translated word
+        const targetText = t.targetText || t.target || '';
+        if (q.targetJa && targetText) {
+          translatedPrompt = translatedPrompt.replace(q.targetJa, targetText);
+        }
+        if (q.audioText && targetText && q.audioText !== q.targetJa) {
+          translatedPrompt = translatedPrompt.replace(q.audioText, targetText);
+        }
+        
         let answerIndex = 0;
         if (t.options && t.options.length > 0) {
           const correctAns = t.correctAnswer || t.Correct_Answer;
@@ -536,6 +545,36 @@ export default function LearnScreen({ weekNumber, sessionType, progress, onEndSe
     const staticQuestions = dbQuestions || [];
     const vocab = dbVocab.length > 0 ? dbVocab : [];
     const lang = localStorage.getItem('kaigolingo_selected_language') || 'ja';
+    
+    const PROMPT_LOCALIZATIONS = {
+      ja: {
+        listen: 'Dengar dan pilih arti yang tepat!',
+        type: 'Ketik ejaan Romaji untuk "{word}"!',
+        shadow: 'Ucapkan kata berikut melalui mikrofon (Shadowing)!'
+      },
+      en: {
+        listen: 'Listen and choose the correct meaning!',
+        type: 'Type the Romaji spelling for "{word}"!',
+        shadow: 'Pronounce the following word into the microphone (Shadowing)!'
+      },
+      zh: {
+        listen: '听录音并选择正确的含义！',
+        type: '请输入“{word}”的罗马字拼写！',
+        shadow: '请通过麦克风朗读以下单词（影子跟读）！'
+      },
+      ar: {
+        listen: 'استمع واختر المعنى الصحيح!',
+        type: 'اكتب تهجئة الروماجي لـ "{word}"!',
+        shadow: 'انطق الكلمة التالية في الميكروفون (Shadowing)!'
+      },
+      ko: {
+        listen: '듣고 올바른 뜻을 고르세요!',
+        type: '"{word}"의 로마자 표기를 입력하세요!',
+        shadow: '마이크를 통해 다음 단어를 따라 말하세요 (Shadowing)!'
+      }
+    };
+    
+    const localPrompt = PROMPT_LOCALIZATIONS[lang] || PROMPT_LOCALIZATIONS['ja'];
     
     // Target count uses static questions if available, otherwise scales from 10 to 20
     const targetCount = staticQuestions.length > 0 ? staticQuestions.length : Math.min(20, 10 + (weekNum - 1));
@@ -594,7 +633,7 @@ export default function LearnScreen({ weekNumber, sessionType, progress, onEndSe
           
           generated.push({
             type: 'B',
-            prompt: 'Dengar dan pilih arti yang tepat!',
+            prompt: localPrompt.listen,
             audioText: item.ja,
             options: options,
             answer: correctIndex,
@@ -610,7 +649,7 @@ export default function LearnScreen({ weekNumber, sessionType, progress, onEndSe
         } else if (chosenType === 'C') {
           generated.push({
             type: 'C',
-            prompt: `Ketik ejaan Romaji untuk "${item.id}"!`,
+            prompt: localPrompt.type.replace('{word}', item.id),
             targetRomaji: item.romaji.replace(/[\s\-]/g, ''),
             targetJa: item.ja,
             meaning: item.id
@@ -620,7 +659,7 @@ export default function LearnScreen({ weekNumber, sessionType, progress, onEndSe
           const formattedRomaji = lang === 'ja' ? item.romaji.split('').join('-') : item.romaji;
           generated.push({
             type: 'D',
-            prompt: 'Ucapkan kata berikut melalui mikrofon (Shadowing)!',
+            prompt: localPrompt.shadow,
             targetJa: item.ja,
             romaji: formattedRomaji,
             meaning: item.id
@@ -1177,6 +1216,17 @@ const localizeVocab = (dbVocab, lang) => {
         };
       }
     }
+    
+    // 2. Fallback: If not in static translations, check if database object has the translation property for the selected language
+    if (lang !== 'ja' && v[lang]) {
+      return {
+        ...v,
+        ja: v[lang], // target text is the translated word (e.g. '腰' or '勺子')
+        romaji: v[lang + '_r'] || v.romaji, // target pronunciation is the translated pronunciation (e.g. 'yāo' or 'sháozi')
+        id: v.id // keep meaning as Indonesian (already v.id, e.g. 'Pinggang' or 'Sendok')
+      };
+    }
+
     return v;
   });
 };
@@ -1390,6 +1440,18 @@ const KANJI_TO_HIRAGANA_TTS = {
     }
     setShadowingResult('');
     setIsRecording(true);
+    
+    // Set recognition language dynamically based on selected target practice language
+    const lang = localStorage.getItem('kaigolingo_selected_language') || 'ja';
+    const recogLocaleMap = {
+      'ja': 'ja-JP',
+      'zh': 'zh-CN',
+      'en': 'en-US',
+      'ar': 'ar-SA',
+      'ko': 'ko-KR'
+    };
+    recognitionRef.current.lang = recogLocaleMap[lang] || 'ja-JP';
+    
     recognitionRef.current.start();
   };
 

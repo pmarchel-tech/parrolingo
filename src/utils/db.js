@@ -1,7 +1,7 @@
 // IndexedDB local storage utility for KaigoLingo
 
 const DB_NAME = 'kaigolingo_db';
-const DB_VERSION = 13;
+const DB_VERSION = 14;
 
 let dbInstance = null;
 let dbPromise = null;
