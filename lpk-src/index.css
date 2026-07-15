@@ -1,35 +1,36 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
-  --font-display: 'Plus Jakarta Sans', sans-serif;
-  --font-body: 'Inter', sans-serif;
+  --font-display: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+  --font-body: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
   
-  /* Modern Premium Slate Palette (Stripe/Linear Style) */
-  --primary: #0f172a;        /* Slate 900 - Deep Navy/Charcoal */
-  --primary-accent: #2563eb; /* Blue 600 - Premium SaaS Blue */
-  --primary-light: #f1f5f9;  /* Slate 100 */
+  /* Microsoft Dynamics 365 / Power Apps Corporate Palette */
+  --primary: #0078d4;        /* Dynamics Fluent Blue */
+  --primary-accent: #005a9e; /* Darker Active Blue */
+  --primary-dark: #002035;   /* Dark Navy (from Dynamics top header) */
+  --primary-light: #f3f2f1;  /* Fluent Light Grey (selected items) */
   
-  --secondary: #0d9488;      /* Teal 600 - Clean Emerald */
-  --secondary-light: #ccfbf1;/* Teal 100 */
+  --secondary: #107c41;      /* Excel Green / Success */
+  --secondary-light: #dff6dd;/* Soft green badge bg */
   
-  --danger: #e11d48;         /* Rose 600 */
-  --danger-light: #ffe4e6;   /* Rose 100 */
+  --danger: #a80000;         /* Fluent Red */
+  --danger-light: #fde7e9;   /* Soft red badge bg */
   
-  --warning: #d97706;        /* Amber 600 */
-  --warning-light: #fef3c7;  /* Amber 100 */
+  --warning: #7a5e00;        /* Muted Yellow/Gold text */
+  --warning-light: #fff4ce;  /* Soft yellow badge bg */
   
-  --background: #f8fafc;     /* Slate 50 - Soft neutral background */
-  --surface: #ffffff;        /* Pure White */
-  --border: #e2e8f0;         /* Slate 200 - Crisp, clean borders */
-  --border-hover: #cbd5e1;   /* Slate 300 */
+  --background: #faf9f8;     /* Dynamics main workspace light grey background */
+  --surface: #ffffff;        /* Pure White for cards & sheets */
+  --border: #edebe9;         /* Fluent 1px border */
+  --border-hover: #8a8886;   /* Fluent medium border */
   
-  --text-main: #0f172a;      /* Slate 900 */
-  --text-muted: #64748b;     /* Slate 500 */
-  --text-light: #94a3b8;     /* Slate 400 */
+  --text-main: #323130;      /* Fluent primary text - Dark Grey */
+  --text-muted: #605e5c;     /* Fluent secondary text - Slate Grey */
+  --text-light: #a19f9d;     /* Fluent tertiary text - Light Grey */
   
-  --radius-sm: 6px;          /* Sharp, modern rounded corners */
-  --radius-md: 8px;
-  --radius-lg: 12px;
+  --radius-sm: 2px;          /* Sharp, corporate square corners */
+  --radius-md: 4px;
+  --radius-lg: 4px;
 }
 
 body {
@@ -42,10 +43,10 @@ body {
 
 h1, h2, h3, h4 {
   font-family: var(--font-display);
-  font-weight: 700;
-  color: var(--primary);
+  font-weight: 600;
+  color: var(--text-main);
   margin-top: 0;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
 }
 
 .lpk-layout {
@@ -53,14 +54,14 @@ h1, h2, h3, h4 {
   min-height: 100vh;
 }
 
-/* Minimalist Sidebar */
+/* Dynamics Corporate Sidebar (Light & Clean) */
 .lpk-sidebar {
-  width: 250px;
+  width: 240px;
   background-color: var(--surface);
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
-  padding: 24px 16px;
+  padding: 0;
   box-sizing: border-box;
 }
 
@@ -68,203 +69,208 @@ h1, h2, h3, h4 {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 28px;
-  padding: 0 8px 16px 8px;
+  padding: 16px 20px;
+  background-color: var(--primary-dark);
+  color: var(--surface);
   border-bottom: 1px solid var(--border);
 }
 
 .lpk-logo-title {
-  font-size: 16px;
-  font-weight: 800;
-  color: var(--primary);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--surface) !important;
   margin: 0;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.03em;
 }
 
 .sidebar-nav {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0; /* Flat layout - no gaps */
+  padding: 8px 0;
   flex: 1;
 }
 
 .sidebar-link {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  border-radius: var(--radius-sm);
+  gap: 12px;
+  padding: 12px 20px;
   color: var(--text-muted);
   text-decoration: none;
   font-family: var(--font-body);
-  font-weight: 500;
+  font-weight: 400;
   font-size: 13px;
   cursor: pointer;
   background: none;
   border: none;
+  border-left: 4px solid transparent; /* Left indicator placeholder */
   text-align: left;
-  transition: all 0.15s ease;
+  transition: background-color 0.1s ease;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .sidebar-link:hover {
   background-color: var(--primary-light);
-  color: var(--primary);
+  color: var(--text-main);
 }
 
+/* Dynamics style active indicator: solid blue left border */
 .sidebar-link.active {
   background-color: var(--primary-light);
   color: var(--primary-accent);
+  border-left: 4px solid var(--primary);
   font-weight: 600;
+  border-radius: 0 !important;
 }
 
 /* Main Content Wrapper */
 .lpk-main-content {
   flex: 1;
-  padding: 32px 40px;
+  padding: 24px 32px;
   box-sizing: border-box;
   overflow-y: auto;
   max-height: 100vh;
 }
 
-/* Crisp Flat Cards */
+/* Crisp Clean Flat Cards (No shadow, sharp corners) */
 .card {
   background-color: var(--surface);
-  border-radius: var(--radius-md);
-  padding: 24px;
+  border-radius: var(--radius-sm);
+  padding: 20px 24px;
   border: 1px solid var(--border);
-  margin-bottom: 24px;
-  transition: border-color 0.2s;
+  margin-bottom: 20px;
+  box-shadow: none !important;
 }
 
-.card:hover {
-  border-color: var(--border-hover);
-}
-
-/* Flat Clean Input Fields */
+/* Flat Forms & Selectors */
 .input-field {
   width: 100%;
-  padding: 8px 12px;
-  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  border-radius: var(--radius-sm) !important;
   border: 1px solid var(--border);
   background-color: var(--surface);
   font-family: var(--font-body);
   font-size: 13px;
   box-sizing: border-box;
-  transition: border-color 0.2s, box-shadow 0.2s;
   outline: none;
-  height: 38px;
+  height: 32px; /* D365 standard input height */
+  box-shadow: none !important;
+  color: var(--text-main);
 }
 
 .input-field:focus {
-  border-color: var(--primary-accent);
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+  border-color: var(--primary) !important;
+  border-width: 1.5px !important;
 }
 
-/* Flat Premium Buttons */
+/* Dynamics Style Solid and Outline Buttons */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 8px 16px;
-  border-radius: var(--radius-sm);
+  padding: 6px 16px;
+  border-radius: var(--radius-sm) !important;
   font-family: var(--font-body);
-  font-weight: 600;
+  font-weight: 400;
   font-size: 13px;
   cursor: pointer;
-  border: 1px solid transparent;
-  transition: all 0.15s ease;
-  height: 38px;
+  border: 1px solid var(--border);
+  transition: background-color 0.1s ease;
+  height: 32px;
+  box-shadow: none !important;
+  background-color: var(--surface);
+  color: var(--text-main);
 }
 
 .btn-primary {
-  background-color: var(--primary);
-  color: var(--surface);
+  background-color: var(--primary) !important;
+  color: var(--surface) !important;
+  border-color: var(--primary) !important;
 }
 
 .btn-primary:hover {
-  background-color: #1e293b; /* Slate 800 */
+  background-color: var(--primary-accent) !important;
 }
 
 .btn-secondary {
-  background-color: var(--primary-accent);
-  color: var(--surface);
+  background-color: var(--surface) !important;
+  color: var(--primary) !important;
+  border: 1.5px solid var(--primary) !important;
 }
 
 .btn-secondary:hover {
-  background-color: #1d4ed8;
+  background-color: var(--primary-light) !important;
 }
 
 .btn-outline {
-  background-color: transparent;
-  border: 1px solid var(--border);
-  color: var(--text-muted);
+  background-color: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text-main) !important;
 }
 
 .btn-outline:hover {
-  background-color: var(--primary-light);
-  color: var(--primary);
-  border-color: var(--border-hover);
+  background-color: var(--primary-light) !important;
+  border-color: var(--border-hover) !important;
 }
 
-/* Minimalist Badges */
+/* Dynamics-Style Colored Status Badges */
 .badge {
   display: inline-flex;
-  padding: 2px 8px;
-  border-radius: var(--radius-sm);
-  font-size: 11px;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm) !important;
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.02em;
+  border: none !important;
 }
 
 .badge-blue {
-  background-color: #eff6ff;
-  color: #1e40af;
-  border: 1px solid #dbeafe;
+  background-color: #c7e0f4 !important; /* D365 Scheduled Blue */
+  color: #00188f !important;
 }
 
 .badge-green {
-  background-color: #f0fdf4;
-  color: #166534;
-  border: 1px solid #dcfce7;
+  background-color: var(--secondary-light) !important; /* D365 Completed Green */
+  color: var(--secondary) !important;
 }
 
 .badge-pink {
-  background-color: #fff1f2;
-  color: #9f1239;
-  border: 1px solid #ffe4e6;
+  background-color: var(--danger-light) !important; /* D365 Canceled Red */
+  color: var(--danger) !important;
 }
 
 .badge-orange {
-  background-color: #fffbeb;
-  color: #92400e;
-  border: 1px solid #fef3c7;
+  background-color: var(--warning-light) !important; /* D365 Normal/In-progress Yellow */
+  color: var(--warning) !important;
 }
 
-/* Dormitory Plan Grid (Floorplan look) */
+/* Dormitory Plan (Clean floorplan look) */
 .dorm-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 20px;
+  gap: 16px;
 }
 
 .room-card {
   background-color: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
   padding: 16px;
+  box-shadow: none !important;
 }
 
 .room-title {
   font-family: var(--font-display);
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--primary);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-main);
   margin-bottom: 12px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 6px;
 }
 
 .bed-grid {
@@ -276,37 +282,37 @@ h1, h2, h3, h4 {
 .bed-slot {
   display: flex;
   flex-direction: column;
-  padding: 10px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border);
-  background-color: var(--background);
+  padding: 8px 12px;
+  border-radius: var(--radius-sm) !important;
+  border: 1px solid var(--border) !important;
+  background-color: var(--background) !important;
   font-size: 12px;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.1s ease;
+  box-shadow: none !important;
 }
 
 .bed-slot.available {
-  background-color: var(--surface);
-  border-style: dashed;
+  background-color: var(--surface) !important;
+  border: 1px dashed var(--border-hover) !important;
   color: var(--text-muted);
 }
 
 .bed-slot.available:hover {
-  background-color: #f0fdf4;
-  border-color: var(--secondary);
-  border-style: solid;
-  color: var(--secondary);
+  background-color: var(--primary-light) !important;
+  border: 1px solid var(--primary) !important;
+  color: var(--primary);
 }
 
 .bed-slot.occupied {
-  background-color: #f8fafc;
-  color: var(--primary);
-  border-color: var(--border-hover);
+  background-color: var(--background) !important;
+  color: var(--text-main) !important;
+  border: 1px solid var(--border-hover) !important;
 }
 
 .bed-name {
   font-family: var(--font-display);
-  font-weight: 700;
+  font-weight: 600;
   margin-top: 4px;
   color: var(--primary);
 }
@@ -316,35 +322,35 @@ h1, h2, h3, h4 {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 16px;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .finance-card {
   background-color: var(--surface);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
   padding: 16px 20px;
   border: 1px solid var(--border);
+  box-shadow: none !important;
 }
 
 .finance-val {
   font-family: var(--font-display);
-  font-size: 20px;
-  font-weight: 800;
-  color: var(--primary);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-main);
   margin-top: 4px;
-  letter-spacing: -0.03em;
 }
 
-/* Crisp Clean Tables (Linear/Stripe style) */
+/* Corporate Data Tables (Dynamics Grid Style) */
 .ledger-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 12px;
-  margin-top: 12px;
+  margin-top: 8px;
 }
 
 .ledger-table th, .ledger-table td {
-  padding: 10px 12px;
+  padding: 8px 12px;
   border-bottom: 1px solid var(--border);
   text-align: left;
 }
@@ -357,10 +363,11 @@ h1, h2, h3, h4 {
   text-transform: uppercase;
   font-size: 10px;
   letter-spacing: 0.05em;
+  border-top: 1px solid var(--border);
 }
 
 .ledger-table tr:hover td {
-  background-color: var(--primary-light);
+  background-color: var(--primary-light) !important;
 }
 
 /* Compact Video Card */
@@ -368,31 +375,28 @@ h1, h2, h3, h4 {
   position: relative;
   width: 100%;
   height: 180px;
-  border-radius: var(--radius-md);
-  background-color: #0f172a;
+  border-radius: var(--radius-sm);
+  background-color: #002035;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   border: 1px solid var(--border);
+  box-shadow: none !important;
 }
 
 .video-play-btn {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  border-radius: 50% !important;
   background-color: var(--surface);
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--primary);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-  transition: transform 0.2s;
-}
-
-.video-mockup:hover .video-play-btn {
-  transform: scale(1.08);
+  box-shadow: none !important;
+  border: 1px solid var(--border);
 }
 
 /* Simple Modals */
@@ -402,7 +406,7 @@ h1, h2, h3, h4 {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(15, 23, 42, 0.4);
+  background-color: rgba(0, 0, 0, 0.15) !important; /* Very soft overlay */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -412,8 +416,43 @@ h1, h2, h3, h4 {
 .modal-content {
   width: 100%;
   background-color: var(--surface);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
   padding: 24px;
   border: 1px solid var(--border);
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1) !important; /* Muted flat shadow */
+}
+
+/* ====================================================== */
+/* FORCE FLAT DESIGN SYSTEM (Dynamics 365 UI Override) */
+/* ====================================================== */
+
+[style*="boxShadow"], [style*="box-shadow"], .card, .modal-content, .finance-card, .video-play-btn {
+  box-shadow: none !important;
+}
+
+/* Force standard sharp border-radius (2px-4px) */
+.card, .modal-content, .finance-card, .room-card, .input-field, .btn, .badge, .bed-slot, 
+[style*="borderRadius"], [style*="border-radius"], 
+.video-mockup {
+  border-radius: 2px !important;
+}
+
+/* Override borders & active scale transforms */
+[style*="border"] {
+  border-width: 1px !important;
+}
+
+[style*="transform"], [style*="scale"] {
+  transform: none !important;
+}
+
+/* Mute active background highlight tints */
+[style*="backgroundColor: 'rgba(37, 99, 235, 0.04)'"],
+[style*="background-color: rgba(37, 99, 235, 0.04)"] {
+  background-color: var(--primary-light) !important;
+}
+
+[style*="border: '2px solid var(--primary-accent)'"],
+[style*="border: 2px solid var(--primary-accent)"] {
+  border: 1px solid var(--primary) !important;
 }

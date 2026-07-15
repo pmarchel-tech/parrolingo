@@ -1262,7 +1262,7 @@ const KANJI_TO_HIRAGANA_TTS = {
     }
     window.speechSynthesis.cancel();
 
-    const lang = localStorage.getItem('kaigolingo_selected_language') || 'ja';
+    const lang = 'ja';
 
     // Multiple locale fallbacks per language (Arabic has many regional variants)
     const ttsLocaleMap = {
@@ -1447,16 +1447,8 @@ const KANJI_TO_HIRAGANA_TTS = {
     setShadowingResult('');
     setIsRecording(true);
     
-    // Set recognition language dynamically based on selected target practice language
-    const lang = localStorage.getItem('kaigolingo_selected_language') || 'ja';
-    const recogLocaleMap = {
-      'ja': 'ja-JP',
-      'zh': 'zh-CN',
-      'en': 'en-US',
-      'ar': 'ar-SA',
-      'ko': 'ko-KR'
-    };
-    recognitionRef.current.lang = recogLocaleMap[lang] || 'ja-JP';
+    // Set recognition language to Japanese since the student is shadowing Japanese words
+    recognitionRef.current.lang = 'ja-JP';
     
     recognitionRef.current.start();
   };
